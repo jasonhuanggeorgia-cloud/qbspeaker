@@ -129,7 +129,6 @@ function reveal(){
  if(countTimer)clearInterval(countTimer);
  countTimer=null;
  $('countdown').textContent='';
- $('answerrow').classList.add('hidden');
  $('official').textContent='Official answer: '+clean(cur.answer);
  $('official').classList.remove('hidden');
  ['correct','wrong'].forEach(x=>{let b=$(x);b.disabled=false;b.classList.remove('lastline-flash','power-label-transition');b.querySelectorAll('.reveal-power-star,.reveal-lastline').forEach(s=>s.remove())});
