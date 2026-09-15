@@ -21,7 +21,7 @@
 <section><h2 id=head>Ready</h2><div id=status class=muted>New tossup loads a question. Space buzzes. P pauses. N skips.</div>
 <div id=countdown class="score" aria-live="polite"></div><div id=q class=question></div><div id=powerNotice class="muted" style="margin-top:8px;font-weight:800"></div>
 <div class=row><button id=start>▶ Read</button><button id=pause>Ⅱ Pause</button><button id=buzz>Space: Buzz</button><button id=skip>N: Skip</button></div>
-<div class=answer><b>Your answer</b><div class=answerrow><input id=ans placeholder="Type answer after buzzing"><button id=check>Reveal</button></div><div id=official class="muted hidden"></div><div class=row><button id=correct class=good disabled>Correct</button><button id=wrong class=bad disabled>Incorrect</button></div><div id=result class=muted></div><div class=score>Score: <span id=score>0</span></div></div></section></main>
+<div class=answer><b>Your answer</b><div id=answerrow class="answerrow hidden"><input id=ans placeholder="Type answer after buzzing"><button id=check>Reveal</button></div><div id=official class="muted hidden"></div><div class=row><button id=correct class=good disabled>Correct</button><button id=wrong class=bad disabled>Incorrect</button></div><div id=result class=muted></div><div class=score>Score: <span id=score>0</span></div></div></section></main>
 <script>
 const $=x=>document.getElementById(x);let cur,words=[],i=0,timer=null,paused=true,buzzed=false,score=0,voices=[],countTimer=null,speechResumeWord=0,speechPaused=false,qbStyleShown=0,hasPower=false,powerWordIndex=-1,lastLineStart=0,powerBuzzed=false,lastLineBuzzed=false;
 function checked(id){return [...$(id).querySelectorAll('input:checked')].map(x=>x.value)}
@@ -114,7 +114,7 @@ function buzz(){
  powerBuzzed=hasPower && powerWordIndex>=0 && i < powerWordIndex;
  lastLineBuzzed=i>=lastLineStart;
  if($('tournament') && $('tournament').checked){ $('status').textContent=powerBuzzed?'Tournament buzz: BEFORE power':(hasPower?'Tournament buzz: AFTER power':'Tournament buzz: no power in question'); } else { $('status').textContent='Buzzed. Enter your answer and reveal.'; }
- $('buzz').disabled=true;$('ans').focus();
+ $('buzz').disabled=true;$('answerrow').classList.remove('hidden');$('ans').focus();
  if($('autotimer').checked){
   let left=Math.max(3,Math.min(60,parseInt($('seconds').value,10)||10));
   $('countdown').textContent='Time left: '+left+'s';
@@ -129,6 +129,7 @@ function reveal(){
  if(countTimer)clearInterval(countTimer);
  countTimer=null;
  $('countdown').textContent='';
+ $('answerrow').classList.add('hidden');
  $('official').textContent='Official answer: '+clean(cur.answer);
  $('official').classList.remove('hidden');
  ['correct','wrong'].forEach(x=>{let b=$(x);b.disabled=false;b.classList.remove('lastline-flash','power-label-transition');b.querySelectorAll('.reveal-power-star,.reveal-lastline').forEach(s=>s.remove())});
@@ -145,7 +146,7 @@ function reveal(){
  }else{$('wrong').textContent='Incorrect'}
  $('status').textContent='Answer revealed.'+(($('tournament')&&$('tournament').checked)?(powerBuzzed?' Power was passed.':(lastLineBuzzed?' Last line.':' Power was not passed.')):'');
 }
-async function load(){stop();buzzed=false;powerBuzzed=false;lastLineBuzzed=false;$('ans').value='';$('buzz').disabled=false;$('official').classList.add('hidden');$('result').textContent='';['correct','wrong'].forEach(x=>{let b=$(x);b.disabled=true;b.classList.remove('lastline-flash','power-label-transition');b.textContent=x==='correct'?'Correct':'Incorrect';b.querySelectorAll('.reveal-power-star,.reveal-lastline,.power-star').forEach(s=>s.remove())});$('head').textContent='Loading…';let r=await api('/api/question',{category:checked('cats'),difficulty:checked('diffs'),search:$('search').value,powerOnly:$('powerOnly')&&$('powerOnly').checked});if(r.error){$('head').textContent='No tossup';$('q').textContent=r.error;return}cur=r;$('head').textContent=`${r.category} · Difficulty ${typeof r.difficulty==='object'?r.difficulty.$numberInt:r.difficulty}`;show(r.question);$('status').textContent='Read aloud, or press Space to buzz.'}
+async function load(){stop();$('answerrow').classList.add('hidden');buzzed=false;powerBuzzed=false;lastLineBuzzed=false;$('ans').value='';$('buzz').disabled=false;$('official').classList.add('hidden');$('result').textContent='';['correct','wrong'].forEach(x=>{let b=$(x);b.disabled=true;b.classList.remove('lastline-flash','power-label-transition');b.textContent=x==='correct'?'Correct':'Incorrect';b.querySelectorAll('.reveal-power-star,.reveal-lastline,.power-star').forEach(s=>s.remove())});$('head').textContent='Loading…';let r=await api('/api/question',{category:checked('cats'),difficulty:checked('diffs'),search:$('search').value,powerOnly:$('powerOnly')&&$('powerOnly').checked});if(r.error){$('head').textContent='No tossup';$('q').textContent=r.error;return}cur=r;$('head').textContent=`${r.category} · Difficulty ${typeof r.difficulty==='object'?r.difficulty.$numberInt:r.difficulty}`;show(r.question);$('status').textContent='Read aloud, or press Space to buzz.'}
 function mark(n,label){document.querySelectorAll('.reveal-power-star,.power-star').forEach(s=>s.remove());score+=n;$('score').textContent=score;$('result').textContent=label;['correct','wrong'].forEach(x=>$(x).disabled=true)}
 async function init(){try{let m=await api('/api/meta');if(!m.categories.length)throw Error('No categories found in database');render('cats',m.categories);render('diffs',m.difficulties);$('meta').textContent=m.count.toLocaleString()+' tossups loaded';}catch(e){$('meta').textContent='Filter loading error: '+e.message;$('cats').textContent='Could not load categories';$('diffs').textContent='Could not load difficulties'}}
 function spawnPowerStars(){
