@@ -56,7 +56,8 @@ function pauseResume(){
 function show(text){
  const raw=String(text||''); const plain=clean(raw);
  words=plain.trim().split(/\s+/).filter(Boolean); i=0; powerBuzzed=false; lastLineBuzzed=false;
- if($('tournament')&&$('tournament').checked){
+ const tournamentMode=$('tournament')&&$('tournament').checked;
+ if(tournamentMode){
   $('q').className='question tournament-hidden';
   $('q').textContent='';
  }
@@ -65,7 +66,10 @@ function show(text){
  const sentenceStarts=[]; for(let n=0;n<words.length;n++){if(n===0||/[.!?][\"”’']?$/.test(words[n-1]))sentenceStarts.push(n)}
  lastLineStart=sentenceStarts.length?sentenceStarts[sentenceStarts.length-1]:Math.max(0,words.length-10);
  if($('powerNotice')) $('powerNotice').textContent=hasPower?'Power in this question':'No power marked in this question';
- if($('qbstyle')&&$('qbstyle').checked){
+ if(tournamentMode){
+  $('q').className='question tournament-hidden';
+  $('q').textContent='';
+ }else if($('qbstyle')&&$('qbstyle').checked){
   $('q').className='question style-reading';
   $('q').textContent='';
  }else{
