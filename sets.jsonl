@@ -1,0 +1,704 @@
+{"_id":{"$oid":"62d98018f67c8a6f6e0a755d"},"name":"2018 BHSAT","difficulty":{"$numberInt":"4"},"year":{"$numberInt":"2018"},"standard":true}
+{"_id":{"$oid":"62d98017f67c8a6f6e0a1b07"},"name":"2013 Penn Bowl","difficulty":{"$numberInt":"8"},"year":{"$numberInt":"2013"},"standard":true}
+{"_id":{"$oid":"62d98018f67c8a6f6e0a8372"},"name":"2018 GLRAC","difficulty":{"$numberInt":"3"},"year":{"$numberInt":"2018"},"standard":true}
+{"_id":{"$oid":"62d98018f67c8a6f6e0aa9bf"},"name":"2019 BHSAT","difficulty":{"$numberInt":"4"},"year":{"$numberInt":"2019"},"standard":true}
+{"_id":{"$oid":"62e05b9cf7cf60c9cba95610"},"name":"2014 ACF Nationals","difficulty":{"$numberInt":"9"},"year":{"$numberInt":"2014"},"standard":true}
+{"_id":{"$oid":"62e05b9cf7cf60c9cba965fb"},"name":"2016 Oxford Open","difficulty":{"$numberInt":"8"},"year":{"$numberInt":"2016"},"standard":true}
+{"_id":{"$oid":"62e0012ddfc9de4846a50307"},"name":"2020 TAILS","difficulty":{"$numberInt":"2"},"year":{"$numberInt":"2020"},"standard":true}
+{"_id":{"$oid":"62ead0be8c91030f69d5b5e0"},"name":"2020 Glasgow Scottie","difficulty":{"$numberInt":"4"},"year":{"$numberInt":"2020"},"standard":true}
+{"_id":{"$oid":"62eec0e40657a21915d9f173"},"name":"2013 Prison Bowl","difficulty":{"$numberInt":"3"},"year":{"$numberInt":"2013"},"standard":true}
+{"_id":{"$oid":"62ec4057d6777289bcae8211"},"name":"2018 PACE NSC","difficulty":{"$numberInt":"5"},"year":{"$numberInt":"2018"},"standard":true}
+{"_id":{"$oid":"62e1531efa61a9ba79f3502f"},"name":"2016 \"stanford housewrite\"","difficulty":{"$numberInt":"8"},"year":{"$numberInt":"2016"},"standard":true}
+{"_id":{"$oid":"62f3ed6a57b6d50239b51fbb"},"name":"2018 Delta Burke","difficulty":{"$numberInt":"6"},"year":{"$numberInt":"2018"},"standard":true}
+{"_id":{"$oid":"62f1bd4b1d1753da7fbbf9bb"},"name":"2022 Boilermaker Spring Novice","difficulty":{"$numberInt":"6"},"year":{"$numberInt":"2022"},"standard":true}
+{"_id":{"$oid":"62ec4057d6777289bcae8623"},"name":"2022 ACF Regionals","difficulty":{"$numberInt":"8"},"year":{"$numberInt":"2022"},"standard":true}
+{"_id":{"$oid":"62f3ed6a57b6d50239b521a8"},"name":"2019 ATHENA II","difficulty":{"$numberInt":"3"},"year":{"$numberInt":"2019"},"standard":true}
+{"_id":{"$oid":"62f3ed6a57b6d50239b530fd"},"name":"2017 Delta Burke","difficulty":{"$numberInt":"6"},"year":{"$numberInt":"2017"},"standard":true}
+{"_id":{"$oid":"62f331699980c350cba737da"},"name":"2013 VCU Open","difficulty":{"$numberInt":"10"},"year":{"$numberInt":"2013"},"standard":true}
+{"_id":{"$oid":"62f743b20e8b632d5cf13fe4"},"name":"2018 MBAT","difficulty":{"$numberInt":"3"},"year":{"$numberInt":"2018"},"standard":true}
+{"_id":{"$oid":"62f3ed6a57b6d50239b524dc"},"name":"2019 CAST","difficulty":{"$numberInt":"3"},"year":{"$numberInt":"2019"},"standard":true}
+{"_id":{"$oid":"62fdc240c76481561474a490"},"name":"2013 LIST","difficulty":{"$numberInt":"3"},"year":{"$numberInt":"2013"},"standard":true}
+{"_id":{"$oid":"62f3ed6a57b6d50239b530d5"},"name":"2021 SOS","difficulty":{"$numberInt":"10"},"year":{"$numberInt":"2021"},"standard":true}
+{"_id":{"$oid":"62f74375d79299d6a96fc086"},"name":"2015 Maryland Fall","difficulty":{"$numberInt":"4"},"year":{"$numberInt":"2015"},"standard":true}
+{"_id":{"$oid":"62f875f3a7dcfd134ec0bbe2"},"name":"2010 ACF Winter","difficulty":{"$numberInt":"7"},"year":{"$numberInt":"2010"},"standard":true}
+{"_id":{"$oid":"62fb178450f2aac87106c723"},"name":"2015 SAGES","difficulty":{"$numberInt":"1"},"year":{"$numberInt":"2015"},"standard":true}
+{"_id":{"$oid":"62fdc240c76481561474a761"},"name":"2012 LIST","difficulty":{"$numberInt":"3"},"year":{"$numberInt":"2012"},"standard":true}
+{"_id":{"$oid":"62fbb3476f6deeba79ec6515"},"name":"2010 Collaborative Middle School Tournament","difficulty":{"$numberInt":"1"},"year":{"$numberInt":"2010"},"standard":true}
+{"_id":{"$oid":"62fe9e9bd9499606df439f0a"},"name":"2012 BHSAT","difficulty":{"$numberInt":"4"},"year":{"$numberInt":"2012"},"standard":true}
+{"_id":{"$oid":"63052604c887e5458fc32ee3"},"name":"2017 Geography Monstrosity","difficulty":{"$numberInt":"10"},"year":{"$numberInt":"2017"},"standard":true}
+{"_id":{"$oid":"62f73cec2215f32393144a43"},"name":"2017 Prison Bowl","difficulty":{"$numberInt":"4"},"year":{"$numberInt":"2017"},"standard":true}
+{"_id":{"$oid":"63059e1543cf0201876234ad"},"name":"2013 DRAGOON","difficulty":{"$numberInt":"7"},"year":{"$numberInt":"2013"},"standard":true}
+{"_id":{"$oid":"6302ccab3e73f93749c0d4d0"},"name":"2015 STIMPY","difficulty":{"$numberInt":"7"},"year":{"$numberInt":"2015"},"standard":true}
+{"_id":{"$oid":"630ad08149000432cd5e7c33"},"name":"2017 Darien DEFT","difficulty":{"$numberInt":"2"},"year":{"$numberInt":"2017"},"standard":true}
+{"_id":{"$oid":"63682fe4906588de785563ad"},"name":"2022 ACF Winter","difficulty":{"$numberInt":"7"},"year":{"$numberInt":"2022"},"standard":true}
+{"_id":{"$oid":"6382c06e578a78206cf207ad"},"name":"2019 Florida Spring Tournament (FST)","difficulty":{"$numberInt":"6"},"year":{"$numberInt":"2019"},"standard":true}
+{"_id":{"$oid":"636ca2cb1b6aedfbdb9eff0d"},"name":"2018 Sun God Invitational","difficulty":{"$numberInt":"7"},"year":{"$numberInt":"2018"},"standard":true}
+{"_id":{"$oid":"6326bf0f692d593d1d7a8b80"},"name":"2019 ACF Regionals","difficulty":{"$numberInt":"8"},"year":{"$numberInt":"2019"},"standard":true}
+{"_id":{"$oid":"6361f475f6f73d137db46b7f"},"name":"2019 Chicago Open","difficulty":{"$numberInt":"10"},"year":{"$numberInt":"2019"},"standard":true}
+{"_id":{"$oid":"63bba672874e0ef7dd7b1fa6"},"name":"2014 Cane Ridge Revival","difficulty":{"$numberInt":"9"},"year":{"$numberInt":"2014"},"standard":true}
+{"_id":{"$oid":"63ab959c491bf8105af0c802"},"name":"2012 Oxford Open","difficulty":{"$numberInt":"8"},"year":{"$numberInt":"2012"},"standard":true}
+{"_id":{"$oid":"63bc99fbec4e2238a4560330"},"name":"2006 ACF Fall","difficulty":{"$numberInt":"6"},"year":{"$numberInt":"2006"},"standard":true}
+{"_id":{"$oid":"63d6dbb47c00e8c6f8d886d9"},"name":"2023 ACF Regionals","difficulty":{"$numberInt":"8"},"year":{"$numberInt":"2023"},"standard":true}
+{"_id":{"$oid":"63d6af74789ea9cdfc004d88"},"name":"2020 HC History","difficulty":{"$numberInt":"3"},"year":{"$numberInt":"2020"},"standard":true}
+{"_id":{"$oid":"63d895987a0d8ea074be746f"},"name":"2011 OLEFIN","difficulty":{"$numberInt":"3"},"year":{"$numberInt":"2011"},"standard":true}
+{"_id":{"$oid":"63e1c0eb32d1b824539f08f8"},"name":"2013 Fall Kickoff Tournament (FKT)","difficulty":{"$numberInt":"2"},"year":{"$numberInt":"2013"},"standard":true}
+{"_id":{"$oid":"63bca72e7fe60f397fb4a708"},"name":"2004 ACF Fall","difficulty":{"$numberInt":"6"},"year":{"$numberInt":"2004"},"standard":true}
+{"_id":{"$oid":"63e31d9ebc8f282ed3d439a8"},"name":"2009 Minnesota Undergraduate Tournament (MUT)","difficulty":{"$numberInt":"6"},"year":{"$numberInt":"2009"},"standard":true}
+{"_id":{"$oid":"63e3f13e1843aa5913201527"},"name":"2017 XENOPHON","difficulty":{"$numberInt":"8"},"year":{"$numberInt":"2017"},"standard":false}
+{"_id":{"$oid":"63e3f13e1843aa5913201884"},"name":"2017 It's Lit","difficulty":{"$numberInt":"10"},"year":{"$numberInt":"2017"},"standard":true}
+{"_id":{"$oid":"63e3f13e1843aa591320166f"},"name":"2018 MALA","difficulty":{"$numberInt":"9"},"year":{"$numberInt":"2018"},"standard":true}
+{"_id":{"$oid":"64046cc6de59b8af97423214"},"name":"2018 Prison Bowl","year":{"$numberInt":"2018"},"difficulty":{"$numberInt":"4"},"standard":true}
+{"_id":{"$oid":"6435fb853c24c106a984004a"},"name":"2000 PACE NSC","year":{"$numberInt":"2000"},"difficulty":{"$numberInt":"5"},"standard":true}
+{"_id":{"$oid":"6435fb853c24c106a9840e28"},"name":"2007 PACE NSC","year":{"$numberInt":"2007"},"difficulty":{"$numberInt":"5"},"standard":true}
+{"_id":{"$oid":"6435fb863c24c106a9841edc"},"name":"2003 PACE NSC","year":{"$numberInt":"2003"},"difficulty":{"$numberInt":"5"},"standard":true}
+{"_id":{"$oid":"644dff39de0b658d0841ad90"},"name":"2022 C++","year":{"$numberInt":"2022"},"difficulty":{"$numberInt":"7"},"standard":true}
+{"_id":{"$oid":"646fffa69d2ba7804333fac3"},"name":"2018 The World Wars","year":{"$numberInt":"2018"},"difficulty":{"$numberInt":"0"},"standard":false}
+{"_id":{"$oid":"6465625b39f9588b048d2193"},"name":"2008 Minnesota Open","year":{"$numberInt":"2008"},"difficulty":{"$numberInt":"10"},"standard":true}
+{"_id":{"$oid":"645aa9f1782bfd94db9eb221"},"name":"2023 Adjectivally Byzantine Packet","year":{"$numberInt":"2023"},"difficulty":{"$numberInt":"9"},"standard":false}
+{"_id":{"$oid":"6451e799d4402ec440c62488"},"name":"2011 BHSAT","year":{"$numberInt":"2011"},"difficulty":{"$numberInt":"4"},"standard":true}
+{"_id":{"$oid":"62d98018f67c8a6f6e0a84a0"},"name":"2018 HFT","difficulty":{"$numberInt":"3"},"year":{"$numberInt":"2018"},"standard":true}
+{"_id":{"$oid":"62df40b44c1b765cb43c3801"},"name":"2016 Chicago Open","difficulty":{"$numberInt":"10"},"year":{"$numberInt":"2016"},"standard":true}
+{"_id":{"$oid":"62d98018f67c8a6f6e0a8806"},"name":"2018 IMSAnity","difficulty":{"$numberInt":"5"},"year":{"$numberInt":"2018"},"standard":true}
+{"_id":{"$oid":"62d98017f67c8a6f6e0a532e"},"name":"2017 GSAC","difficulty":{"$numberInt":"3"},"year":{"$numberInt":"2017"},"standard":true}
+{"_id":{"$oid":"62d98017f67c8a6f6e0a489a"},"name":"2017 BHSAT","difficulty":{"$numberInt":"4"},"year":{"$numberInt":"2017"},"standard":true}
+{"_id":{"$oid":"62e1531efa61a9ba79f34b4b"},"name":"2014 Minnesota Undergraduate Tournament (MUT)","difficulty":{"$numberInt":"6"},"year":{"$numberInt":"2014"},"standard":true}
+{"_id":{"$oid":"62df7ca243aee49db2f7684e"},"name":"2014 NASAT","difficulty":{"$numberInt":"8"},"year":{"$numberInt":"2014"},"standard":true}
+{"_id":{"$oid":"62e05b9cf7cf60c9cba96a82"},"name":"2019 BLAST","difficulty":{"$numberInt":"4"},"year":{"$numberInt":"2019"},"standard":true}
+{"_id":{"$oid":"62e0ada5f59865e1289caefc"},"name":"2017 WAO","difficulty":{"$numberInt":"8"},"year":{"$numberInt":"2017"},"standard":true}
+{"_id":{"$oid":"62e0ae7c93b216c5acc06fa6"},"name":"2017 FRENCH","difficulty":{"$numberInt":"10"},"year":{"$numberInt":"2017"},"standard":true}
+{"_id":{"$oid":"62df83920c3a38102cd756d1"},"name":"2010 NASAT","difficulty":{"$numberInt":"8"},"year":{"$numberInt":"2010"},"standard":true}
+{"_id":{"$oid":"62df8012e66cc66ca571cfb8"},"name":"2011 NASAT","difficulty":{"$numberInt":"8"},"year":{"$numberInt":"2011"},"standard":true}
+{"_id":{"$oid":"62e1a301ab47ea79abd6baca"},"name":"2016 WHAQ","difficulty":{"$numberInt":"3"},"year":{"$numberInt":"2016"},"standard":true}
+{"_id":{"$oid":"62e43e30eb21ef1b7910162c"},"name":"2010 Chicago Open","difficulty":{"$numberInt":"10"},"year":{"$numberInt":"2010"},"standard":true}
+{"_id":{"$oid":"62ec4057d6777289bcae7dfd"},"name":"2011 ACF Nationals","difficulty":{"$numberInt":"9"},"year":{"$numberInt":"2011"},"standard":true}
+{"_id":{"$oid":"62ead0bf8c91030f69d5bac6"},"name":"2021 Vedul's Short Poetry Packet","difficulty":{"$numberInt":"9"},"year":{"$numberInt":"2021"},"standard":false}
+{"_id":{"$oid":"62eec31bb669367617b8c7d4"},"name":"2015 GSAC","difficulty":{"$numberInt":"3"},"year":{"$numberInt":"2015"},"standard":true}
+{"_id":{"$oid":"62eeadce1032cda62a677382"},"name":"2020 MOQBA Novice","difficulty":{"$numberInt":"2"},"year":{"$numberInt":"2020"},"standard":true}
+{"_id":{"$oid":"62ead0be8c91030f69d5b81e"},"name":"2021 FINE AARTS","difficulty":{"$numberInt":"8"},"year":{"$numberInt":"2021"},"standard":false}
+{"_id":{"$oid":"62e1531ffa61a9ba79f3584b"},"name":"2016 Minnesota Undergraduate Tournament (MUT)","difficulty":{"$numberInt":"6"},"year":{"$numberInt":"2016"},"standard":true}
+{"_id":{"$oid":"62ed680be0734022cfa3a34d"},"name":"2011 PACE NSC","difficulty":{"$numberInt":"5"},"year":{"$numberInt":"2011"},"standard":true}
+{"_id":{"$oid":"62f32c8153c44a298923c121"},"name":"2021 HARI","difficulty":{"$numberInt":"7"},"year":{"$numberInt":"2021"},"standard":true}
+{"_id":{"$oid":"62f3ed6a57b6d50239b523f9"},"name":"2019 Age of Empires","difficulty":{"$numberInt":"10"},"year":{"$numberInt":"2019"},"standard":true}
+{"_id":{"$oid":"62f3133409fdd1c1242385ae"},"name":"2021 Remember the Women","difficulty":{"$numberInt":"4"},"year":{"$numberInt":"2021"},"standard":true}
+{"_id":{"$oid":"62fb12f3df12519cb125cd27"},"name":"2015 ACF Fall","difficulty":{"$numberInt":"6"},"year":{"$numberInt":"2015"},"standard":true}
+{"_id":{"$oid":"62fbe8af60ace717b0882dc2"},"name":"2016 BHSAT","difficulty":{"$numberInt":"4"},"year":{"$numberInt":"2016"},"standard":true}
+{"_id":{"$oid":"62fdc240c76481561474a250"},"name":"2018 FACTS","difficulty":{"$numberInt":"4"},"year":{"$numberInt":"2018"},"standard":true}
+{"_id":{"$oid":"62fe9e9bd9499606df43a882"},"name":"2013 JAMES","difficulty":{"$numberInt":"3"},"year":{"$numberInt":"2013"},"standard":true}
+{"_id":{"$oid":"62f74375d79299d6a96fbbaf"},"name":"2014 HFT","difficulty":{"$numberInt":"4"},"year":{"$numberInt":"2014"},"standard":true}
+{"_id":{"$oid":"6308f08b477954b5e7f5b6b4"},"name":"2019 MUSES","difficulty":{"$numberInt":"10"},"year":{"$numberInt":"2019"},"standard":true}
+{"_id":{"$oid":"62f86328cdb0cbb3f4645b07"},"name":"2014 BHSAT","difficulty":{"$numberInt":"4"},"year":{"$numberInt":"2014"},"standard":true}
+{"_id":{"$oid":"6306e3725252479dd12942f9"},"name":"2019 META","difficulty":{"$numberInt":"10"},"year":{"$numberInt":"2019"},"standard":true}
+{"_id":{"$oid":"6382c08d5b3dc7dc712c765b"},"name":"2019 ACF Nationals","difficulty":{"$numberInt":"9"},"year":{"$numberInt":"2019"},"standard":true}
+{"_id":{"$oid":"6302ccab3e73f93749c0e09d"},"name":"2014 BISB","difficulty":{"$numberInt":"3"},"year":{"$numberInt":"2014"},"standard":true}
+{"_id":{"$oid":"6382b35c9cc87abdd9a5a50a"},"name":"2015 NASAT","difficulty":{"$numberInt":"8"},"year":{"$numberInt":"2015"},"standard":true}
+{"_id":{"$oid":"63829f6ee2cbd63208bfe33f"},"name":"2010 ANGST","difficulty":{"$numberInt":"8"},"year":{"$numberInt":"2010"},"standard":true}
+{"_id":{"$oid":"63ab959c491bf8105af0cc0a"},"name":"2021 Bentley Contemporary Literature Packet","difficulty":{"$numberInt":"10"},"year":{"$numberInt":"2021"},"standard":false}
+{"_id":{"$oid":"63a5146d0af62c6119349caa"},"name":"2009 Minnesota Open","difficulty":{"$numberInt":"10"},"year":{"$numberInt":"2009"},"standard":true}
+{"_id":{"$oid":"636ca2cb1b6aedfbdb9efd10"},"name":"2018 Florida Spring Tournament (FST)","difficulty":{"$numberInt":"7"},"year":{"$numberInt":"2018"},"standard":true}
+{"_id":{"$oid":"6361f475f6f73d137db46133"},"name":"2019 Fall Open","difficulty":{"$numberInt":"9"},"year":{"$numberInt":"2019"},"standard":true}
+{"_id":{"$oid":"630edc029db771144f1e5675"},"name":"2021 Illinois Open","difficulty":{"$numberInt":"10"},"year":{"$numberInt":"2021"},"standard":true}
+{"_id":{"$oid":"635b6428d8a170d88c9e6c05"},"name":"2011 ACF Regionals","difficulty":{"$numberInt":"8"},"year":{"$numberInt":"2011"},"standard":true}
+{"_id":{"$oid":"63be318bb3c0552587597865"},"name":"2012 Illinois Fall Tournament","difficulty":{"$numberInt":"6"},"year":{"$numberInt":"2012"},"standard":true}
+{"_id":{"$oid":"63bba672874e0ef7dd7b1e5d"},"name":"2014 CLEAR","difficulty":{"$numberInt":"10"},"year":{"$numberInt":"2014"},"standard":false}
+{"_id":{"$oid":"63bba672874e0ef7dd7b132c"},"name":"2008 Prison Bowl","difficulty":{"$numberInt":"4"},"year":{"$numberInt":"2008"},"standard":true}
+{"_id":{"$oid":"63bcab6cc6fadbe6166da6f9"},"name":"2011 Minnesota Undergraduate Tournament (MUT)","difficulty":{"$numberInt":"6"},"year":{"$numberInt":"2011"},"standard":true}
+{"_id":{"$oid":"63d895997a0d8ea074be7baa"},"name":"2011 BDAT","difficulty":{"$numberInt":"4"},"year":{"$numberInt":"2011"},"standard":true}
+{"_id":{"$oid":"63d895997a0d8ea074be794f"},"name":"2010 NAREN","difficulty":{"$numberInt":"4"},"year":{"$numberInt":"2010"},"standard":true}
+{"_id":{"$oid":"63e1c0eb32d1b824539f0575"},"name":"2011 Fall Kickoff Tournament (FKT)","difficulty":{"$numberInt":"2"},"year":{"$numberInt":"2011"},"standard":true}
+{"_id":{"$oid":"63e1c0ec32d1b824539f0c81"},"name":"2009 Fall Kickoff Tournament (FKT)","difficulty":{"$numberInt":"2"},"year":{"$numberInt":"2009"},"standard":true}
+{"_id":{"$oid":"63d895987a0d8ea074be769f"},"name":"2012 BDAT","difficulty":{"$numberInt":"3"},"year":{"$numberInt":"2012"},"standard":true}
+{"_id":{"$oid":"63e31d9ebc8f282ed3d44068"},"name":"2007 Early Fall Tournament (EFT)","difficulty":{"$numberInt":"7"},"year":{"$numberInt":"2007"},"standard":true}
+{"_id":{"$oid":"63e2ecd514bf7b00170b15e5"},"name":"2007 ACF Nationals","difficulty":{"$numberInt":"9"},"year":{"$numberInt":"2007"},"standard":true}
+{"_id":{"$oid":"63f6f79c02e9e08726a6aee7"},"name":"2017 FONS","year":{"$numberInt":"2017"},"difficulty":{"$numberInt":"0"},"standard":false}
+{"_id":{"$oid":"64307e9f1357bcd3ef98b59c"},"name":"2017 ACF Regionals","year":{"$numberInt":"2017"},"difficulty":{"$numberInt":"8"},"standard":true}
+{"_id":{"$oid":"64046cc6de59b8af9742281f"},"name":"2016 Penn Bowl","year":{"$numberInt":"2016"},"difficulty":{"$numberInt":"8"},"standard":true}
+{"_id":{"$oid":"6413cd9afdc648a1ed7097a5"},"name":"2018 British Novice","year":{"$numberInt":"2018"},"difficulty":{"$numberInt":"6"},"standard":true}
+{"_id":{"$oid":"64046cc6de59b8af974225aa"},"name":"2014 Penn Bowl","year":{"$numberInt":"2014"},"difficulty":{"$numberInt":"8"},"standard":true}
+{"_id":{"$oid":"642255d991a7465b1f7ae96b"},"name":"2022 CMST","year":{"$numberInt":"2022"},"difficulty":{"$numberInt":"9"},"standard":true}
+{"_id":{"$oid":"644932c99f0045ff841d66fb"},"name":"2023 ACF Nationals","year":{"$numberInt":"2023"},"difficulty":{"$numberInt":"9"},"standard":true}
+{"_id":{"$oid":"6435fb853c24c106a9841273"},"name":"2008 PACE NSC","year":{"$numberInt":"2008"},"difficulty":{"$numberInt":"5"},"standard":true}
+{"_id":{"$oid":"6451604ef8a47edd20cfa4da"},"name":"2021 LHASA","year":{"$numberInt":"2021"},"difficulty":{"$numberInt":"4"},"standard":true}
+{"_id":{"$oid":"644052b286e2a9ad33a47162"},"name":"2021 Semi-Serious Charity Tournament","year":{"$numberInt":"2021"},"difficulty":{"$numberInt":"9"},"standard":true}
+{"_id":{"$oid":"64828e4aba41c3cf376934f6"},"name":"2023 HAYLEE Packet","year":{"$numberInt":"2023"},"difficulty":{"$numberInt":"7"},"standard":false}
+{"_id":{"$oid":"62d98019f67c8a6f6e0ae4ae"},"name":"2020 IKEA","difficulty":{"$numberInt":"7"},"year":{"$numberInt":"2020"},"standard":true}
+{"_id":{"$oid":"62d98017f67c8a6f6e0a4236"},"name":"2017 SCOP MS 7","difficulty":{"$numberInt":"1"},"year":{"$numberInt":"2017"},"standard":true}
+{"_id":{"$oid":"62d98019f67c8a6f6e0adf2a"},"name":"2020 ERIS","difficulty":{"$numberInt":"1"},"year":{"$numberInt":"2020"},"standard":true}
+{"_id":{"$oid":"62e07665f7a23ab4441dfc73"},"name":"2014 Lederberg","difficulty":{"$numberInt":"10"},"year":{"$numberInt":"2014"},"standard":true}
+{"_id":{"$oid":"62e9b655469ef3ae75f63c06"},"name":"2022 COAST","difficulty":{"$numberInt":"4"},"year":{"$numberInt":"2022"},"standard":true}
+{"_id":{"$oid":"62ead0be8c91030f69d5b85e"},"name":"2021 Glasgow Scottie","difficulty":{"$numberInt":"4"},"year":{"$numberInt":"2021"},"standard":true}
+{"_id":{"$oid":"62e1531ffa61a9ba79f355e3"},"name":"2016 Early Fall Tournament (EFT)","difficulty":{"$numberInt":"7"},"year":{"$numberInt":"2016"},"standard":true}
+{"_id":{"$oid":"62ed71f3ad42c93b1df77cee"},"name":"2018 RAPTURE","difficulty":{"$numberInt":"8"},"year":{"$numberInt":"2018"},"standard":true}
+{"_id":{"$oid":"62edc1ba974521c293e49630"},"name":"2019 Glasgow Scottie","difficulty":{"$numberInt":"3"},"year":{"$numberInt":"2019"},"standard":true}
+{"_id":{"$oid":"62ed60f81539231f571edeb3"},"name":"2021 SMH","difficulty":{"$numberInt":"6"},"year":{"$numberInt":"2021"},"standard":true}
+{"_id":{"$oid":"62e9b655469ef3ae75f63cb8"},"name":"2022 STANIEL Packet","difficulty":{"$numberInt":"10"},"year":{"$numberInt":"2022"},"standard":false}
+{"_id":{"$oid":"62eea92bec6a162496489431"},"name":"2020 DECAMERON","difficulty":{"$numberInt":"7"},"year":{"$numberInt":"2020"},"standard":true}
+{"_id":{"$oid":"62f3ed6a57b6d50239b51f13"},"name":"2016 SAGES","difficulty":{"$numberInt":"1"},"year":{"$numberInt":"2016"},"standard":true}
+{"_id":{"$oid":"62fe9e9bd9499606df43a386"},"name":"2017 PSACA","difficulty":{"$numberInt":"3"},"year":{"$numberInt":"2017"},"standard":true}
+{"_id":{"$oid":"62f082db3218040b890d8df6"},"name":"2022 Alex's Science Packet","difficulty":{"$numberInt":"9"},"year":{"$numberInt":"2022"},"standard":false}
+{"_id":{"$oid":"62f924c30105d297286ff219"},"name":"2018 ACF Fall","difficulty":{"$numberInt":"6"},"year":{"$numberInt":"2018"},"standard":true}
+{"_id":{"$oid":"62f85b0cdbfff7f0b54ae4fa"},"name":"2017 PACE NSC","difficulty":{"$numberInt":"5"},"year":{"$numberInt":"2017"},"standard":true}
+{"_id":{"$oid":"62f74375d79299d6a96fbe32"},"name":"2019 RMBAT","difficulty":{"$numberInt":"4"},"year":{"$numberInt":"2019"},"standard":true}
+{"_id":{"$oid":"62f74375d79299d6a96fc2a3"},"name":"2017 HFT","difficulty":{"$numberInt":"4"},"year":{"$numberInt":"2017"},"standard":true}
+{"_id":{"$oid":"6302ccab3e73f93749c0db9f"},"name":"2016 MYSTERIUM","difficulty":{"$numberInt":"7"},"year":{"$numberInt":"2016"},"standard":true}
+{"_id":{"$oid":"63080c092e43e86a5be1a8ca"},"name":"2020 LONE STAR","difficulty":{"$numberInt":"3"},"year":{"$numberInt":"2020"},"standard":true}
+{"_id":{"$oid":"63002656ea186ec68c3bd4ad"},"name":"2014 VCU Open","difficulty":{"$numberInt":"10"},"year":{"$numberInt":"2014"},"standard":true}
+{"_id":{"$oid":"63002656ea186ec68c3bd707"},"name":"2015 VCU Open","difficulty":{"$numberInt":"10"},"year":{"$numberInt":"2015"},"standard":true}
+{"_id":{"$oid":"630144195c4c3a62fc38feba"},"name":"2020 CALISTO","difficulty":{"$numberInt":"3"},"year":{"$numberInt":"2020"},"standard":true}
+{"_id":{"$oid":"6302ccab3e73f93749c0e2ea"},"name":"2014 SUBMIT","difficulty":{"$numberInt":"8"},"year":{"$numberInt":"2014"},"standard":true}
+{"_id":{"$oid":"63059e1543cf020187623252"},"name":"2013 BISB","difficulty":{"$numberInt":"3"},"year":{"$numberInt":"2013"},"standard":true}
+{"_id":{"$oid":"63829f6fe2cbd63208bfe7b3"},"name":"2013 GSAC","difficulty":{"$numberInt":"3"},"year":{"$numberInt":"2013"},"standard":true}
+{"_id":{"$oid":"63acb2f3ea571b63636ee1cc"},"name":"2010 Delta Burke","difficulty":{"$numberInt":"6"},"year":{"$numberInt":"2010"},"standard":true}
+{"_id":{"$oid":"63565e81aa22adfc267911bd"},"name":"2014 Chicago Open","difficulty":{"$numberInt":"10"},"year":{"$numberInt":"2014"},"standard":true}
+{"_id":{"$oid":"63acb2f4ea571b63636eece5"},"name":"2012 Delta Burke","difficulty":{"$numberInt":"6"},"year":{"$numberInt":"2012"},"standard":true}
+{"_id":{"$oid":"63be318bb3c0552587597f6a"},"name":"2010 Penn Bowl","difficulty":{"$numberInt":"8"},"year":{"$numberInt":"2010"},"standard":true}
+{"_id":{"$oid":"63bcab6bc6fadbe6166da1ed"},"name":"2010 Minnesota Undergraduate Tournament (MUT)","difficulty":{"$numberInt":"6"},"year":{"$numberInt":"2010"},"standard":true}
+{"_id":{"$oid":"63d6bd28e96d73a0dccd5cb2"},"name":"2009 Lederberg","difficulty":{"$numberInt":"9"},"year":{"$numberInt":"2009"},"standard":true}
+{"_id":{"$oid":"63d6af74789ea9cdfc005034"},"name":"2018 SCOP Novice 9","difficulty":{"$numberInt":"2"},"year":{"$numberInt":"2018"},"standard":true}
+{"_id":{"$oid":"63d6af74789ea9cdfc004e5b"},"name":"2019 SCOP Novice 10","difficulty":{"$numberInt":"2"},"year":{"$numberInt":"2019"},"standard":true}
+{"_id":{"$oid":"63f6f79d02e9e08726a6b0b6"},"name":"2018 FONS","year":{"$numberInt":"2018"},"difficulty":{"$numberInt":"0"},"standard":false}
+{"_id":{"$oid":"640017e9c0c9463aced4597d"},"name":"2022 Medieval Literature Packet","year":{"$numberInt":"2022"},"difficulty":{"$numberInt":"10"},"standard":false}
+{"_id":{"$oid":"640017e9c0c9463aced4599c"},"name":"2023 Black History Month Packet","year":{"$numberInt":"2023"},"difficulty":{"$numberInt":"8"},"standard":false}
+{"_id":{"$oid":"64046cc6de59b8af97423b5e"},"name":"2021 ACF Winter","year":{"$numberInt":"2021"},"difficulty":{"$numberInt":"7"},"standard":true}
+{"_id":{"$oid":"64046cc6de59b8af97422fa0"},"name":"2018 Penn Bowl","year":{"$numberInt":"2018"},"difficulty":{"$numberInt":"8"},"standard":true}
+{"_id":{"$oid":"64046cc6de59b8af97423e0f"},"name":"2021 Chicago Open","year":{"$numberInt":"2021"},"difficulty":{"$numberInt":"10"},"standard":true}
+{"_id":{"$oid":"6435fb853c24c106a98402d0"},"name":"2004 PACE NSC","year":{"$numberInt":"2004"},"difficulty":{"$numberInt":"5"},"standard":true}
+{"_id":{"$oid":"6451604ef8a47edd20cfa6d3"},"name":"2009 VCU Open","year":{"$numberInt":"2009"},"difficulty":{"$numberInt":"10"},"standard":true}
+{"_id":{"$oid":"6451604ef8a47edd20cf9e90"},"name":"2010 VCU Open (Sunday)","year":{"$numberInt":"2010"},"difficulty":{"$numberInt":"5"},"standard":true}
+{"_id":{"$oid":"648938e130bd7ab56b095da3"},"name":"2023 The World As It Was","year":{"$numberInt":"2023"},"difficulty":{"$numberInt":"10"},"standard":false}
+{"_id":{"$oid":"646912af2e8fbb82d5768ae3"},"name":"2012 Penn Bowl","year":{"$numberInt":"2012"},"difficulty":{"$numberInt":"8"},"standard":true}
+{"_id":{"$oid":"64682fcffaa56bc597faab7b"},"name":"2017 Skype Lit","year":{"$numberInt":"2017"},"difficulty":{"$numberInt":"10"},"standard":true}
+{"_id":{"$oid":"62d98019f67c8a6f6e0af058"},"name":"2020 RAFT","difficulty":{"$numberInt":"3"},"year":{"$numberInt":"2020"},"standard":true}
+{"_id":{"$oid":"62d98017f67c8a6f6e0a5a64"},"name":"2017 MASSOLIT","difficulty":{"$numberInt":"10"},"year":{"$numberInt":"2017"},"standard":true}
+{"_id":{"$oid":"62d98017f67c8a6f6e0a398a"},"name":"2016 HFT","difficulty":{"$numberInt":"4"},"year":{"$numberInt":"2016"},"standard":true}
+{"_id":{"$oid":"62d98019f67c8a6f6e0ae6f5"},"name":"2020 Longhorn Invitational Tournament","difficulty":{"$numberInt":"7"},"year":{"$numberInt":"2020"},"standard":true}
+{"_id":{"$oid":"62d98019f67c8a6f6e0ada90"},"name":"2020 BHSAT","difficulty":{"$numberInt":"4"},"year":{"$numberInt":"2020"},"standard":true}
+{"_id":{"$oid":"62d98019f67c8a6f6e0b0513"},"name":"2021 ACF Nationals Qualifier","difficulty":{"$numberInt":"8"},"year":{"$numberInt":"2021"},"standard":false}
+{"_id":{"$oid":"62d98018f67c8a6f6e0a7f45"},"name":"2018 Early Fall Tournament (EFT)","difficulty":{"$numberInt":"6"},"year":{"$numberInt":"2018"},"standard":true}
+{"_id":{"$oid":"62d98019f67c8a6f6e0ae396"},"name":"2020 FRENCH","difficulty":{"$numberInt":"10"},"year":{"$numberInt":"2020"},"standard":true}
+{"_id":{"$oid":"62d9801af67c8a6f6e0b3f8f"},"name":"2022 PACE NSC","difficulty":{"$numberInt":"5"},"year":{"$numberInt":"2022"},"standard":true}
+{"_id":{"$oid":"62d98019f67c8a6f6e0aeb88"},"name":"2020 Michigan Winter Tournament","difficulty":{"$numberInt":"7"},"year":{"$numberInt":"2020"},"standard":true}
+{"_id":{"$oid":"62e05b9cf7cf60c9cba9636a"},"name":"2016 ACF Regionals","difficulty":{"$numberInt":"8"},"year":{"$numberInt":"2016"},"standard":true}
+{"_id":{"$oid":"62d98019f67c8a6f6e0b1ae7"},"name":"2021 GORKY III","difficulty":{"$numberInt":"10"},"year":{"$numberInt":"2021"},"standard":false}
+{"_id":{"$oid":"62e05b9cf7cf60c9cba95e60"},"name":"2015 ACF Regionals","difficulty":{"$numberInt":"8"},"year":{"$numberInt":"2015"},"standard":true}
+{"_id":{"$oid":"62e1531ffa61a9ba79f35aa6"},"name":"2021 AQBL February Set","difficulty":{"$numberInt":"3"},"year":{"$numberInt":"2021"},"standard":true}
+{"_id":{"$oid":"62eeafe83c775a4357205814"},"name":"2020 Saturnalia","difficulty":{"$numberInt":"4"},"year":{"$numberInt":"2020"},"standard":true}
+{"_id":{"$oid":"62eeaca03c2fca34d39ed7bc"},"name":"2020-2021 Matt Cvijanovich Memorial Tournament","difficulty":{"$numberInt":"3"},"year":{"$numberInt":"2020"},"standard":true}
+{"_id":{"$oid":"62f072b47434cffff7b59f9c"},"name":"2019 Early Fall Tournament (EFT)","difficulty":{"$numberInt":"7"},"year":{"$numberInt":"2019"},"standard":true}
+{"_id":{"$oid":"62ed6e71216c5c9ba56753c0"},"name":"2010 PACE NSC","difficulty":{"$numberInt":"5"},"year":{"$numberInt":"2010"},"standard":true}
+{"_id":{"$oid":"62f3ed6a57b6d50239b52997"},"name":"2019 WAIT","difficulty":{"$numberInt":"3"},"year":{"$numberInt":"2019"},"standard":true}
+{"_id":{"$oid":"62f3ed6a57b6d50239b53313"},"name":"2017 Maryland Fall","difficulty":{"$numberInt":"3"},"year":{"$numberInt":"2017"},"standard":true}
+{"_id":{"$oid":"62f3ed6a57b6d50239b5274d"},"name":"2019 LOGIC","difficulty":{"$numberInt":"3"},"year":{"$numberInt":"2019"},"standard":true}
+{"_id":{"$oid":"62eec0e50657a21915d9f407"},"name":"2014 Prison Bowl","difficulty":{"$numberInt":"3"},"year":{"$numberInt":"2014"},"standard":true}
+{"_id":{"$oid":"62f3ed6a57b6d50239b5355d"},"name":"2021 TELEOLOGY","difficulty":{"$numberInt":"10"},"year":{"$numberInt":"2021"},"standard":false}
+{"_id":{"$oid":"62f875f3a7dcfd134ec0b3a7"},"name":"2012 ACF Fall","difficulty":{"$numberInt":"6"},"year":{"$numberInt":"2012"},"standard":true}
+{"_id":{"$oid":"62f86327cdb0cbb3f46458ac"},"name":"2013 BHSAT","difficulty":{"$numberInt":"4"},"year":{"$numberInt":"2013"},"standard":true}
+{"_id":{"$oid":"62fb178450f2aac87106c39c"},"name":"2013 Collaborative Middle School Tournament #4","difficulty":{"$numberInt":"1"},"year":{"$numberInt":"2013"},"standard":true}
+{"_id":{"$oid":"62f73cec2215f32393144c73"},"name":"2019 Prison Bowl","difficulty":{"$numberInt":"5"},"year":{"$numberInt":"2019"},"standard":true}
+{"_id":{"$oid":"6306e3725252479dd12943a2"},"name":"2019 Reel Knowledge","difficulty":{"$numberInt":"10"},"year":{"$numberInt":"2019"},"standard":true}
+{"_id":{"$oid":"630020e3cab8fa6d1490bee9"},"name":"2017 NASAT","difficulty":{"$numberInt":"8"},"year":{"$numberInt":"2017"},"standard":true}
+{"_id":{"$oid":"6302ccab3e73f93749c0d3f9"},"name":"2015 SHEIKH","difficulty":{"$numberInt":"9"},"year":{"$numberInt":"2015"},"standard":true}
+{"_id":{"$oid":"63052604c887e5458fc32f24"},"name":"2018 Geography Monstrosity","difficulty":{"$numberInt":"10"},"year":{"$numberInt":"2018"},"standard":true}
+{"_id":{"$oid":"63052605c887e5458fc32f8e"},"name":"2016 Geography Monstrosity","difficulty":{"$numberInt":"10"},"year":{"$numberInt":"2016"},"standard":true}
+{"_id":{"$oid":"630020e3cab8fa6d1490bb84"},"name":"2018 NASAT","difficulty":{"$numberInt":"8"},"year":{"$numberInt":"2018"},"standard":true}
+{"_id":{"$oid":"62fe9e9bd9499606df43a628"},"name":"2021 NEWT","difficulty":{"$numberInt":"4"},"year":{"$numberInt":"2021"},"standard":true}
+{"_id":{"$oid":"63052605c887e5458fc32fd1"},"name":"2014 PADAWAN","difficulty":{"$numberInt":"7"},"year":{"$numberInt":"2014"},"standard":true}
+{"_id":{"$oid":"63acb2f4ea571b63636ee5f8"},"name":"2015 Missouri Open","difficulty":{"$numberInt":"8"},"year":{"$numberInt":"2015"},"standard":true}
+{"_id":{"$oid":"635b6428d8a170d88c9e6960"},"name":"2010 ACF Regionals","difficulty":{"$numberInt":"8"},"year":{"$numberInt":"2010"},"standard":true}
+{"_id":{"$oid":"6358db348e48451b24cfad8d"},"name":"2022 NIPPON Packet","difficulty":{"$numberInt":"10"},"year":{"$numberInt":"2022"},"standard":false}
+{"_id":{"$oid":"639f7290036417219c961c3e"},"name":"2017 RMBCT","difficulty":{"$numberInt":"3"},"year":{"$numberInt":"2017"},"standard":true}
+{"_id":{"$oid":"63a5146d0af62c61193499ff"},"name":"2011 Minnesota Open","difficulty":{"$numberInt":"10"},"year":{"$numberInt":"2011"},"standard":true}
+{"_id":{"$oid":"63acb2f4ea571b63636ee8a7"},"name":"2017 MKULTRA","difficulty":{"$numberInt":"0"},"year":{"$numberInt":"2017"},"standard":false}
+{"_id":{"$oid":"630adb572eacc381ae57fd88"},"name":"2012 YMIR","difficulty":{"$numberInt":"10"},"year":{"$numberInt":"2012"},"standard":true}
+{"_id":{"$oid":"630ae7fafb0cd6e790c320fa"},"name":"2013 Minnesota Undergraduate Tournament (MUT)","difficulty":{"$numberInt":"6"},"year":{"$numberInt":"2013"},"standard":true}
+{"_id":{"$oid":"630adb562eacc381ae57f95f"},"name":"2014 DEES","difficulty":{"$numberInt":"8"},"year":{"$numberInt":"2014"},"standard":true}
+{"_id":{"$oid":"63506cec1b4438a94f2a283a"},"name":"2022 ACF Fall","difficulty":{"$numberInt":"6"},"year":{"$numberInt":"2022"},"standard":true}
+{"_id":{"$oid":"6361e01fec1ecd3e795a40eb"},"name":"2018 ACF Nationals","difficulty":{"$numberInt":"9"},"year":{"$numberInt":"2018"},"standard":true}
+{"_id":{"$oid":"63ade128794bda10f6dedf65"},"name":"2011 Collegiate Novice","difficulty":{"$numberInt":"6"},"year":{"$numberInt":"2011"},"standard":true}
+{"_id":{"$oid":"6326bf0e692d593d1d7a88c8"},"name":"2021 ACF Regionals","difficulty":{"$numberInt":"8"},"year":{"$numberInt":"2021"},"standard":true}
+{"_id":{"$oid":"63bc99fbec4e2238a456004b"},"name":"2009 ACF Fall","difficulty":{"$numberInt":"6"},"year":{"$numberInt":"2009"},"standard":true}
+{"_id":{"$oid":"63be318bb3c0552587596c54"},"name":"2003 ACF Fall","difficulty":{"$numberInt":"6"},"year":{"$numberInt":"2003"},"standard":true}
+{"_id":{"$oid":"63be318bb3c055258759761b"},"name":"2012 BARGE","difficulty":{"$numberInt":"8"},"year":{"$numberInt":"2012"},"standard":true}
+{"_id":{"$oid":"63d6bd28e96d73a0dccd5dfd"},"name":"2019 ScotBowl","difficulty":{"$numberInt":"0"},"year":{"$numberInt":"2019"},"standard":false}
+{"_id":{"$oid":"63bc99fbec4e2238a455fd30"},"name":"2008 ACF Fall","difficulty":{"$numberInt":"6"},"year":{"$numberInt":"2008"},"standard":true}
+{"_id":{"$oid":"63bba672874e0ef7dd7b2408"},"name":"2018 WORLDSTAR","difficulty":{"$numberInt":"10"},"year":{"$numberInt":"2018"},"standard":true}
+{"_id":{"$oid":"63d6af74789ea9cdfc004baf"},"name":"2017 SCOP Novice 8","difficulty":{"$numberInt":"2"},"year":{"$numberInt":"2017"},"standard":true}
+{"_id":{"$oid":"63bba673874e0ef7dd7b24d1"},"name":"2009 Prison Bowl","difficulty":{"$numberInt":"4"},"year":{"$numberInt":"2009"},"standard":true}
+{"_id":{"$oid":"63e31d9ebc8f282ed3d43e38"},"name":"2010 Fall Novice Tournament","difficulty":{"$numberInt":"2"},"year":{"$numberInt":"2010"},"standard":true}
+{"_id":{"$oid":"63e31d9ebc8f282ed3d442b5"},"name":"2008 Early Fall Tournament (EFT)","difficulty":{"$numberInt":"7"},"year":{"$numberInt":"2008"},"standard":true}
+{"_id":{"$oid":"63ec2f74c5548754cbcb02ca"},"name":"2022 ARCADIA","year":{"$numberInt":"2022"},"difficulty":{"$numberInt":"8"},"standard":true}
+{"_id":{"$oid":"640020a88d3cf1e72e23428a"},"name":"2019 Scattergories","year":{"$numberInt":"2019"},"difficulty":{"$numberInt":"10"},"standard":false}
+{"_id":{"$oid":"640020a88d3cf1e72e234530"},"name":"2021 Scattergories","year":{"$numberInt":"2021"},"difficulty":{"$numberInt":"10"},"standard":false}
+{"_id":{"$oid":"63e31d9ebc8f282ed3d43352"},"name":"2008 Minnesota Undergraduate Tournament (MUT)","difficulty":{"$numberInt":"6"},"year":{"$numberInt":"2008"},"standard":true}
+{"_id":{"$oid":"640020a88d3cf1e72e23451a"},"name":"2020 Vanity John Milton Packet","year":{"$numberInt":"2020"},"difficulty":{"$numberInt":"10"},"standard":false}
+{"_id":{"$oid":"63e31d9ebc8f282ed3d43bf9"},"name":"2010 Early Fall Tournament (EFT)","difficulty":{"$numberInt":"7"},"year":{"$numberInt":"2010"},"standard":true}
+{"_id":{"$oid":"62d98017f67c8a6f6e0a57b9"},"name":"2017 Jakob","difficulty":{"$numberInt":"9"},"year":{"$numberInt":"2017"},"standard":true}
+{"_id":{"$oid":"62d98019f67c8a6f6e0b1ad1"},"name":"2021 GORKY II","difficulty":{"$numberInt":"10"},"year":{"$numberInt":"2021"},"standard":false}
+{"_id":{"$oid":"62d98017f67c8a6f6e0a271f"},"name":"2015 Delta Burke","difficulty":{"$numberInt":"6"},"year":{"$numberInt":"2015"},"standard":true}
+{"_id":{"$oid":"62df3ddba2602b93e0407e5c"},"name":"2010 ACF Nationals","difficulty":{"$numberInt":"9"},"year":{"$numberInt":"2010"},"standard":true}
+{"_id":{"$oid":"62d98019f67c8a6f6e0b1afd"},"name":"2021 Geoffrey Wu's NFL Packet","difficulty":{"$numberInt":"0"},"year":{"$numberInt":"2021"},"standard":false}
+{"_id":{"$oid":"62e0702bb8d2514c621308f9"},"name":"2014 ACF Fall","difficulty":{"$numberInt":"6"},"year":{"$numberInt":"2014"},"standard":true}
+{"_id":{"$oid":"62e05b9cf7cf60c9cba9612d"},"name":"2015 Oxford Open","difficulty":{"$numberInt":"8"},"year":{"$numberInt":"2015"},"standard":true}
+{"_id":{"$oid":"62edb4fedff988263841ba8c"},"name":"2013 ACF Fall","difficulty":{"$numberInt":"6"},"year":{"$numberInt":"2013"},"standard":true}
+{"_id":{"$oid":"62e05b9cf7cf60c9cba96ceb"},"name":"2019 Oxford Open","difficulty":{"$numberInt":"8"},"year":{"$numberInt":"2019"},"standard":true}
+{"_id":{"$oid":"62e1bdc5c74f416b9ba8baab"},"name":"2019 The Unanswered Question","difficulty":{"$numberInt":"10"},"year":{"$numberInt":"2019"},"standard":true}
+{"_id":{"$oid":"62ed60f71539231f571edb00"},"name":"2021 PACE NSC","difficulty":{"$numberInt":"5"},"year":{"$numberInt":"2021"},"standard":true}
+{"_id":{"$oid":"62df8ab610329be735a33d58"},"name":"2013 NASAT","difficulty":{"$numberInt":"8"},"year":{"$numberInt":"2013"},"standard":true}
+{"_id":{"$oid":"62e9b655469ef3ae75f63c85"},"name":"2022 COHORT","difficulty":{"$numberInt":"10"},"year":{"$numberInt":"2022"},"standard":true}
+{"_id":{"$oid":"62e1a301ab47ea79abd6b698"},"name":"2016 Pennsylvania Novice","difficulty":{"$numberInt":"2"},"year":{"$numberInt":"2016"},"standard":true}
+{"_id":{"$oid":"62ed6a483fe041d20f4a47f9"},"name":"2015 George Oppen","difficulty":{"$numberInt":"9"},"year":{"$numberInt":"2015"},"standard":true}
+{"_id":{"$oid":"62ec2b2977063e8d403f06c5"},"name":"2021 CALISTO 2","difficulty":{"$numberInt":"3"},"year":{"$numberInt":"2021"},"standard":true}
+{"_id":{"$oid":"62ec4057d6777289bcae8ed7"},"name":"2013 ACF Nationals","difficulty":{"$numberInt":"9"},"year":{"$numberInt":"2013"},"standard":true}
+{"_id":{"$oid":"62ead0bf8c91030f69d5ba9c"},"name":"2021 TSALT","difficulty":{"$numberInt":"6"},"year":{"$numberInt":"2021"},"standard":true}
+{"_id":{"$oid":"62f3334ca31bf970001bb838"},"name":"2019 RULFO","difficulty":{"$numberInt":"10"},"year":{"$numberInt":"2019"},"standard":true}
+{"_id":{"$oid":"62f33042333cf2cfbd44abe5"},"name":"2013 Terrapin","difficulty":{"$numberInt":"7"},"year":{"$numberInt":"2013"},"standard":true}
+{"_id":{"$oid":"62f32f19679b6464bbdf72d5"},"name":"2016 Terrapin","difficulty":{"$numberInt":"7"},"year":{"$numberInt":"2016"},"standard":true}
+{"_id":{"$oid":"62ec4057d6777289bcae8b12"},"name":"2012 ACF Nationals","difficulty":{"$numberInt":"9"},"year":{"$numberInt":"2012"},"standard":true}
+{"_id":{"$oid":"62f1b8aed2b97d3109c682c9"},"name":"2021 WORKSHOP","difficulty":{"$numberInt":"8"},"year":{"$numberInt":"2021"},"standard":true}
+{"_id":{"$oid":"62fb178450f2aac87106c54b"},"name":"2016 PLATO","difficulty":{"$numberInt":"1"},"year":{"$numberInt":"2016"},"standard":true}
+{"_id":{"$oid":"62f3ed6a57b6d50239b530bf"},"name":"2021 KEYSET","difficulty":{"$numberInt":"10"},"year":{"$numberInt":"2021"},"standard":true}
+{"_id":{"$oid":"62f2c8e7e2ddc83d7b753423"},"name":"2019 PACE NSC","difficulty":{"$numberInt":"5"},"year":{"$numberInt":"2019"},"standard":true}
+{"_id":{"$oid":"62f875f3a7dcfd134ec0b688"},"name":"2014 ACF Regionals","difficulty":{"$numberInt":"8"},"year":{"$numberInt":"2014"},"standard":true}
+{"_id":{"$oid":"62f85b0cdbfff7f0b54adc45"},"name":"2015 PACE NSC","difficulty":{"$numberInt":"5"},"year":{"$numberInt":"2015"},"standard":true}
+{"_id":{"$oid":"62fb12f3df12519cb125d26f"},"name":"2016 ACF Fall","difficulty":{"$numberInt":"6"},"year":{"$numberInt":"2016"},"standard":true}
+{"_id":{"$oid":"62fbeb02c3c9bf58ab2ab4ef"},"name":"2019 Terrapin","difficulty":{"$numberInt":"8"},"year":{"$numberInt":"2019"},"standard":true}
+{"_id":{"$oid":"62f85b0cdbfff7f0b54ad794"},"name":"2012 PACE NSC","difficulty":{"$numberInt":"5"},"year":{"$numberInt":"2012"},"standard":true}
+{"_id":{"$oid":"62fdc23fc764815614749d96"},"name":"2011 LIST","difficulty":{"$numberInt":"3"},"year":{"$numberInt":"2011"},"standard":true}
+{"_id":{"$oid":"62fe9e9bd9499606df43a139"},"name":"2014 BELLOCO","difficulty":{"$numberInt":"3"},"year":{"$numberInt":"2014"},"standard":true}
+{"_id":{"$oid":"62f924c30105d297286ff70f"},"name":"2022 20th-21st Century Literature Packet","difficulty":{"$numberInt":"9"},"year":{"$numberInt":"2022"},"standard":false}
+{"_id":{"$oid":"6302ccab3e73f93749c0e069"},"name":"2017 Letras","difficulty":{"$numberInt":"10"},"year":{"$numberInt":"2017"},"standard":true}
+{"_id":{"$oid":"63acb2f4ea571b63636eeea9"},"name":"2011 Delta Burke","difficulty":{"$numberInt":"6"},"year":{"$numberInt":"2011"},"standard":true}
+{"_id":{"$oid":"6302ccab3e73f93749c0d71b"},"name":"2015 VTACO","difficulty":{"$numberInt":"3"},"year":{"$numberInt":"2015"},"standard":true}
+{"_id":{"$oid":"630adb562eacc381ae57fbed"},"name":"2016 CLEAR","difficulty":{"$numberInt":"10"},"year":{"$numberInt":"2016"},"standard":false}
+{"_id":{"$oid":"631674023d364b3265eaef5d"},"name":"2017 ACF Fall","difficulty":{"$numberInt":"6"},"year":{"$numberInt":"2017"},"standard":true}
+{"_id":{"$oid":"63ab959c491bf8105af0c9f4"},"name":"2016 Delta Burke","difficulty":{"$numberInt":"6"},"year":{"$numberInt":"2016"},"standard":true}
+{"_id":{"$oid":"6361f475f6f73d137db46639"},"name":"2020 FLopen","difficulty":{"$numberInt":"9"},"year":{"$numberInt":"2020"},"standard":true}
+{"_id":{"$oid":"6361f475f6f73d137db463a8"},"name":"2019 Spartan Housewrite","difficulty":{"$numberInt":"8"},"year":{"$numberInt":"2019"},"standard":true}
+{"_id":{"$oid":"63ade128794bda10f6ded77d"},"name":"2013 Collegiate Novice","difficulty":{"$numberInt":"6"},"year":{"$numberInt":"2013"},"standard":true}
+{"_id":{"$oid":"6327e538099ec9a245d6de33"},"name":"2018 Oxford Open","difficulty":{"$numberInt":"8"},"year":{"$numberInt":"2018"},"standard":true}
+{"_id":{"$oid":"635b6428d8a170d88c9e6f00"},"name":"2012 ACF Regionals","difficulty":{"$numberInt":"8"},"year":{"$numberInt":"2012"},"standard":true}
+{"_id":{"$oid":"63a5146d0af62c61193497dc"},"name":"2015 HERMES","difficulty":{"$numberInt":"4"},"year":{"$numberInt":"2015"},"standard":true}
+{"_id":{"$oid":"63a3f66ab17797e852f22cb3"},"name":"2019 Lederberg","difficulty":{"$numberInt":"10"},"year":{"$numberInt":"2019"},"standard":true}
+{"_id":{"$oid":"6361f475f6f73d137db45ecb"},"name":"2017 Penn Bowl","difficulty":{"$numberInt":"8"},"year":{"$numberInt":"2017"},"standard":true}
+{"_id":{"$oid":"637e9669d626499cd9592c99"},"name":"2022 Logomachy","difficulty":{"$numberInt":"8"},"year":{"$numberInt":"2022"},"standard":true}
+{"_id":{"$oid":"63bba672874e0ef7dd7b149e"},"name":"2010 Prison Bowl","difficulty":{"$numberInt":"4"},"year":{"$numberInt":"2010"},"standard":true}
+{"_id":{"$oid":"637e8280dfdd9c1fe3b88e9e"},"name":"2020 Delta Burke","difficulty":{"$numberInt":"6"},"year":{"$numberInt":"2020"},"standard":true}
+{"_id":{"$oid":"63acb2f4ea571b63636ee3e2"},"name":"2013 Delta Burke","difficulty":{"$numberInt":"6"},"year":{"$numberInt":"2013"},"standard":true}
+{"_id":{"$oid":"63bba672874e0ef7dd7b16f9"},"name":"2011 Prison Bowl","difficulty":{"$numberInt":"4"},"year":{"$numberInt":"2011"},"standard":true}
+{"_id":{"$oid":"63e2ecd514bf7b00170b0bf0"},"name":"2005 ACF Nationals","difficulty":{"$numberInt":"9"},"year":{"$numberInt":"2005"},"standard":true}
+{"_id":{"$oid":"63d6bd28e96d73a0dccd5fff"},"name":"2020 AQBL October Set","difficulty":{"$numberInt":"3"},"year":{"$numberInt":"2020"},"standard":true}
+{"_id":{"$oid":"63d895987a0d8ea074be7392"},"name":"2010 MELD","difficulty":{"$numberInt":"10"},"year":{"$numberInt":"2010"},"standard":true}
+{"_id":{"$oid":"640020a88d3cf1e72e234635"},"name":"2018 Scattergories","year":{"$numberInt":"2018"},"difficulty":{"$numberInt":"10"},"standard":false}
+{"_id":{"$oid":"63f6efc8f503ccd287686cfe"},"name":"2019 FONS","year":{"$numberInt":"2019"},"difficulty":{"$numberInt":"0"},"standard":false}
+{"_id":{"$oid":"63e31d9ebc8f282ed3d4354c"},"name":"2009 Early Fall Tournament (EFT)","difficulty":{"$numberInt":"7"},"year":{"$numberInt":"2009"},"standard":true}
+{"_id":{"$oid":"640020a88d3cf1e72e234412"},"name":"2020 Scattergories","year":{"$numberInt":"2020"},"difficulty":{"$numberInt":"10"},"standard":false}
+{"_id":{"$oid":"64046cc6de59b8af97422d4f"},"name":"2017 WHAQ","year":{"$numberInt":"2017"},"difficulty":{"$numberInt":"3"},"standard":true}
+{"_id":{"$oid":"6414e1a1d83c2db5e169bf5d"},"name":"2017 Oxford Open","year":{"$numberInt":"2017"},"difficulty":{"$numberInt":"8"},"standard":true}
+{"_id":{"$oid":"6435fb863c24c106a9841ba3"},"name":"2002 PACE NSC","year":{"$numberInt":"2002"},"difficulty":{"$numberInt":"5"},"standard":true}
+{"_id":{"$oid":"6451604ef8a47edd20cf9be5"},"name":"2010 VCU Open (Saturday)","year":{"$numberInt":"2010"},"difficulty":{"$numberInt":"9"},"standard":true}
+{"_id":{"$oid":"645aa9f2782bfd94db9eb278"},"name":"2023 History of Aviation Safety Pack","year":{"$numberInt":"2023"},"difficulty":{"$numberInt":"0"},"standard":false}
+{"_id":{"$oid":"645aa9f1782bfd94db9eb237"},"name":"2023 Rick Riordan Packet","year":{"$numberInt":"2023"},"difficulty":{"$numberInt":"8"},"standard":false}
+{"_id":{"$oid":"6451604ef8a47edd20cfa3ab"},"name":"2015 Chicago Open History","year":{"$numberInt":"2015"},"difficulty":{"$numberInt":"10"},"standard":true}
+{"_id":{"$oid":"6446f1bb88d882e271ced837"},"name":"2010 Fall Kickoff Tournament (FKT)","year":{"$numberInt":"2010"},"difficulty":{"$numberInt":"2"},"standard":true}
+{"_id":{"$oid":"644d9269c699b0373c807f34"},"name":"2019 Rahul and Jack's Links","year":{"$numberInt":"2019"},"difficulty":{"$numberInt":"9"},"standard":false}
+{"_id":{"$oid":"6451604ef8a47edd20cfa125"},"name":"2011 VCU Open","year":{"$numberInt":"2011"},"difficulty":{"$numberInt":"10"},"standard":true}
+{"_id":{"$oid":"6435fb853c24c106a9840ab2"},"name":"2006 PACE NSC","year":{"$numberInt":"2006"},"difficulty":{"$numberInt":"5"},"standard":true}
+{"_id":{"$oid":"64683d300d0d0e5f184a3788"},"name":"2009 Science Non-Strosity","year":{"$numberInt":"2009"},"difficulty":{"$numberInt":"10"},"standard":true}
+{"_id":{"$oid":"646fffa69d2ba7804333f7d2"},"name":"2018 Boardman Spartan AGOGE","year":{"$numberInt":"2018"},"difficulty":{"$numberInt":"4"},"standard":true}
+{"_id":{"$oid":"646546751e113ada1c0481a0"},"name":"2023 DRAMA","year":{"$numberInt":"2023"},"difficulty":{"$numberInt":"10"},"standard":false}
+{"_id":{"$oid":"64682fcffaa56bc597faa55b"},"name":"2012 College History Bowl","year":{"$numberInt":"2012"},"difficulty":{"$numberInt":"9"},"standard":true}
+{"_id":{"$oid":"63e2ecd514bf7b00170b0ef1"},"name":"2008 ACF Nationals","difficulty":{"$numberInt":"9"},"year":{"$numberInt":"2008"},"standard":true}
+{"_id":{"$oid":"6406d0dde39f8dfd08fc2382"},"name":"2018 Stevenson Memorial Tournament (SMT)","year":{"$numberInt":"2018"},"difficulty":{"$numberInt":"6"},"standard":true}
+{"_id":{"$oid":"64046cc6de59b8af9742392e"},"name":"2020 ACF Winter","year":{"$numberInt":"2020"},"difficulty":{"$numberInt":"7"},"standard":true}
+{"_id":{"$oid":"64306480335bc8c468cbb024"},"name":"2017 ACF Nationals","year":{"$numberInt":"2017"},"difficulty":{"$numberInt":"9"},"standard":true}
+{"_id":{"$oid":"6413cb8b829159c59ea8702d"},"name":"2018 CMST","year":{"$numberInt":"2018"},"difficulty":{"$numberInt":"9"},"standard":true}
+{"_id":{"$oid":"643b8c661bdcc57729e62b44"},"name":"2003 ACF Nationals","year":{"$numberInt":"2003"},"difficulty":{"$numberInt":"9"},"standard":true}
+{"_id":{"$oid":"64ab6873f814f28d9b5a7845"},"name":"2023 European Drama Packet","year":{"$numberInt":"2023"},"difficulty":{"$numberInt":"10"},"standard":false}
+{"_id":{"$oid":"646b851a9769bf82550cc39a"},"name":"2019 History Bee Nationals","year":{"$numberInt":"2019"},"difficulty":{"$numberInt":"0"},"standard":false}
+{"_id":{"$oid":"64682fcffaa56bc597faae73"},"name":"2010 Chicago Open Lit","year":{"$numberInt":"2010"},"difficulty":{"$numberInt":"10"},"standard":true}
+{"_id":{"$oid":"62d98017f67c8a6f6e0a5847"},"name":"2017 LIST","difficulty":{"$numberInt":"3"},"year":{"$numberInt":"2017"},"standard":true}
+{"_id":{"$oid":"62d98017f67c8a6f6e0a4dae"},"name":"2017 Early Fall Tournament (EFT)","difficulty":{"$numberInt":"7"},"year":{"$numberInt":"2017"},"standard":true}
+{"_id":{"$oid":"62d98019f67c8a6f6e0af2a5"},"name":"2020 SCALE","difficulty":{"$numberInt":"5"},"year":{"$numberInt":"2020"},"standard":true}
+{"_id":{"$oid":"62e0ada5f59865e1289cad28"},"name":"2017 SUN","difficulty":{"$numberInt":"6"},"year":{"$numberInt":"2017"},"standard":true}
+{"_id":{"$oid":"62df87c09bc4e61b2fb3774b"},"name":"2012 NASAT","difficulty":{"$numberInt":"8"},"year":{"$numberInt":"2012"},"standard":true}
+{"_id":{"$oid":"62e35effc080082733afc3cc"},"name":"2012 Chicago Open","difficulty":{"$numberInt":"10"},"year":{"$numberInt":"2012"},"standard":true}
+{"_id":{"$oid":"62edc1ba974521c293e493ca"},"name":"2018 Glasgow Scottie","difficulty":{"$numberInt":"3"},"year":{"$numberInt":"2018"},"standard":true}
+{"_id":{"$oid":"62eea9fb047a67fbbb305b5c"},"name":"2020 Spring Undergraduate Novice","difficulty":{"$numberInt":"6"},"year":{"$numberInt":"2020"},"standard":true}
+{"_id":{"$oid":"62ec4cc6671d74a7752da451"},"name":"2011 Chicago Open","difficulty":{"$numberInt":"10"},"year":{"$numberInt":"2011"},"standard":true}
+{"_id":{"$oid":"62edbda6ea3e4d20e78a51e6"},"name":"2022 Random Music Packet","difficulty":{"$numberInt":"8"},"year":{"$numberInt":"2022"},"standard":false}
+{"_id":{"$oid":"62ec4057d6777289bcae88c6"},"name":"2022 WORKSHOP","difficulty":{"$numberInt":"8"},"year":{"$numberInt":"2022"},"standard":true}
+{"_id":{"$oid":"62e34d863d21c832d023cc58"},"name":"2022 QUARTET","difficulty":{"$numberInt":"10"},"year":{"$numberInt":"2022"},"standard":true}
+{"_id":{"$oid":"62f30f3a499e50c9ee5d9088"},"name":"2021 MSQB Madness","difficulty":{"$numberInt":"3"},"year":{"$numberInt":"2021"},"standard":true}
+{"_id":{"$oid":"62f3114afad1e88c874a2dc8"},"name":"2020 SCOP A","difficulty":{"$numberInt":"2"},"year":{"$numberInt":"2020"},"standard":true}
+{"_id":{"$oid":"62f3ed6a57b6d50239b52e76"},"name":"2021 ARCADIA","difficulty":{"$numberInt":"7"},"year":{"$numberInt":"2021"},"standard":true}
+{"_id":{"$oid":"62f3101eabc146a6b81891bf"},"name":"2021 SCOP B","difficulty":{"$numberInt":"2"},"year":{"$numberInt":"2021"},"standard":true}
+{"_id":{"$oid":"62f2d7847edb615d3ac9f2ef"},"name":"2021 Spring Novice","difficulty":{"$numberInt":"6"},"year":{"$numberInt":"2021"},"standard":true}
+{"_id":{"$oid":"62f745d63ec41269ea99119c"},"name":"2015 BASK","difficulty":{"$numberInt":"3"},"year":{"$numberInt":"2015"},"standard":true}
+{"_id":{"$oid":"62f875f3a7dcfd134ec0b931"},"name":"2011 ACF Fall","difficulty":{"$numberInt":"6"},"year":{"$numberInt":"2011"},"standard":true}
+{"_id":{"$oid":"62f86328cdb0cbb3f4645d62"},"name":"2015 BHSAT","difficulty":{"$numberInt":"4"},"year":{"$numberInt":"2015"},"standard":true}
+{"_id":{"$oid":"630858144ee0305662a6ec22"},"name":"2021 CERES","difficulty":{"$numberInt":"1"},"year":{"$numberInt":"2021"},"standard":true}
+{"_id":{"$oid":"6302ccab3e73f93749c0d9a3"},"name":"2016 Listory","difficulty":{"$numberInt":"9"},"year":{"$numberInt":"2016"},"standard":true}
+{"_id":{"$oid":"6302ccab3e73f93749c0d1ac"},"name":"2015 BISB","difficulty":{"$numberInt":"3"},"year":{"$numberInt":"2015"},"standard":true}
+{"_id":{"$oid":"63052604c887e5458fc32c42"},"name":"2013 ACF Regionals","difficulty":{"$numberInt":"8"},"year":{"$numberInt":"2013"},"standard":true}
+{"_id":{"$oid":"630ae7fafb0cd6e790c31a5b"},"name":"2017 POMMSS","difficulty":{"$numberInt":"3"},"year":{"$numberInt":"2017"},"standard":true}
+{"_id":{"$oid":"637e827fdfdd9c1fe3b88cb8"},"name":"2019 Delta Burke","difficulty":{"$numberInt":"6"},"year":{"$numberInt":"2019"},"standard":true}
+{"_id":{"$oid":"63829f6fe2cbd63208bfec69"},"name":"2010 Ben Cooper","difficulty":{"$numberInt":"3"},"year":{"$numberInt":"2010"},"standard":true}
+{"_id":{"$oid":"6306e3725252479dd1294247"},"name":"2015 VICO","difficulty":{"$numberInt":"9"},"year":{"$numberInt":"2015"},"standard":true}
+{"_id":{"$oid":"639a46d925fac6a63b2b7df9"},"name":"2022 Penn Bowl","difficulty":{"$numberInt":"8"},"year":{"$numberInt":"2022"},"standard":true}
+{"_id":{"$oid":"63aca784728d604710bf8628"},"name":"2019 MKULTRA","difficulty":{"$numberInt":"0"},"year":{"$numberInt":"2019"},"standard":false}
+{"_id":{"$oid":"630adb562eacc381ae57f704"},"name":"2012 QUARK","difficulty":{"$numberInt":"8"},"year":{"$numberInt":"2012"},"standard":true}
+{"_id":{"$oid":"639f76b696d8b354e96b58d5"},"name":"2015 Chicago Open","difficulty":{"$numberInt":"10"},"year":{"$numberInt":"2015"},"standard":true}
+{"_id":{"$oid":"63829f6fe2cbd63208bfe558"},"name":"2012 GSAC","difficulty":{"$numberInt":"3"},"year":{"$numberInt":"2012"},"standard":true}
+{"_id":{"$oid":"63ade128794bda10f6ded5c4"},"name":"2010 Collegiate Novice","difficulty":{"$numberInt":"6"},"year":{"$numberInt":"2010"},"standard":true}
+{"_id":{"$oid":"63bc99fbec4e2238a4560627"},"name":"2007 ACF Fall","difficulty":{"$numberInt":"6"},"year":{"$numberInt":"2007"},"standard":true}
+{"_id":{"$oid":"63bba672874e0ef7dd7b1bd8"},"name":"2012 Prison Bowl","difficulty":{"$numberInt":"4"},"year":{"$numberInt":"2012"},"standard":true}
+{"_id":{"$oid":"63bba672874e0ef7dd7b197d"},"name":"2012 Minnesota Open","difficulty":{"$numberInt":"10"},"year":{"$numberInt":"2012"},"standard":true}
+{"_id":{"$oid":"63bc99fbec4e2238a455fa10"},"name":"2005 ACF Fall","difficulty":{"$numberInt":"6"},"year":{"$numberInt":"2005"},"standard":true}
+{"_id":{"$oid":"640020a88d3cf1e72e2343bc"},"name":"2020 DITCH","year":{"$numberInt":"2020"},"difficulty":{"$numberInt":"9"},"standard":false}
+{"_id":{"$oid":"63e2ecd514bf7b00170b11fa"},"name":"2009 ACF Nationals","difficulty":{"$numberInt":"9"},"year":{"$numberInt":"2009"},"standard":true}
+{"_id":{"$oid":"63e3f13e1843aa5913201331"},"name":"2008 FEUERBACH","difficulty":{"$numberInt":"7"},"year":{"$numberInt":"2008"},"standard":true}
+{"_id":{"$oid":"63f6efc8f503ccd287686ae1"},"name":"2016 FONS","year":{"$numberInt":"2016"},"difficulty":{"$numberInt":"0"},"standard":false}
+{"_id":{"$oid":"63e3f13e1843aa59132015a5"},"name":"2018 Human Use of Human Beings","difficulty":{"$numberInt":"10"},"year":{"$numberInt":"2018"},"standard":false}
+{"_id":{"$oid":"640020a88d3cf1e72e23473a"},"name":"2019 Canadian Hybrid","year":{"$numberInt":"2019"},"difficulty":{"$numberInt":"7"},"standard":true}
+{"_id":{"$oid":"64046cc6de59b8af974236bb"},"name":"2019 Penn Bowl","year":{"$numberInt":"2019"},"difficulty":{"$numberInt":"8"},"standard":true}
+{"_id":{"$oid":"64306481335bc8c468cbb36d"},"name":"2021 ACF Nationals","year":{"$numberInt":"2021"},"difficulty":{"$numberInt":"9"},"standard":true}
+{"_id":{"$oid":"64046cc6de59b8af974240d7"},"name":"2015 Penn Bowl","year":{"$numberInt":"2015"},"difficulty":{"$numberInt":"8"},"standard":true}
+{"_id":{"$oid":"64046cc6de59b8af97423444"},"name":"2019 PIANO","year":{"$numberInt":"2019"},"difficulty":{"$numberInt":"9"},"standard":true}
+{"_id":{"$oid":"6451604ef8a47edd20cf99b5"},"name":"2008 VCU Open","year":{"$numberInt":"2008"},"difficulty":{"$numberInt":"10"},"standard":true}
+{"_id":{"$oid":"643b8c671bdcc57729e62e31"},"name":"2023 Hot People Packet","year":{"$numberInt":"2023"},"difficulty":{"$numberInt":"5"},"standard":false}
+{"_id":{"$oid":"6435fb853c24c106a98415e8"},"name":"2009 PACE NSC","year":{"$numberInt":"2009"},"difficulty":{"$numberInt":"5"},"standard":true}
+{"_id":{"$oid":"6451604ef8a47edd20cfa8f3"},"name":"2009 Missouri Open","year":{"$numberInt":"2009"},"difficulty":{"$numberInt":"10"},"standard":true}
+{"_id":{"$oid":"64ab6873f814f28d9b5a7783"},"name":"2017 Jordaens Visual Arts","year":{"$numberInt":"2017"},"difficulty":{"$numberInt":"10"},"standard":true}
+{"_id":{"$oid":"64a4d585770cd7127f7daab6"},"name":"2022 Glasgow Scottie","year":{"$numberInt":"2022"},"difficulty":{"$numberInt":"4"},"standard":true}
+{"_id":{"$oid":"647044212576885f91e621ff"},"name":"2016 BASQT","year":{"$numberInt":"2016"},"difficulty":{"$numberInt":"3"},"standard":true}
+{"_id":{"$oid":"6487ac4fdca6572b106f52ca"},"name":"2023 Shock of the Old","year":{"$numberInt":"2023"},"difficulty":{"$numberInt":"10"},"standard":false}
+{"_id":{"$oid":"645aa9f2782bfd94db9eb261"},"name":"2023 Geo Packet","year":{"$numberInt":"2023"},"difficulty":{"$numberInt":"0"},"standard":false}
+{"_id":{"$oid":"64683d300d0d0e5f184a343b"},"name":"2008 Chicago Open","year":{"$numberInt":"2008"},"difficulty":{"$numberInt":"10"},"standard":true}
+{"_id":{"$oid":"62d98018f67c8a6f6e0a8724"},"name":"2018 Historature","difficulty":{"$numberInt":"9"},"year":{"$numberInt":"2018"},"standard":true}
+{"_id":{"$oid":"62d98019f67c8a6f6e0b0d2b"},"name":"2021 BHSAT","difficulty":{"$numberInt":"4"},"year":{"$numberInt":"2021"},"standard":true}
+{"_id":{"$oid":"62d98019f67c8a6f6e0b1683"},"name":"2021 DART","difficulty":{"$numberInt":"4"},"year":{"$numberInt":"2021"},"standard":true}
+{"_id":{"$oid":"62d98019f67c8a6f6e0b320b"},"name":"2021 Shiva's Tiny Science Tossups","difficulty":{"$numberInt":"4"},"year":{"$numberInt":"2021"},"standard":true}
+{"_id":{"$oid":"62e0023a69364e383bef694e"},"name":"2019 RAFT","difficulty":{"$numberInt":"3"},"year":{"$numberInt":"2019"},"standard":true}
+{"_id":{"$oid":"62e05b9cf7cf60c9cba97117"},"name":"2022 SCOP MS 11","difficulty":{"$numberInt":"1"},"year":{"$numberInt":"2022"},"standard":true}
+{"_id":{"$oid":"62df3a4b1c64d9772f73875c"},"name":"2016 ACF Nationals","difficulty":{"$numberInt":"9"},"year":{"$numberInt":"2016"},"standard":true}
+{"_id":{"$oid":"62df736e427feb09cfb1bb95"},"name":"2021 DUOS","difficulty":{"$numberInt":"4"},"year":{"$numberInt":"2021"},"standard":true}
+{"_id":{"$oid":"62e35effc080082733afc6c7"},"name":"2013 Chicago Open","difficulty":{"$numberInt":"10"},"year":{"$numberInt":"2013"},"standard":true}
+{"_id":{"$oid":"62edba2365d377e2cebbd02d"},"name":"2015 MKULTRA","difficulty":{"$numberInt":"0"},"year":{"$numberInt":"2015"},"standard":false}
+{"_id":{"$oid":"62ede294c53e50a05136329e"},"name":"2022 ACF Nationals","difficulty":{"$numberInt":"9"},"year":{"$numberInt":"2022"},"standard":true}
+{"_id":{"$oid":"62ead0be8c91030f69d5b530"},"name":"2018 OCTAVIAN","difficulty":{"$numberInt":"10"},"year":{"$numberInt":"2018"},"standard":true}
+{"_id":{"$oid":"62ed60f81539231f571ee1fd"},"name":"2022 MRNA VACCINE","difficulty":{"$numberInt":"7"},"year":{"$numberInt":"2022"},"standard":true}
+{"_id":{"$oid":"62f2d45f2ad3e45a654f2bd1"},"name":"2021 ACF Fall","difficulty":{"$numberInt":"6"},"year":{"$numberInt":"2021"},"standard":true}
+{"_id":{"$oid":"62e1a301ab47ea79abd6b89a"},"name":"2016 Prison Bowl","difficulty":{"$numberInt":"3"},"year":{"$numberInt":"2016"},"standard":true}
+{"_id":{"$oid":"62f32e2883e2636cb3c96256"},"name":"2016 MLK","difficulty":{"$numberInt":"7"},"year":{"$numberInt":"2016"},"standard":true}
+{"_id":{"$oid":"62f5c57693c38435a5a33b6e"},"name":"2022 Chicago Open","difficulty":{"$numberInt":"10"},"year":{"$numberInt":"2022"},"standard":true}
+{"_id":{"$oid":"62f3ed6a57b6d50239b52c0e"},"name":"2020 STASH","difficulty":{"$numberInt":"5"},"year":{"$numberInt":"2020"},"standard":true}
+{"_id":{"$oid":"62f2d640e7cc529af452897d"},"name":"2021 The World As It Is","difficulty":{"$numberInt":"10"},"year":{"$numberInt":"2021"},"standard":false}
+{"_id":{"$oid":"62f924c30105d297286ff9a5"},"name":"2020 ACF Fall","difficulty":{"$numberInt":"6"},"year":{"$numberInt":"2020"},"standard":true}
+{"_id":{"$oid":"62fdc23fc764815614749fac"},"name":"2014 LIST","difficulty":{"$numberInt":"3"},"year":{"$numberInt":"2014"},"standard":true}
+{"_id":{"$oid":"62fe9e9bd9499606df43a5a3"},"name":"2018 Words and Objects","difficulty":{"$numberInt":"10"},"year":{"$numberInt":"2018"},"standard":true}
+{"_id":{"$oid":"62fbeb03c3c9bf58ab2ab75d"},"name":"2020 Terrapin","difficulty":{"$numberInt":"10"},"year":{"$numberInt":"2020"},"standard":true}
+{"_id":{"$oid":"62f85b0cdbfff7f0b54ae0c6"},"name":"2016 PACE NSC","difficulty":{"$numberInt":"5"},"year":{"$numberInt":"2016"},"standard":true}
+{"_id":{"$oid":"630020e3cab8fa6d1490b8d3"},"name":"2016 NASAT","difficulty":{"$numberInt":"8"},"year":{"$numberInt":"2016"},"standard":true}
+{"_id":{"$oid":"6308f08b477954b5e7f5b8ad"},"name":"2021 MUSES II","difficulty":{"$numberInt":"10"},"year":{"$numberInt":"2021"},"standard":true}
+{"_id":{"$oid":"62fb12f3df12519cb125d009"},"name":"2017 Eisenhower Memorial Tournament (EMT)","difficulty":{"$numberInt":"7"},"year":{"$numberInt":"2017"},"standard":true}
+{"_id":{"$oid":"62fe9e9bd9499606df43ab23"},"name":"2013 SASS","difficulty":{"$numberInt":"5"},"year":{"$numberInt":"2013"},"standard":true}
+{"_id":{"$oid":"637e966ad626499cd9592d72"},"name":"2022 MUSES III","difficulty":{"$numberInt":"10"},"year":{"$numberInt":"2022"},"standard":true}
+{"_id":{"$oid":"630a734f995199588ca69c18"},"name":"2018 Chicago Open","difficulty":{"$numberInt":"10"},"year":{"$numberInt":"2018"},"standard":true}
+{"_id":{"$oid":"6326bf0f692d593d1d7a8e31"},"name":"2020 ACF Regionals","difficulty":{"$numberInt":"8"},"year":{"$numberInt":"2020"},"standard":true}
+{"_id":{"$oid":"630adb572eacc381ae57fe39"},"name":"2012 WELD","difficulty":{"$numberInt":"10"},"year":{"$numberInt":"2012"},"standard":true}
+{"_id":{"$oid":"63167de299ac1f87e75a5302"},"name":"2018 WHAQ","difficulty":{"$numberInt":"3"},"year":{"$numberInt":"2018"},"standard":true}
+{"_id":{"$oid":"63829f6fe2cbd63208bfee9a"},"name":"2010 BATE","difficulty":{"$numberInt":"3"},"year":{"$numberInt":"2010"},"standard":true}
+{"_id":{"$oid":"63ade128794bda10f6ded936"},"name":"2013 VCU Closed","difficulty":{"$numberInt":"8"},"year":{"$numberInt":"2013"},"standard":true}
+{"_id":{"$oid":"63acb2f4ea571b63636eeac2"},"name":"2018 MKULTRA","difficulty":{"$numberInt":"0"},"year":{"$numberInt":"2018"},"standard":false}
+{"_id":{"$oid":"63ab959c491bf8105af0cc24"},"name":"2022 UGGHH","difficulty":{"$numberInt":"10"},"year":{"$numberInt":"2022"},"standard":true}
+{"_id":{"$oid":"6358db358e48451b24cfada3"},"name":"2022 The Last 1022 Years Were Boring Anyway Packet","difficulty":{"$numberInt":"10"},"year":{"$numberInt":"2022"},"standard":false}
+{"_id":{"$oid":"63506cec1b4438a94f2a2a87"},"name":"2022 MSQB Madness","difficulty":{"$numberInt":"3"},"year":{"$numberInt":"2022"},"standard":true}
+{"_id":{"$oid":"636ca48ee0c789d868e222bd"},"name":"2022 Eminent Victorians","difficulty":{"$numberInt":"10"},"year":{"$numberInt":"2022"},"standard":false}
+{"_id":{"$oid":"630ae7fafb0cd6e790c317d5"},"name":"2013 Michigan Fall Tournament","difficulty":{"$numberInt":"7"},"year":{"$numberInt":"2013"},"standard":true}
+{"_id":{"$oid":"639f712311983f92aa71f649"},"name":"2020 Prison Bowl","difficulty":{"$numberInt":"4"},"year":{"$numberInt":"2020"},"standard":true}
+{"_id":{"$oid":"633c0b2665a3d8043ff7e215"},"name":"2020 GORKY","difficulty":{"$numberInt":"10"},"year":{"$numberInt":"2020"},"standard":false}
+{"_id":{"$oid":"63ab959c491bf8105af0ce23"},"name":"2014 Delta Burke","difficulty":{"$numberInt":"6"},"year":{"$numberInt":"2014"},"standard":true}
+{"_id":{"$oid":"6361f475f6f73d137db468c8"},"name":"2018 Cambridge Open","difficulty":{"$numberInt":"8"},"year":{"$numberInt":"2018"},"standard":true}
+{"_id":{"$oid":"63ade128794bda10f6dedc49"},"name":"2017 GEODUCK","difficulty":{"$numberInt":"9"},"year":{"$numberInt":"2017"},"standard":true}
+{"_id":{"$oid":"63be318bb3c0552587596f20"},"name":"2011 MAGNI","difficulty":{"$numberInt":"8"},"year":{"$numberInt":"2011"},"standard":true}
+{"_id":{"$oid":"6336ab9eb8c640ece5cb91d8"},"name":"2021 COOT","difficulty":{"$numberInt":"8"},"year":{"$numberInt":"2021"},"standard":true}
+{"_id":{"$oid":"63ade128794bda10f6dedd12"},"name":"2018 GHOTI","difficulty":{"$numberInt":"10"},"year":{"$numberInt":"2018"},"standard":true}
+{"_id":{"$oid":"63ade128794bda10f6deddac"},"name":"2012 Collegiate Novice","difficulty":{"$numberInt":"6"},"year":{"$numberInt":"2012"},"standard":true}
+{"_id":{"$oid":"63be061e6537282fb101c3af"},"name":"2022 Winter Closed","difficulty":{"$numberInt":"8"},"year":{"$numberInt":"2022"},"standard":true}
+{"_id":{"$oid":"63e1c0eb32d1b824539f0723"},"name":"2012 Fall Kickoff Tournament (FKT)","difficulty":{"$numberInt":"2"},"year":{"$numberInt":"2012"},"standard":true}
+{"_id":{"$oid":"63e44fc060c522c60cc7ae97"},"name":"2011 GSAC","difficulty":{"$numberInt":"3"},"year":{"$numberInt":"2011"},"standard":true}
+{"_id":{"$oid":"640020a88d3cf1e72e2341a0"},"name":"2019 Guerrilla History","year":{"$numberInt":"2019"},"difficulty":{"$numberInt":"9"},"standard":true}
+{"_id":{"$oid":"63e3f13e1843aa5913201699"},"name":"2020 TAPIR","difficulty":{"$numberInt":"3"},"year":{"$numberInt":"2020"},"standard":true}
+{"_id":{"$oid":"640020a88d3cf1e72e2343d2"},"name":"2020 Hit or Myth Packets","year":{"$numberInt":"2020"},"difficulty":{"$numberInt":"10"},"standard":false}
+{"_id":{"$oid":"64046cc6de59b8af9742435a"},"name":"2015 Prison Bowl","year":{"$numberInt":"2015"},"difficulty":{"$numberInt":"4"},"standard":true}
+{"_id":{"$oid":"64046cc6de59b8af97422a95"},"name":"2017 Chicago Open","year":{"$numberInt":"2017"},"difficulty":{"$numberInt":"10"},"standard":true}
+{"_id":{"$oid":"6413cd99fdc648a1ed70955d"},"name":"2017 British Novice","year":{"$numberInt":"2017"},"difficulty":{"$numberInt":"6"},"standard":true}
+{"_id":{"$oid":"6435fb853c24c106a984073d"},"name":"2005 PACE NSC","year":{"$numberInt":"2005"},"difficulty":{"$numberInt":"5"},"standard":true}
+{"_id":{"$oid":"643e0e8d5926d80753f00551"},"name":"2023 Politics & History with a side of Memes","year":{"$numberInt":"2023"},"difficulty":{"$numberInt":"3"},"standard":false}
+{"_id":{"$oid":"648938e130bd7ab56b095a1b"},"name":"2023 PACE NSC","year":{"$numberInt":"2023"},"difficulty":{"$numberInt":"5"},"standard":true}
+{"_id":{"$oid":"64666209ecba4f3099064d60"},"name":"2021 RAFT","year":{"$numberInt":"2021"},"difficulty":{"$numberInt":"3"},"standard":true}
+{"_id":{"$oid":"64682fcffaa56bc597faa8da"},"name":"2014 College History Bowl","year":{"$numberInt":"2014"},"difficulty":{"$numberInt":"9"},"standard":true}
+{"_id":{"$oid":"62d98018f67c8a6f6e0ab59a"},"name":"2019 HFT","difficulty":{"$numberInt":"4"},"year":{"$numberInt":"2019"},"standard":true}
+{"_id":{"$oid":"62d98019f67c8a6f6e0b1abb"},"name":"2021 Dan and Coby and [redacted]'s Math Set","difficulty":{"$numberInt":"0"},"year":{"$numberInt":"2021"},"standard":false}
+{"_id":{"$oid":"62d98018f67c8a6f6e0ab7cb"},"name":"2019 ILLIAC","difficulty":{"$numberInt":"6"},"year":{"$numberInt":"2019"},"standard":true}
+{"_id":{"$oid":"62d98017f67c8a6f6e0a290c"},"name":"2015 HFT","difficulty":{"$numberInt":"4"},"year":{"$numberInt":"2015"},"standard":true}
+{"_id":{"$oid":"62d98019f67c8a6f6e0b18a5"},"name":"2022 DART","difficulty":{"$numberInt":"4"},"year":{"$numberInt":"2022"},"standard":true}
+{"_id":{"$oid":"62e05b9cf7cf60c9cba95a45"},"name":"2015 ACF Nationals","difficulty":{"$numberInt":"9"},"year":{"$numberInt":"2015"},"standard":true}
+{"_id":{"$oid":"62e1531efa61a9ba79f34da7"},"name":"2015 Minnesota Undergraduate Tournament (MUT)","difficulty":{"$numberInt":"6"},"year":{"$numberInt":"2015"},"standard":true}
+{"_id":{"$oid":"62edbcdd3f92cea3563af1a4"},"name":"2021 Halloween Contemporary Poetry Packet","difficulty":{"$numberInt":"10"},"year":{"$numberInt":"2021"},"standard":false}
+{"_id":{"$oid":"62f08076bbf8fdbdf07e9cf6"},"name":"2018 MVS RAMS","difficulty":{"$numberInt":"1"},"year":{"$numberInt":"2018"},"standard":true}
+{"_id":{"$oid":"62edc5401249c9578b2abd66"},"name":"2021 Penn Bowl","difficulty":{"$numberInt":"8"},"year":{"$numberInt":"2021"},"standard":true}
+{"_id":{"$oid":"62ead0bf8c91030f69d5badc"},"name":"2022 DECAF","difficulty":{"$numberInt":"10"},"year":{"$numberInt":"2022"},"standard":true}
+{"_id":{"$oid":"62f07cea5295951080e2cc0b"},"name":"2020 SCOP MS 10","difficulty":{"$numberInt":"1"},"year":{"$numberInt":"2020"},"standard":true}
+{"_id":{"$oid":"62eab48dfa940174d24e1302"},"name":"2017 HIGS","difficulty":{"$numberInt":"1"},"year":{"$numberInt":"2017"},"standard":true}
+{"_id":{"$oid":"62f85b0cdbfff7f0b54ae8d8"},"name":"2013 PACE NSC","difficulty":{"$numberInt":"5"},"year":{"$numberInt":"2013"},"standard":true}
+{"_id":{"$oid":"62f1bf365ffd63b5f24c1a86"},"name":"2021 NASAT","difficulty":{"$numberInt":"8"},"year":{"$numberInt":"2021"},"standard":true}
+{"_id":{"$oid":"62f875f3a7dcfd134ec0b0e6"},"name":"2010 ACF Fall","difficulty":{"$numberInt":"6"},"year":{"$numberInt":"2010"},"standard":true}
+{"_id":{"$oid":"62f924c30105d297286ff72f"},"name":"2019 ACF Fall","difficulty":{"$numberInt":"6"},"year":{"$numberInt":"2019"},"standard":true}
+{"_id":{"$oid":"62f85b0cdbfff7f0b54aed89"},"name":"2014 PACE NSC","difficulty":{"$numberInt":"5"},"year":{"$numberInt":"2014"},"standard":true}
+{"_id":{"$oid":"62fbb3476f6deeba79ec66c3"},"name":"2011 Collaborative Middle School Tournament #2","difficulty":{"$numberInt":"1"},"year":{"$numberInt":"2011"},"standard":true}
+{"_id":{"$oid":"6302ccab3e73f93749c0cffe"},"name":"2012 Michigan KABO","difficulty":{"$numberInt":"8"},"year":{"$numberInt":"2012"},"standard":true}
+{"_id":{"$oid":"6300226cdcc9d816c18b75f5"},"name":"2020 Oxford Open","difficulty":{"$numberInt":"8"},"year":{"$numberInt":"2020"},"standard":true}
+{"_id":{"$oid":"62f924c30105d297286ff4aa"},"name":"2021 The Geography Front","difficulty":{"$numberInt":"10"},"year":{"$numberInt":"2021"},"standard":false}
+{"_id":{"$oid":"6302ccab3e73f93749c0ddf4"},"name":"2017 (This) Tournament is a Crime","difficulty":{"$numberInt":"10"},"year":{"$numberInt":"2017"},"standard":true}
+{"_id":{"$oid":"6334baae3df8739d684ba86d"},"name":"2022 NASAT","difficulty":{"$numberInt":"8"},"year":{"$numberInt":"2022"},"standard":true}
+{"_id":{"$oid":"630ae7fafb0cd6e790c31dcb"},"name":"2013 Western Invitational Tournament","difficulty":{"$numberInt":"8"},"year":{"$numberInt":"2013"},"standard":true}
+{"_id":{"$oid":"630adffd9c5af29a3c8c05ae"},"name":"2016 ARTSEE","difficulty":{"$numberInt":"10"},"year":{"$numberInt":"2016"},"standard":true}
+{"_id":{"$oid":"635b5bc633afc95b57f7e58d"},"name":"2022 Reinstein","difficulty":{"$numberInt":"3"},"year":{"$numberInt":"2022"},"standard":true}
+{"_id":{"$oid":"631a175612170ac0a81b974d"},"name":"2019 NASAT","difficulty":{"$numberInt":"8"},"year":{"$numberInt":"2019"},"standard":true}
+{"_id":{"$oid":"6382c2fba161cf1fc596549f"},"name":"2020 WORKSHOP","difficulty":{"$numberInt":"8"},"year":{"$numberInt":"2020"},"standard":true}
+{"_id":{"$oid":"63ab959c491bf8105af0cc3a"},"name":"2014 Introductory Collaborative Collegiate Set","difficulty":{"$numberInt":"6"},"year":{"$numberInt":"2014"},"standard":true}
+{"_id":{"$oid":"63829f6fe2cbd63208bfea0e"},"name":"2014 GSAC","difficulty":{"$numberInt":"3"},"year":{"$numberInt":"2014"},"standard":true}
+{"_id":{"$oid":"63a5146d0af62c61193495bb"},"name":"2014 Maryland Spring","difficulty":{"$numberInt":"3"},"year":{"$numberInt":"2014"},"standard":true}
+{"_id":{"$oid":"631674958fcb0abc6527b5cb"},"name":"2012 Collaborative Middle School Tournament #3","difficulty":{"$numberInt":"1"},"year":{"$numberInt":"2012"},"standard":true}
+{"_id":{"$oid":"6326bf0e692d593d1d7a861e"},"name":"2018 ACF Regionals","difficulty":{"$numberInt":"8"},"year":{"$numberInt":"2018"},"standard":true}
+{"_id":{"$oid":"63be318bb3c0552587597189"},"name":"2011 Penn Bowl","difficulty":{"$numberInt":"8"},"year":{"$numberInt":"2011"},"standard":true}
+{"_id":{"$oid":"63bba673874e0ef7dd7b26d6"},"name":"2010 Minnesota Open","difficulty":{"$numberInt":"10"},"year":{"$numberInt":"2010"},"standard":true}
+{"_id":{"$oid":"63bba672874e0ef7dd7b2218"},"name":"2014 Oxford Open","difficulty":{"$numberInt":"8"},"year":{"$numberInt":"2014"},"standard":true}
+{"_id":{"$oid":"63bcab6cc6fadbe6166da474"},"name":"2012 Minnesota Undergraduate Tournament (MUT)","difficulty":{"$numberInt":"6"},"year":{"$numberInt":"2012"},"standard":true}
+{"_id":{"$oid":"63be318bb3c0552587597adc"},"name":"2012 Penn-ance","difficulty":{"$numberInt":"8"},"year":{"$numberInt":"2012"},"standard":true}
+{"_id":{"$oid":"63d895997a0d8ea074be78fa"},"name":"2014 MGMT","difficulty":{"$numberInt":"8"},"year":{"$numberInt":"2014"},"standard":true}
+{"_id":{"$oid":"63e1c0eb32d1b824539f02a7"},"name":"2009 ACF Winter","difficulty":{"$numberInt":"7"},"year":{"$numberInt":"2009"},"standard":true}
+{"_id":{"$oid":"63d6af74789ea9cdfc004ddc"},"name":"2021 JORDU","difficulty":{"$numberInt":"10"},"year":{"$numberInt":"2021"},"standard":true}
+{"_id":{"$oid":"63e2ecd514bf7b00170b18b6"},"name":"2006 ACF Nationals","difficulty":{"$numberInt":"9"},"year":{"$numberInt":"2006"},"standard":true}
+{"_id":{"$oid":"640020a88d3cf1e72e23409b"},"name":"2017 Scattergories","year":{"$numberInt":"2017"},"difficulty":{"$numberInt":"10"},"standard":false}
+{"_id":{"$oid":"63e3f13e1843aa5913201946"},"name":"2017 Thought Monstrosity","difficulty":{"$numberInt":"10"},"year":{"$numberInt":"2017"},"standard":true}
+{"_id":{"$oid":"640020a88d3cf1e72e23438f"},"name":"2020 ART NOUVEAU Packets","year":{"$numberInt":"2020"},"difficulty":{"$numberInt":"10"},"standard":false}
+{"_id":{"$oid":"63e31d9dbc8f282ed3d430db"},"name":"2006 Early Fall Tournament (EFT)","difficulty":{"$numberInt":"7"},"year":{"$numberInt":"2006"},"standard":true}
+{"_id":{"$oid":"63e31d9ebc8f282ed3d437a3"},"name":"2009 Fall Novice Tournament","difficulty":{"$numberInt":"2"},"year":{"$numberInt":"2009"},"standard":true}
+{"_id":{"$oid":"6406d0dee39f8dfd08fc2608"},"name":"2021 SKUFFED","year":{"$numberInt":"2021"},"difficulty":{"$numberInt":"5"},"standard":true}
+{"_id":{"$oid":"6446f1bb88d882e271ced9bb"},"name":"2011 SACK","year":{"$numberInt":"2011"},"difficulty":{"$numberInt":"10"},"standard":true}
+{"_id":{"$oid":"643b8c671bdcc57729e62e4b"},"name":"2009 Chicago Open","year":{"$numberInt":"2009"},"difficulty":{"$numberInt":"10"},"standard":true}
+{"_id":{"$oid":"643b8c671bdcc57729e630eb"},"name":"2012 RAVE","year":{"$numberInt":"2012"},"difficulty":{"$numberInt":"4"},"standard":true}
+{"_id":{"$oid":"64682fcffaa56bc597faa7e1"},"name":"2014 Chicago Open History Doubles","year":{"$numberInt":"2014"},"difficulty":{"$numberInt":"10"},"standard":true}
+{"_id":{"$oid":"64682fcefaa56bc597faa2e3"},"name":"2009 Chicago Open Lit","year":{"$numberInt":"2009"},"difficulty":{"$numberInt":"10"},"standard":true}
+{"_id":{"$oid":"646a390bcde60b6f25666bb6"},"name":"2022 History Bee Nationals","year":{"$numberInt":"2022"},"difficulty":{"$numberInt":"0"},"standard":false}
+{"_id":{"$oid":"6451e799d4402ec440c62283"},"name":"2010 BHSAT","year":{"$numberInt":"2010"},"difficulty":{"$numberInt":"4"},"standard":true}
+{"_id":{"$oid":"646b851a9769bf82550cc4fa"},"name":"2020 History Bee Nationals","year":{"$numberInt":"2020"},"difficulty":{"$numberInt":"0"},"standard":false}
+{"_id":{"$oid":"64655a09023d25e2f6e206dc"},"name":"2015 RILKE","year":{"$numberInt":"2015"},"difficulty":{"$numberInt":"10"},"standard":true}
+{"_id":{"$oid":"64682fcffaa56bc597faa3c2"},"name":"2012 Chicago Open History Doubles","year":{"$numberInt":"2012"},"difficulty":{"$numberInt":"10"},"standard":true}
+{"_id":{"$oid":"646565b40e43b5aafda1c68a"},"name":"2011 Illinois Open","year":{"$numberInt":"2011"},"difficulty":{"$numberInt":"10"},"standard":true}
+{"_id":{"$oid":"647044202576885f91e61f9a"},"name":"2015 LIMIT","year":{"$numberInt":"2015"},"difficulty":{"$numberInt":"3"},"standard":true}
+{"_id":{"$oid":"64828e4aba41c3cf37693520"},"name":"2023 IQBT Undergraduate Championship Qualifier","year":{"$numberInt":"2023"},"difficulty":{"$numberInt":"8"},"standard":false}
+{"_id":{"$oid":"64a0ccb31634f2d5eb7deafb"},"name":"2022 KICKOFF","year":{"$numberInt":"2022"},"difficulty":{"$numberInt":"3"},"standard":true}
+{"_id":{"$oid":"64d94438cb996cf5df5a807c"},"name":"2005 Michigan Manu Ginobili Open","year":{"$numberInt":"2005"},"difficulty":{"$numberInt":"10"},"standard":true}
+{"_id":{"$oid":"6531aa9acde02a8be25ff1ba"},"name":"2011 DCCAT","year":{"$numberInt":"2011"},"difficulty":{"$numberInt":"3"},"standard":true}
+{"_id":{"$oid":"6551b08d2c809f9dfdac1d5e"},"name":"2023 ACF Winter","year":{"$numberInt":"2023"},"difficulty":{"$numberInt":"7"},"standard":true}
+{"_id":{"$oid":"657fd7d7de6df0163bbe3b2c"},"name":"2023 EMACS","year":{"$numberInt":"2023"},"difficulty":{"$numberInt":"10"},"standard":false}
+{"_id":{"$oid":"657fd7dade6df0163bbe3bd5"},"name":"2023 SUDO","year":{"$numberInt":"2023"},"difficulty":{"$numberInt":"8"},"standard":false}
+{"_id":{"$oid":"65b3fc6f0a12fc35bca90c84"},"name":"2024 CULT","year":{"$numberInt":"2024"},"difficulty":{"$numberInt":"10"},"standard":true}
+{"_id":{"$oid":"65ba8788ca6edbbc92a5d2a6"},"name":"2024 ACF Regionals","year":{"$numberInt":"2024"},"difficulty":{"$numberInt":"8"},"standard":true}
+{"_id":{"$oid":"65d2b4d531bcc15f0a3cebb5"},"name":"2023 Nora Barnacle Memorial Tournament","year":{"$numberInt":"2023"},"difficulty":{"$numberInt":"10"},"standard":false}
+{"_id":{"$oid":"660a2cf538190d8ac17b4364"},"name":"2017 WAO II","year":{"$numberInt":"2017"},"difficulty":{"$numberInt":"8"},"standard":true}
+{"_id":{"$oid":"66307b02f089611172b04f14"},"name":"2024 ACF Nationals","year":{"$numberInt":"2024"},"difficulty":{"$numberInt":"9"},"standard":true}
+{"_id":{"$oid":"6632d7054c1a8347da197ab5"},"name":"2009 GSAC","year":{"$numberInt":"2009"},"difficulty":{"$numberInt":"3"},"standard":true}
+{"_id":{"$oid":"663809cf867240107e0f1d8a"},"name":"2010 SCOP Novice","year":{"$numberInt":"2010"},"difficulty":{"$numberInt":"2"},"standard":true}
+{"_id":{"$oid":"663a87f92729263fb44b4060"},"name":"2018 ACRONYM","year":{"$numberInt":"2018"},"difficulty":{"$numberInt":"0"},"standard":false}
+{"_id":{"$oid":"663a87fa2729263fb44b424d"},"name":"2019 ACRONYM","year":{"$numberInt":"2019"},"difficulty":{"$numberInt":"0"},"standard":false}
+{"_id":{"$oid":"6643bbf601cbf053963dda4d"},"name":"2007 Chicago Open","year":{"$numberInt":"2007"},"difficulty":{"$numberInt":"10"},"standard":true}
+{"_id":{"$oid":"673aef78cbbbb69a5263ccb9"},"name":"2023 QUAOAR","year":{"$numberInt":"2023"},"difficulty":{"$numberInt":"1"},"standard":true}
+{"_id":{"$oid":"676a112797acc2cc958b30c7"},"name":"2024 TELEOLOGY","year":{"$numberInt":"2024"},"difficulty":{"$numberInt":"10"},"standard":false}
+{"_id":{"$oid":"676f7239f56e0dff73abec84"},"name":"2023 Sentinel CYBER 1A","year":{"$numberInt":"2023"},"difficulty":{"$numberInt":"1"},"standard":true}
+{"_id":{"$oid":"676f82eec626ea977c7a3274"},"name":"2013 Schindler's Lit","year":{"$numberInt":"2013"},"difficulty":{"$numberInt":"10"},"standard":true}
+{"_id":{"$oid":"676f82f1c626ea977c7a330e"},"name":"2008 Minnesota Open Lit","year":{"$numberInt":"2008"},"difficulty":{"$numberInt":"10"},"standard":true}
+{"_id":{"$oid":"67aecd57e40fc2c0d1676107"},"name":"2024 Untitled Film Set","year":{"$numberInt":"2024"},"difficulty":{"$numberInt":"10"},"standard":false}
+{"_id":{"$oid":"64740f170044bbd367c3f3d9"},"name":"2023 BHSU","year":{"$numberInt":"2023"},"difficulty":{"$numberInt":"9"},"standard":true}
+{"_id":{"$oid":"646eebb29aa260d7cf070604"},"name":"2009 TACO","year":{"$numberInt":"2009"},"difficulty":{"$numberInt":"9"},"standard":true}
+{"_id":{"$oid":"64cef6195bf080dd9900d33d"},"name":"2023 SOVIET Packet","year":{"$numberInt":"2023"},"difficulty":{"$numberInt":"0"},"standard":false}
+{"_id":{"$oid":"651a2dd05c3919082740d1d4"},"name":"2023 On Cinema at the Buzzer","year":{"$numberInt":"2023"},"difficulty":{"$numberInt":"10"},"standard":true}
+{"_id":{"$oid":"653c0d3fd2558b9e2148a597"},"name":"2023 SHAWM Packets","year":{"$numberInt":"2023"},"difficulty":{"$numberInt":"10"},"standard":false}
+{"_id":{"$oid":"663809d0867240107e0f1fa0"},"name":"2011 SCOP Novice 2","year":{"$numberInt":"2011"},"difficulty":{"$numberInt":"2"},"standard":true}
+{"_id":{"$oid":"663a87ff2729263fb44b4814"},"name":"2022 ACRONYM","year":{"$numberInt":"2022"},"difficulty":{"$numberInt":"0"},"standard":false}
+{"_id":{"$oid":"66f0f7225f18a88258296be2"},"name":"2023 CARD","year":{"$numberInt":"2023"},"difficulty":{"$numberInt":"3"},"standard":true}
+{"_id":{"$oid":"66f1cab1e44f1dc412c3d77e"},"name":"2024 JaMES","year":{"$numberInt":"2024"},"difficulty":{"$numberInt":"10"},"standard":false}
+{"_id":{"$oid":"67283b8cca3a67e1989a421e"},"name":"2024 IQBT Undergraduate Championship Qualifier","year":{"$numberInt":"2024"},"difficulty":{"$numberInt":"7"},"standard":false}
+{"_id":{"$oid":"673c03f04d9b6b7ed1ef5870"},"name":"2023 Ahead By a Century","year":{"$numberInt":"2023"},"difficulty":{"$numberInt":"10"},"standard":false}
+{"_id":{"$oid":"676f82ebc626ea977c7a319a"},"name":"2012 ANFORTAS","year":{"$numberInt":"2012"},"difficulty":{"$numberInt":"10"},"standard":true}
+{"_id":{"$oid":"676f82f5c626ea977c7a33af"},"name":"2009 Penn Bowl","year":{"$numberInt":"2009"},"difficulty":{"$numberInt":"8"},"standard":true}
+{"_id":{"$oid":"67b3c0226aa8a3da38aa7eeb"},"name":"2011 Terrapin","year":{"$numberInt":"2011"},"difficulty":{"$numberInt":"8"},"standard":true}
+{"_id":{"$oid":"67e338da63ef71fce09df9c1"},"name":"2024 ARGOS","year":{"$numberInt":"2024"},"difficulty":{"$numberInt":"9"},"standard":true}
+{"_id":{"$oid":"647044212576885f91e6245a"},"name":"2017 BASQT","year":{"$numberInt":"2017"},"difficulty":{"$numberInt":"3"},"standard":true}
+{"_id":{"$oid":"6504ad7221f976c0af07f46b"},"name":"2023 ARCHIVE","year":{"$numberInt":"2023"},"difficulty":{"$numberInt":"10"},"standard":false}
+{"_id":{"$oid":"652ebb6c8051389c667bceaf"},"name":"2023 ACF Fall","year":{"$numberInt":"2023"},"difficulty":{"$numberInt":"6"},"standard":true}
+{"_id":{"$oid":"663806eba0924256318acd58"},"name":"2015 SCOP Novice 6","year":{"$numberInt":"2015"},"difficulty":{"$numberInt":"2"},"standard":true}
+{"_id":{"$oid":"666dc6c49f7c4cfdbd678472"},"name":"2024 PACE NSC","year":{"$numberInt":"2024"},"difficulty":{"$numberInt":"5"},"standard":true}
+{"_id":{"$oid":"66b83d71e381fe913c42f6ee"},"name":"2024 Chicago Open","year":{"$numberInt":"2024"},"difficulty":{"$numberInt":"10"},"standard":true}
+{"_id":{"$oid":"673b8e846a9f877eb58c9b63"},"name":"2024 History of the World Part II","year":{"$numberInt":"2024"},"difficulty":{"$numberInt":"10"},"standard":false}
+{"_id":{"$oid":"6765041c540a782fbf33bc93"},"name":"2024 TOWNS","year":{"$numberInt":"2024"},"difficulty":{"$numberInt":"10"},"standard":false}
+{"_id":{"$oid":"676a112297acc2cc958b2f9a"},"name":"2023 TELEOLOGY","year":{"$numberInt":"2023"},"difficulty":{"$numberInt":"10"},"standard":false}
+{"_id":{"$oid":"676f76f83bd20cb9a8cf4b68"},"name":"2023 KYOGRE","year":{"$numberInt":"2023"},"difficulty":{"$numberInt":"0"},"standard":false}
+{"_id":{"$oid":"67e338d863ef71fce09df777"},"name":"2023 SITH","year":{"$numberInt":"2023"},"difficulty":{"$numberInt":"3"},"standard":true}
+{"_id":{"$oid":"64682fcffaa56bc597faad3f"},"name":"2011 Chicago Open History Doubles","year":{"$numberInt":"2011"},"difficulty":{"$numberInt":"10"},"standard":true}
+{"_id":{"$oid":"650a74b87033487bec6a7c1a"},"name":"2023 NASAT","year":{"$numberInt":"2023"},"difficulty":{"$numberInt":"8"},"standard":true}
+{"_id":{"$oid":"6574dd319e75c9fcbfec7f3e"},"name":"2023 Penn Bowl","year":{"$numberInt":"2023"},"difficulty":{"$numberInt":"8"},"standard":true}
+{"_id":{"$oid":"657fd7d2de6df0163bbe3927"},"name":"2010 GSAC","year":{"$numberInt":"2010"},"difficulty":{"$numberInt":"3"},"standard":true}
+{"_id":{"$oid":"65fa4916e210b3e07c6de6cc"},"name":"2023 Halloween Hippopotamus Invitational","year":{"$numberInt":"2023"},"difficulty":{"$numberInt":"7"},"standard":false}
+{"_id":{"$oid":"6632d3d7cfb887c5bcba452d"},"name":"2008 Chicago Open Lit","year":{"$numberInt":"2008"},"difficulty":{"$numberInt":"10"},"standard":true}
+{"_id":{"$oid":"6643bbea01cbf053963dd625"},"name":"2006 Chicago Open","year":{"$numberInt":"2006"},"difficulty":{"$numberInt":"10"},"standard":true}
+{"_id":{"$oid":"6643bbf101cbf053963dd8db"},"name":"2006 Chicago Open History Doubles","year":{"$numberInt":"2006"},"difficulty":{"$numberInt":"10"},"standard":true}
+{"_id":{"$oid":"6727fb420a73c65be67f770a"},"name":"2023 CREEK+","year":{"$numberInt":"2023"},"difficulty":{"$numberInt":"6"},"standard":true}
+{"_id":{"$oid":"64c4601ce6811c453d40da70"},"name":"2022 Prison Bowl","year":{"$numberInt":"2022"},"difficulty":{"$numberInt":"4"},"standard":true}
+{"_id":{"$oid":"64d58a86e3eb24e351921424"},"name":"2023 The Last 1023 Years Were Boring Anyway Packet","year":{"$numberInt":"2023"},"difficulty":{"$numberInt":"10"},"standard":false}
+{"_id":{"$oid":"64d81df703b5396be47591f3"},"name":"2022 IQBT Regular Season Set #1","year":{"$numberInt":"2022"},"difficulty":{"$numberInt":"3"},"standard":true}
+{"_id":{"$oid":"64da5c1c70e51dc8b7735dcd"},"name":"2023 CLEAN","year":{"$numberInt":"2023"},"difficulty":{"$numberInt":"8"},"standard":true}
+{"_id":{"$oid":"651a2dcb5c3919082740cfe7"},"name":"2022 DUOS","year":{"$numberInt":"2022"},"difficulty":{"$numberInt":"4"},"standard":true}
+{"_id":{"$oid":"652ebb728051389c667bd105"},"name":"2022 Saucy Invitational","year":{"$numberInt":"2022"},"difficulty":{"$numberInt":"3"},"standard":true}
+{"_id":{"$oid":"66315f61ddd20e7cbb31dda0"},"name":"2024 FEMTO","year":{"$numberInt":"2024"},"difficulty":{"$numberInt":"10"},"standard":false}
+{"_id":{"$oid":"663806e7a0924256318ac9a6"},"name":"2013 SCOP Novice 4","year":{"$numberInt":"2013"},"difficulty":{"$numberInt":"2"},"standard":true}
+{"_id":{"$oid":"66423ff1515f1173a58a2733"},"name":"2023 Planetfall","year":{"$numberInt":"2023"},"difficulty":{"$numberInt":"3"},"standard":true}
+{"_id":{"$oid":"66cd4c39c5459312fdcc51cf"},"name":"2023 HFT","year":{"$numberInt":"2023"},"difficulty":{"$numberInt":"4"},"standard":true}
+{"_id":{"$oid":"66cd4c3dc5459312fdcc55fa"},"name":"2023 SHOW-ME More","year":{"$numberInt":"2023"},"difficulty":{"$numberInt":"3"},"standard":true}
+{"_id":{"$oid":"676f82fdc626ea977c7a36ba"},"name":"2009 FIST","year":{"$numberInt":"2009"},"difficulty":{"$numberInt":"10"},"standard":true}
+{"_id":{"$oid":"6794029eb327fe5c5449d347"},"name":"2017 History Bee Nationals","year":{"$numberInt":"2017"},"difficulty":{"$numberInt":"0"},"standard":false}
+{"_id":{"$oid":"6797c22a6d78eee804a376a3"},"name":"2024 NASAT","year":{"$numberInt":"2024"},"difficulty":{"$numberInt":"8"},"standard":true}
+{"_id":{"$oid":"67aec9f56f064eb7c48bbcf1"},"name":"2025 ACF Regionals","year":{"$numberInt":"2025"},"difficulty":{"$numberInt":"8"},"standard":true}
+{"_id":{"$oid":"67aece6896eae2aa19c6fca8"},"name":"2024 This Set is Garbo","year":{"$numberInt":"2024"},"difficulty":{"$numberInt":"10"},"standard":false}
+{"_id":{"$oid":"646fffa69d2ba7804333f7f6"},"name":"2020 Academic Practice Bee","year":{"$numberInt":"2020"},"difficulty":{"$numberInt":"4"},"standard":true}
+{"_id":{"$oid":"64a0ccb31634f2d5eb7dece8"},"name":"2022 KICKOFF Novice","year":{"$numberInt":"2022"},"difficulty":{"$numberInt":"2"},"standard":true}
+{"_id":{"$oid":"64c4601ce6811c453d40dc75"},"name":"2022 SHOW-ME","year":{"$numberInt":"2022"},"difficulty":{"$numberInt":"3"},"standard":true}
+{"_id":{"$oid":"65286b177947fb17d9374e1d"},"name":"2023 COOT","year":{"$numberInt":"2023"},"difficulty":{"$numberInt":"8"},"standard":true}
+{"_id":{"$oid":"6554318c4579e16ae2938e2c"},"name":"2023 COLONIAL","year":{"$numberInt":"2023"},"difficulty":{"$numberInt":"10"},"standard":true}
+{"_id":{"$oid":"65666dfd443a0a5dea00439a"},"name":"2022 MAKEMAKE","year":{"$numberInt":"2022"},"difficulty":{"$numberInt":"1"},"standard":true}
+{"_id":{"$oid":"65d14215270be3aedf05a1b9"},"name":"2021 QB League Season 1","year":{"$numberInt":"2021"},"difficulty":{"$numberInt":"6"},"standard":true}
+{"_id":{"$oid":"65dfe1421274f833e5a3c700"},"name":"2023 ARCADIA","year":{"$numberInt":"2023"},"difficulty":{"$numberInt":"8"},"standard":true}
+{"_id":{"$oid":"6605c17c7891dce02ea7cfaa"},"name":"2023 IQBT Regular Season Set #2","year":{"$numberInt":"2023"},"difficulty":{"$numberInt":"3"},"standard":true}
+{"_id":{"$oid":"663a87f82729263fb44b3e9c"},"name":"2017 ACRONYM","year":{"$numberInt":"2017"},"difficulty":{"$numberInt":"0"},"standard":false}
+{"_id":{"$oid":"663a87fe2729263fb44b4627"},"name":"2021 ACRONYM","year":{"$numberInt":"2021"},"difficulty":{"$numberInt":"0"},"standard":false}
+{"_id":{"$oid":"6643bbfc01cbf053963ddc8c"},"name":"2007 Chicago Open Lit","year":{"$numberInt":"2007"},"difficulty":{"$numberInt":"10"},"standard":true}
+{"_id":{"$oid":"664d3b257fccf73196050200"},"name":"2023 ILLIAC","year":{"$numberInt":"2023"},"difficulty":{"$numberInt":"7"},"standard":true}
+{"_id":{"$oid":"66763416fe8264b343f11172"},"name":"2024 Booster Shot","year":{"$numberInt":"2024"},"difficulty":{"$numberInt":"7"},"standard":true}
+{"_id":{"$oid":"673b8d447c14188a841fa62c"},"name":"2024 HILTON","year":{"$numberInt":"2024"},"difficulty":{"$numberInt":"9"},"standard":false}
+{"_id":{"$oid":"6794029db327fe5c5449d1cb"},"name":"2018 History Bee Nationals","year":{"$numberInt":"2018"},"difficulty":{"$numberInt":"0"},"standard":false}
+{"_id":{"$oid":"67cb4e10a4d5f0b0e22ac0e4"},"name":"2024 Notes on the Underground","year":{"$numberInt":"2024"},"difficulty":{"$numberInt":"10"},"standard":false}
+{"_id":{"$oid":"64692c2b0eb5b74ce2b71540"},"name":"2023 Recent(ish) Musicals Packet","year":{"$numberInt":"2023"},"difficulty":{"$numberInt":"10"},"standard":false}
+{"_id":{"$oid":"64d17df3ce0dacc4ef84b92c"},"name":"2023 Chicago Open","year":{"$numberInt":"2023"},"difficulty":{"$numberInt":"10"},"standard":true}
+{"_id":{"$oid":"64d58b421eb3b13d92e576a1"},"name":"2023 IQBT Undergraduate Championship","year":{"$numberInt":"2023"},"difficulty":{"$numberInt":"8"},"standard":true}
+{"_id":{"$oid":"64d93f0e4fa392c5b68c452a"},"name":"2006 ACF Regionals","year":{"$numberInt":"2006"},"difficulty":{"$numberInt":"8"},"standard":true}
+{"_id":{"$oid":"6504ab639ee6e14c2d0e3ffa"},"name":"2023 MKULTRA","year":{"$numberInt":"2023"},"difficulty":{"$numberInt":"0"},"standard":false}
+{"_id":{"$oid":"653c0ab80c0aae1fdb1a4b4f"},"name":"2023 DART","year":{"$numberInt":"2023"},"difficulty":{"$numberInt":"4"},"standard":true}
+{"_id":{"$oid":"65865e33760988da16ee6037"},"name":"2013 Arrabal","year":{"$numberInt":"2013"},"difficulty":{"$numberInt":"10"},"standard":true}
+{"_id":{"$oid":"65de63ecffe1839107b635d0"},"name":"2020 CATT","year":{"$numberInt":"2020"},"difficulty":{"$numberInt":"4"},"standard":true}
+{"_id":{"$oid":"6632dcd07fac9e7fd1b7ce72"},"name":"2015 Chicago Open Visual Arts","year":{"$numberInt":"2015"},"difficulty":{"$numberInt":"10"},"standard":true}
+{"_id":{"$oid":"663806e5a0924256318ac7cd"},"name":"2012 SCOP Novice 3","year":{"$numberInt":"2012"},"difficulty":{"$numberInt":"2"},"standard":true}
+{"_id":{"$oid":"663806e9a0924256318acb7f"},"name":"2014 SCOP Novice 5","year":{"$numberInt":"2014"},"difficulty":{"$numberInt":"2"},"standard":true}
+{"_id":{"$oid":"663a87fc2729263fb44b443a"},"name":"2020 ACRONYM","year":{"$numberInt":"2020"},"difficulty":{"$numberInt":"0"},"standard":false}
+{"_id":{"$oid":"663a88012729263fb44b4a01"},"name":"2023 ACRONYM","year":{"$numberInt":"2023"},"difficulty":{"$numberInt":"0"},"standard":false}
+{"_id":{"$oid":"66e1bbb5b3ec1cfe3cd4a5c6"},"name":"2023 MOQBA Novice","year":{"$numberInt":"2023"},"difficulty":{"$numberInt":"2"},"standard":true}
+{"_id":{"$oid":"66f1c84a7b6c52e165910d8e"},"name":"2024 TESTRUN","year":{"$numberInt":"2024"},"difficulty":{"$numberInt":"7"},"standard":false}
+{"_id":{"$oid":"671d6e2a704068afc3e928a7"},"name":"2024 ACF Fall","year":{"$numberInt":"2024"},"difficulty":{"$numberInt":"6"},"standard":true}
+{"_id":{"$oid":"6727fb380a73c65be67f74cb"},"name":"2023 CREEK","year":{"$numberInt":"2023"},"difficulty":{"$numberInt":"4"},"standard":true}
+{"_id":{"$oid":"673ec00f90236da031c2cec5"},"name":"2024 ACF Winter","year":{"$numberInt":"2024"},"difficulty":{"$numberInt":"7"},"standard":true}
+{"_id":{"$oid":"6765cbd16221936d6388518b"},"name":"2023 DMA","year":{"$numberInt":"2023"},"difficulty":{"$numberInt":"4"},"standard":true}
+{"_id":{"$oid":"676f8304c626ea977c7a38e8"},"name":"2009 Illinois Open","year":{"$numberInt":"2009"},"difficulty":{"$numberInt":"10"},"standard":true}
+{"_id":{"$oid":"676f830bc626ea977c7a3b59"},"name":"2008 Penn Bowl","year":{"$numberInt":"2008"},"difficulty":{"$numberInt":"8"},"standard":true}
+{"_id":{"$oid":"67777539115778212c716c2f"},"name":"2024 IQBT Undergraduate Championship","year":{"$numberInt":"2024"},"difficulty":{"$numberInt":"8"},"standard":true}
+{"_id":{"$oid":"6778d33d2c73527d87131db3"},"name":"2024 Bonus Eventus","year":{"$numberInt":"2024"},"difficulty":{"$numberInt":"10"},"standard":false}
+{"_id":{"$oid":"6794029fb327fe5c5449d4c2"},"name":"2016 History Bee Nationals","year":{"$numberInt":"2016"},"difficulty":{"$numberInt":"0"},"standard":false}
+{"_id":{"$oid":"679402a0b327fe5c5449d62e"},"name":"2015 History Bee Nationals","year":{"$numberInt":"2015"},"difficulty":{"$numberInt":"0"},"standard":false}
+{"_id":{"$oid":"67df4b7ccacb2c4b3f6e6c3a"},"name":"2009 Tyrone Slothrop Lit","year":{"$numberInt":"2009"},"difficulty":{"$numberInt":"0"},"standard":false}
+{"_id":{"$oid":"67df4c93d5921688cff9e38e"},"name":"2024 COOT","year":{"$numberInt":"2024"},"difficulty":{"$numberInt":"8"},"standard":true}
+{"_id":{"$oid":"67df7a15ff6d7e06dc4ca5f5"},"name":"2024 HONK!","year":{"$numberInt":"2024"},"difficulty":{"$numberInt":"0"},"standard":false}
+{"_id":{"$oid":"646fffa69d2ba7804333f8e9"},"name":"2018 James Blair Bowl","year":{"$numberInt":"2018"},"difficulty":{"$numberInt":"4"},"standard":true}
+{"_id":{"$oid":"64a0ccb31634f2d5eb7deed5"},"name":"2023 MRNA","year":{"$numberInt":"2023"},"difficulty":{"$numberInt":"7"},"standard":true}
+{"_id":{"$oid":"646a390bcde60b6f25666a4a"},"name":"2021 History Bee Nationals","year":{"$numberInt":"2021"},"difficulty":{"$numberInt":"0"},"standard":false}
+{"_id":{"$oid":"64a635c7c514d1929f57b860"},"name":"2022 SANDS","year":{"$numberInt":"2022"},"difficulty":{"$numberInt":"1"},"standard":true}
+{"_id":{"$oid":"64683d300d0d0e5f184a3402"},"name":"2007 Chicago Science Monstrosity","year":{"$numberInt":"2007"},"difficulty":{"$numberInt":"10"},"standard":true}
+{"_id":{"$oid":"64cef6185bf080dd9900d311"},"name":"2023 CVS Packet","year":{"$numberInt":"2023"},"difficulty":{"$numberInt":"10"},"standard":false}
+{"_id":{"$oid":"64cef6195bf080dd9900d34f"},"name":"2023 National Mythology Showdown Packets","year":{"$numberInt":"2023"},"difficulty":{"$numberInt":"10"},"standard":false}
+{"_id":{"$oid":"64cef7255ca7dc5dd99e2b3b"},"name":"2023 ah's modern poetry packets","year":{"$numberInt":"2023"},"difficulty":{"$numberInt":"10"},"standard":false}
+{"_id":{"$oid":"652ebb778051389c667bd1ed"},"name":"2023 THERAPY","year":{"$numberInt":"2023"},"difficulty":{"$numberInt":"10"},"standard":false}
+{"_id":{"$oid":"6549e618dd7828c4e244d55d"},"name":"2023 Canadian Novice","year":{"$numberInt":"2023"},"difficulty":{"$numberInt":"6"},"standard":true}
+{"_id":{"$oid":"65d14219270be3aedf05a33c"},"name":"2021 QB League Season 2","year":{"$numberInt":"2021"},"difficulty":{"$numberInt":"6"},"standard":true}
+{"_id":{"$oid":"65d8486856d3474dcdac22d6"},"name":"2023 SCURVY","year":{"$numberInt":"2023"},"difficulty":{"$numberInt":"4"},"standard":true}
+{"_id":{"$oid":"66316380d1f64a7017dec179"},"name":"2024 Renaissance Art Packet","year":{"$numberInt":"2024"},"difficulty":{"$numberInt":"10"},"standard":false}
+{"_id":{"$oid":"6643bbe601cbf053963dd4dc"},"name":"2005 Chicago Open","year":{"$numberInt":"2005"},"difficulty":{"$numberInt":"10"},"standard":true}
+{"_id":{"$oid":"66a566d1afb4d671f312e820"},"name":"2024 ESPN","year":{"$numberInt":"2024"},"difficulty":{"$numberInt":"9"},"standard":true}
+{"_id":{"$oid":"66cd4c3bc5459312fdcc540d"},"name":"2023 Prison Bowl","year":{"$numberInt":"2023"},"difficulty":{"$numberInt":"4"},"standard":true}
+{"_id":{"$oid":"676f7233f56e0dff73abea76"},"name":"2023 SWAMP","year":{"$numberInt":"2023"},"difficulty":{"$numberInt":"3"},"standard":true}
+{"_id":{"$oid":"67cb4e0ea4d5f0b0e22abe9a"},"name":"2024 Penn Bowl","year":{"$numberInt":"2024"},"difficulty":{"$numberInt":"8"},"standard":true}
+{"_id":{"$oid":"67e9a3e560d5e25024711fd6"},"name":"2024 The Geography Front","year":{"$numberInt":"2024"},"difficulty":{"$numberInt":"10"},"standard":false}
+{"_id":{"$oid":"681fa16d196ad6fc88d805fc"},"name":"2024 JORDU","year":{"$numberInt":"2024"},"difficulty":{"$numberInt":"10"},"standard":false}
+{"_id":{"$oid":"6822bfc61f87396179872c51"},"name":"2025 ACF Nationals","year":{"$numberInt":"2025"},"difficulty":{"$numberInt":"9"},"standard":true}
+{"_id":{"$oid":"6830cd3c72496bd596457003"},"name":"2024 Chicago Open Trash","year":{"$numberInt":"2024"},"difficulty":{"$numberInt":"0"},"standard":false}
+{"_id":{"$oid":"6830d0071172fb96a05e03a7"},"name":"2022 Chicago Open Trash","year":{"$numberInt":"2022"},"difficulty":{"$numberInt":"0"},"standard":false}
+{"_id":{"$oid":"6835ff14ae8f5a9b6d49a94b"},"name":"2024 ACRONYM","year":{"$numberInt":"2024"},"difficulty":{"$numberInt":"0"},"standard":false}
+{"_id":{"$oid":"683601a0169f36826f4c5e91"},"name":"2014 Gorilla Lit","year":{"$numberInt":"2014"},"difficulty":{"$numberInt":"10"},"standard":false}
+{"_id":{"$oid":"68360526bd73b39bd4bb3490"},"name":"2023 Scottie","year":{"$numberInt":"2023"},"difficulty":{"$numberInt":"4"},"standard":true}
+{"_id":{"$oid":"68369419fe2a2882cd2fd8b2"},"name":"2016 Chicago Open Trash","year":{"$numberInt":"2016"},"difficulty":{"$numberInt":"0"},"standard":false}
+{"_id":{"$oid":"68369423fe2a2882cd2fdac8"},"name":"2018 Chicago Open Trash","year":{"$numberInt":"2018"},"difficulty":{"$numberInt":"0"},"standard":false}
+{"_id":{"$oid":"6836942cfe2a2882cd2fdcde"},"name":"2017 Super ACRONYM","year":{"$numberInt":"2017"},"difficulty":{"$numberInt":"0"},"standard":false}
+{"_id":{"$oid":"68369435fe2a2882cd2fdecb"},"name":"2019 Super ACRONYM","year":{"$numberInt":"2019"},"difficulty":{"$numberInt":"0"},"standard":false}
+{"_id":{"$oid":"6836943dfe2a2882cd2fe0b8"},"name":"2021 Super ACRONYM","year":{"$numberInt":"2021"},"difficulty":{"$numberInt":"0"},"standard":false}
+{"_id":{"$oid":"6836944afe2a2882cd2fe2a5"},"name":"2023 Super ACRONYM","year":{"$numberInt":"2023"},"difficulty":{"$numberInt":"0"},"standard":false}
+{"_id":{"$oid":"6837af62278db02eb79f1cb9"},"name":"2025 Rockford Quiz Bowl Novice","year":{"$numberInt":"2025"},"difficulty":{"$numberInt":"2"},"standard":true}
+{"_id":{"$oid":"68486966b074cbb48b99b2ec"},"name":"2025 PACE NSC","year":{"$numberInt":"2025"},"difficulty":{"$numberInt":"5"},"standard":true}
+{"_id":{"$oid":"686e1e49786d3dcf273bf495"},"name":"2024 ARCADIA","year":{"$numberInt":"2024"},"difficulty":{"$numberInt":"8"},"standard":true}
+{"_id":{"$oid":"68846958641a9dc975af8298"},"name":"2024 PLAYTIME!","year":{"$numberInt":"2024"},"difficulty":{"$numberInt":"7"},"standard":true}
+{"_id":{"$oid":"68846972641a9dc975af84e6"},"name":"2024 VAULT","year":{"$numberInt":"2024"},"difficulty":{"$numberInt":"4"},"standard":true}
+{"_id":{"$oid":"6884698a641a9dc975af8733"},"name":"2025 MRNA","year":{"$numberInt":"2025"},"difficulty":{"$numberInt":"7"},"standard":true}
+{"_id":{"$oid":"689206aa282b420d4a198a5f"},"name":"2024 FARSI","year":{"$numberInt":"2024"},"difficulty":{"$numberInt":"3"},"standard":true}
+{"_id":{"$oid":"689a0d5e2d8608f4ad851493"},"name":"2025 Chicago Open","year":{"$numberInt":"2025"},"difficulty":{"$numberInt":"10"},"standard":true}
+{"_id":{"$oid":"689a0d692d8608f4ad851772"},"name":"2025 SHOW-ME","year":{"$numberInt":"2025"},"difficulty":{"$numberInt":"3"},"standard":true}
+{"_id":{"$oid":"68a26a3a2371a424b101c899"},"name":"2025 RMP Fest","year":{"$numberInt":"2025"},"difficulty":{"$numberInt":"9"},"standard":false}
+{"_id":{"$oid":"68aa6f7deb7f936a9a15e384"},"name":"2025 WAO","year":{"$numberInt":"2025"},"difficulty":{"$numberInt":"9"},"standard":true}
+{"_id":{"$oid":"68b2ff0c8940d9f7c563a115"},"name":"2024 Satellite","year":{"$numberInt":"2024"},"difficulty":{"$numberInt":"3"},"standard":true}
+{"_id":{"$oid":"68b30045abe4e93dffa358ab"},"name":"2025 The Pyramid","year":{"$numberInt":"2025"},"difficulty":{"$numberInt":"10"},"standard":false}
+{"_id":{"$oid":"68b8fc893c4c0515ae31d7d3"},"name":"2024 CARD","year":{"$numberInt":"2024"},"difficulty":{"$numberInt":"3"},"standard":true}
+{"_id":{"$oid":"68bb81d4c87a3eecfecf5271"},"name":"2024 Prison Bowl","year":{"$numberInt":"2024"},"difficulty":{"$numberInt":"4"},"standard":true}
+{"_id":{"$oid":"68d745e784b8b67bf4ffe389"},"name":"2025 LITANY","year":{"$numberInt":"2025"},"difficulty":{"$numberInt":"8"},"standard":false}
+{"_id":{"$oid":"68d7483823ecd621bd0ce99c"},"name":"2023 British Novice","year":{"$numberInt":"2023"},"difficulty":{"$numberInt":"6"},"standard":true}
+{"_id":{"$oid":"68d80884f2b1f8e7f391328f"},"name":"2024 IQBT Regular Season Set #3","year":{"$numberInt":"2024"},"difficulty":{"$numberInt":"3"},"standard":true}
+{"_id":{"$oid":"68d80a0e17de87dadfd22939"},"name":"2024 Nora Barnacle Memorial Tournament","year":{"$numberInt":"2024"},"difficulty":{"$numberInt":"10"},"standard":false}
+{"_id":{"$oid":"68fc54d55b5d7bee38aa3e0a"},"name":"2025 ACF Fall","year":{"$numberInt":"2025"},"difficulty":{"$numberInt":"6"},"standard":true}
+{"_id":{"$oid":"68fc55cec262e4078e906ed8"},"name":"2024 DART","year":{"$numberInt":"2024"},"difficulty":{"$numberInt":"5"},"standard":true}
+{"_id":{"$oid":"68fd4026a03782f1b6578fee"},"name":"2024 IQBT Regular Season Set #4","year":{"$numberInt":"2024"},"difficulty":{"$numberInt":"3"},"standard":true}
+{"_id":{"$oid":"68fda9d21fd794cc6b3e1985"},"name":"2023 Purdue IM Housewrite","year":{"$numberInt":"2023"},"difficulty":{"$numberInt":"6"},"standard":true}
+{"_id":{"$oid":"68fda9d41fd794cc6b3e1a88"},"name":"2024 Purdue IM Housewrite","year":{"$numberInt":"2024"},"difficulty":{"$numberInt":"6"},"standard":true}
+{"_id":{"$oid":"690d60ad9ae643ec12a7c280"},"name":"2025 Spec Script","year":{"$numberInt":"2025"},"difficulty":{"$numberInt":"10"},"standard":false}
+{"_id":{"$oid":"691d18ecdd1d63a6adb63547"},"name":"2023 \"Questions Based on Wikipedia Links Ophir Sent Me\"","year":{"$numberInt":"2023"},"difficulty":{"$numberInt":"10"},"standard":false}
+{"_id":{"$oid":"692330ebf1f28d19289b7f3d"},"name":"2025 ACF Winter","year":{"$numberInt":"2025"},"difficulty":{"$numberInt":"7"},"standard":true}
+{"_id":{"$oid":"692330eff1f28d19289b81e4"},"name":"2025 IQBT Undergraduate Championship","year":{"$numberInt":"2025"},"difficulty":{"$numberInt":"8"},"standard":true}
+{"_id":{"$oid":"692662bc653007f6f742165f"},"name":"2023 Planes, Trains, and Automobiles","year":{"$numberInt":"2023"},"difficulty":{"$numberInt":"10"},"standard":false}
+{"_id":{"$oid":"69390700f4e555b637420fad"},"name":"2024 CALISTO","year":{"$numberInt":"2024"},"difficulty":{"$numberInt":"3"},"standard":true}
+{"_id":{"$oid":"69460dfd9753254279800e26"},"name":"2023 Lore Dump","year":{"$numberInt":"2023"},"difficulty":{"$numberInt":"0"},"standard":false}
+{"_id":{"$oid":"69460e009753254279800ec3"},"name":"2024 Lore Dump","year":{"$numberInt":"2024"},"difficulty":{"$numberInt":"0"},"standard":false}
+{"_id":{"$oid":"694f300c81a87f0629b4abb8"},"name":"2025 Absolute Cinema","year":{"$numberInt":"2025"},"difficulty":{"$numberInt":"10"},"standard":false}
+{"_id":{"$oid":"697aacaeb8a09e9b70c0a797"},"name":"2025 Penn Bowl","year":{"$numberInt":"2025"},"difficulty":{"$numberInt":"8"},"standard":true}
+{"_id":{"$oid":"697c313c766076527b0e7bba"},"name":"2025 City Limits","year":{"$numberInt":"2025"},"difficulty":{"$numberInt":"10"},"standard":false}
+{"_id":{"$oid":"697ffb6755785d7f5ce38a3f"},"name":"2024 Maryland Spring","year":{"$numberInt":"2024"},"difficulty":{"$numberInt":"5"},"standard":true}
+{"_id":{"$oid":"697ffd32ebd24347285477f2"},"name":"2026 ACF Regionals","year":{"$numberInt":"2026"},"difficulty":{"$numberInt":"8"},"standard":true}
+{"_id":{"$oid":"6983ff6febb0dabe80252071"},"name":"2024 SITH","year":{"$numberInt":"2024"},"difficulty":{"$numberInt":"3"},"standard":true}
+{"_id":{"$oid":"6988ba005086dfd002049144"},"name":"2025 COOT","year":{"$numberInt":"2025"},"difficulty":{"$numberInt":"8"},"standard":true}
+{"_id":{"$oid":"699e2ae37a0803cad64e4149"},"name":"2025 NAFTA","year":{"$numberInt":"2025"},"difficulty":{"$numberInt":"9"},"standard":true}
+{"_id":{"$oid":"69d0a6d92edcce58c88e931a"},"name":"2025 HISTONE","year":{"$numberInt":"2025"},"difficulty":{"$numberInt":"5"},"standard":true}
+{"_id":{"$oid":"69db1d8b4eb60d043c821a2d"},"name":"2025 GSAC","year":{"$numberInt":"2025"},"difficulty":{"$numberInt":"3"},"standard":true}
+{"_id":{"$oid":"69e81dccac2904965ab07fb8"},"name":"2025 ACRONYM","year":{"$numberInt":"2025"},"difficulty":{"$numberInt":"0"},"standard":false}
+{"_id":{"$oid":"69ebd8154997b65751097586"},"name":"2025 NASAT","year":{"$numberInt":"2025"},"difficulty":{"$numberInt":"8"},"standard":true}
+{"_id":{"$oid":"69f6ccbda8d8a47437e9595c"},"name":"2026 ACF Nationals","year":{"$numberInt":"2026"},"difficulty":{"$numberInt":"9"},"standard":true}
+{"_id":{"$oid":"69fe6774e2442def495d8597"},"name":"2026 UK Varsities","year":{"$numberInt":"2026"},"difficulty":{"$numberInt":"7"},"standard":true}
+{"_id":{"$oid":"6a028dc0e7d76fea379020b1"},"name":"2026 ARCADIA","year":{"$numberInt":"2026"},"difficulty":{"$numberInt":"7"},"standard":true}
+{"_id":{"$oid":"6a0fbcbf92c3849e7db1d3e4"},"name":"2025 Scarlet Housewrite","year":{"$numberInt":"2025"},"difficulty":{"$numberInt":"6"},"standard":true}
+{"_id":{"$oid":"6a2cbf305fef949429e44b83"},"name":"2026 PACE NSC","year":{"$numberInt":"2026"},"difficulty":{"$numberInt":"5"},"standard":true}
+{"_id":{"$oid":"6a2cc107c2299b5c289654ae"},"name":"2025 Ludography","year":{"$numberInt":"2025"},"difficulty":{"$numberInt":"0"},"standard":false}
+{"_id":{"$oid":"6a4a89f450c311502adc478f"},"name":"2026 MRNA","year":{"$numberInt":"2026"},"difficulty":{"$numberInt":"7"},"standard":true}
+{"_id":{"$oid":"6a4a8bcb4c8d82f8f6577ab5"},"name":"2021 Delta Burke","year":{"$numberInt":"2021"},"difficulty":{"$numberInt":"6"},"standard":true}
+{"_id":{"$oid":"6a4a8e64d6a33ab5cffa0fac"},"name":"2026 UMA Bowl","year":{"$numberInt":"2026"},"difficulty":{"$numberInt":"0"},"standard":false}
