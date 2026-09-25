@@ -107,20 +107,16 @@ function tick(){
  if(e){e.classList.add('active');if(!$('qbstyle')||!$('qbstyle').checked)e.scrollIntoView({block:'center',behavior:'auto'})}
 }
 function startHighlight(wpm){
- // Fallback only: the speech engine's boundary events are the primary clock.
- let ms=60000/wpm;
+ let ms=Math.max(80,60000/Math.max(80,Math.min(400,wpm)));
  if(timer)clearInterval(timer);
- timer=setTimeout(()=>{if(!speechBoundarySeen&&!buzzed)fallbackHighlight(wpm)},900);
+ timer=setInterval(()=>{
+  if(paused||buzzed){return;}
+  if(i>=words.length-1){clearInterval(timer);timer=null;return;}
+  i++;
+  if($('qbstyle')&&$('qbstyle').checked)showProgress(i);
+  else if(!($('tournament')&&$('tournament').checked))tick();
+ },ms);
  tick();
-}
-let speechBoundarySeen=false;
-let lastBoundary=-1;
-let lastSpokenWord=-1;
-function fallbackHighlight(wpm){
- let ms=60000/wpm;
- if(timer)clearInterval(timer);
- timer=setInterval(()=>{if(i>=words.length){clearInterval(timer);timer=null;return}tick();i++},ms);
- tick();i++;
 }
 function startAnswerTimer(reason){if(!$('timerEnabled')||!$('timerEnabled').checked)return;if(countTimer)clearInterval(countTimer);let left=Math.max(3,Math.min(60,parseInt($('seconds').value,10)||10));$('countdown').textContent=(reason==='finished'?'Time after question: ':'Time left: ')+left+'s';countTimer=setInterval(()=>{left--;$('countdown').textContent=(reason==='finished'?'Time after question: ':'Time left: ')+left+'s';if(left<=0){clearInterval(countTimer);countTimer=null;$('countdown').textContent='Time expired';if(!buzzed){buzzed=true;lastLineBuzzed=false;powerBuzzed=false;$('answerrow').classList.remove('hidden');$('status').textContent='Question timer expired. Reveal the answer.';}reveal();}},1000)}
 function speakFrom(startWord){
@@ -130,9 +126,8 @@ function speakFrom(startWord){
  let text=words.slice(startWord).join(' '); if(!text)return;
  let u=new SpeechSynthesisUtterance(text),v=voices[Number($('voice').value)];
  if(v)u.voice=v;u.lang=v?v.lang:'en-US';u.rate=Math.max(.5,Math.min(2,wpm/240));u.pitch=pitch;u.volume=1;
- speechBoundarySeen=true; u.onboundary=e=>{let n=startWord+(String(text).slice(0,e.charIndex||0).trim().split(/\s+/).filter(Boolean).length);i=Math.min(words.length-1,n);if($('qbstyle')&&$('qbstyle').checked)showProgress(i);else if(!($('tournament')&&$('tournament').checked))tick()};
- u.onend=()=>{if(!buzzed){i=words.length-1;if($('qbstyle')&&$('qbstyle').checked)showProgress(i);else if(!($('tournament')&&$('tournament').checked))tick();paused=true;speechPaused=false;$('pause').textContent='Ⅱ Pause';$('status').textContent=$('timerEnabled').checked?'Question finished. Timer started.':'Question finished.';if($('timerEnabled').checked)startAnswerTimer('finished');}};
- speechBoundarySeen=false; if(timer)clearInterval(timer); timer=null; window.speechSynthesis.cancel(); window.speechSynthesis.speak(u); let estimate=Math.max(90,Math.min(700,wpm)); let delay=60000/estimate; timer=setInterval(()=>{if(speechBoundarySeen||buzzed||paused){if(speechBoundarySeen||buzzed){clearInterval(timer);timer=null}return} if(i<words.length-1){i++;if($('qbstyle')&&$('qbstyle').checked)showProgress(i);else if(!($('tournament')&&$('tournament').checked))tick()}},delay);
+ u.onend=()=>{if(!buzzed){i=words.length-1;if($('qbstyle')&&$('qbstyle').checked)showProgress(i);else if(!($('tournament')&&$('tournament').checked))tick();paused=true;speechPaused=false;if(timer)clearInterval(timer);timer=null;$('pause').textContent='Ⅱ Pause';$('status').textContent=$('timerEnabled').checked?'Question finished. Timer started.':'Question finished.';if($('timerEnabled').checked)startAnswerTimer('finished');}};
+ if(timer)clearInterval(timer); timer=null; window.speechSynthesis.cancel(); window.speechSynthesis.speak(u); startHighlight(wpm);
 }
 function read(){if(!cur||buzzed)return;stop();if(!currentReadCounted){totalRead++;currentReadCounted=true;updateQBStats()}paused=false;speechPaused=false;$('pause').textContent='Ⅱ Pause';speakFrom(0)}
 function buzz(){
