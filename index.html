@@ -34,7 +34,7 @@
 <div class=row><button id=start>▶ Read</button><button id=pause>Ⅱ Pause</button><button id=buzz>Space: Buzz</button><button id=skip>N: Skip</button></div>
 <div class=answer><b>Your answer</b><div id=answerrow class="answerrow hidden"><input id=ans placeholder="Type answer after buzzing"><button id=check>Reveal</button></div><div id=official class="muted hidden"></div><div class=row><button id=correct class=good disabled>Correct</button><button id=wrong class=bad disabled>Incorrect</button></div><div id=result class=muted></div><div class=score>Score: <span id=score>0</span> <span id=qbStats class="muted" style="margin-left:14px;font-size:15px;font-weight:700">Power: 0 · Correct: 0 · Neg: 0 · Dead: 0 · Tossups read: 0 · Celerity: 0.000</span> <button id=clearStats type=button style="margin-left:10px;font-size:14px;padding:5px 9px">Clear stats</button></div><div id=history class=history><h3>Question history</h3><div id=historyList></div></div></div></section></main><div id=keybindModal class="keybind-modal hidden" role="dialog" aria-modal="true" aria-labelledby="keybindTitle"><div class=keybind-card><button id=closeKeybinds class=keybind-close aria-label="Close keybinds">×</button><h3 id=keybindTitle>Keybinds</h3><ul><li><b>R</b> — Start reading tossup</li><li><b>N</b> — Skip / next tossup</li><li><b>P</b> — Pause / resume</li><li><b>Space</b> — Buzz</li></ul></div></div>
 <script>
-const $=x=>document.getElementById(x);let cur,words=[],i=0,timer=null,paused=true,buzzed=false,score=0,voices=[],countTimer=null,speechResumeWord=0,speechPaused=false,qbStyleShown=0,hasPower=false,powerWordIndex=-1,lastLineStart=0,powerBuzzed=false,lastLineBuzzed=false,powerCount=0,correctCount=0,negCount=0,deadCount=0,totalRead=0,currentReadCounted=false,celerityTotal=0,celerityCount=0,pendingCelerity=null;
+const $=x=>document.getElementById(x);let cur,words=[],i=0,timer=null,paused=true,buzzed=false,score=0,voices=[],countTimer=null,speechResumeWord=0,speechPaused=false,qbStyleShown=0,hasPower=false,powerWordIndex=-1,powerBuzzed=false,lastLineBuzzed=false,readingDone=false,boundaryActive=false,powerCount=0,correctCount=0,negCount=0,deadCount=0,totalRead=0,currentReadCounted=false,celerityTotal=0,celerityCount=0,pendingCelerity=null;
 function checked(id){return [...$(id).querySelectorAll('input:checked')].map(x=>x.value)}
 let allQuestions=[];let dataReady=null;let historySeq=0,activeHistoryId=null,currentHistoryOutcome=null,currentHistoryPoints=0,loadingNext=false;
 
@@ -74,7 +74,7 @@ function pauseResume(){
 }
 function show(text){
  const raw=String(text||''); const plain=clean(raw);
- words=plain.trim().split(/\s+/).filter(Boolean); i=0; powerBuzzed=false; lastLineBuzzed=false;
+ words=plain.trim().split(/\s+/).filter(Boolean); i=0; powerBuzzed=false; lastLineBuzzed=false; readingDone=false;
  const tournamentMode=$('tournament')&&$('tournament').checked;
  if(tournamentMode){
   $('q').className='question tournament-hidden';
@@ -82,8 +82,6 @@ function show(text){
  }
  powerWordIndex=words.findIndex(w=>/^\(\s*\*\s*\)$/.test(w.replace(/[.,;:!?]+$/,''))); hasPower=powerWordIndex>=0;
  const starts=[]; let pos=0; words.forEach((w,n)=>{starts.push(pos);pos+=w.length+1});
- const sentenceStarts=[]; for(let n=0;n<words.length;n++){if(n===0||/[.!?][\"”’']?$/.test(words[n-1]))sentenceStarts.push(n)}
- lastLineStart=sentenceStarts.length?sentenceStarts[sentenceStarts.length-1]:Math.max(0,words.length-10);
  if($('powerNotice')) $('powerNotice').textContent=hasPower?'Power in this question':'No power marked in this question';
  if(tournamentMode){
   $('q').className='question tournament-hidden';
@@ -118,15 +116,28 @@ function startHighlight(wpm){
  },ms);
  tick();
 }
-function startAnswerTimer(reason){if(!$('timerEnabled')||!$('timerEnabled').checked)return;if(countTimer)clearInterval(countTimer);let left=Math.max(3,Math.min(60,parseInt($('seconds').value,10)||10));$('countdown').textContent=(reason==='finished'?'Time after question: ':'Time left: ')+left+'s';countTimer=setInterval(()=>{left--;$('countdown').textContent=(reason==='finished'?'Time after question: ':'Time left: ')+left+'s';if(left<=0){clearInterval(countTimer);countTimer=null;$('countdown').textContent='Time expired';if(!buzzed){buzzed=true;lastLineBuzzed=false;powerBuzzed=false;$('answerrow').classList.remove('hidden');$('status').textContent='Question timer expired. Reveal the answer.';}reveal();}},1000)}
+function startAnswerTimer(reason){if(!$('timerEnabled')||!$('timerEnabled').checked)return;if(countTimer)clearInterval(countTimer);let left=Math.max(3,Math.min(60,parseInt($('seconds').value,10)||10));$('countdown').textContent=(reason==='finished'?'Time after question: ':'Time left: ')+left+'s';countTimer=setInterval(()=>{left--;$('countdown').textContent=(reason==='finished'?'Time after question: ':'Time left: ')+left+'s';if(left<=0){clearInterval(countTimer);countTimer=null;$('countdown').textContent='Time expired';if(!buzzed){buzzed=true;lastLineBuzzed=readingDone;powerBuzzed=false;$('answerrow').classList.remove('hidden');$('status').textContent='Question timer expired. Reveal the answer.';}reveal();}},1000)}
 function speakFrom(startWord){
  if(!cur||buzzed)return;
  let wpm=Math.max(80,Math.min(400,parseInt($('wpm').value,10)||240));
  let pitch=Math.max(.5,Math.min(2,+$('pitch').value||1));
- let text=words.slice(startWord).join(' '); if(!text)return;
+ let sliceWords=words.slice(startWord);
+ let text=sliceWords.join(' '); if(!text)return;
+ readingDone=false;
+ let charStarts=[]; let acc=0; sliceWords.forEach(w=>{charStarts.push(acc);acc+=w.length+1});
  let u=new SpeechSynthesisUtterance(text),v=voices[Number($('voice').value)];
  if(v)u.voice=v;u.lang=v?v.lang:'en-US';u.rate=Math.max(.5,Math.min(2,wpm/240));u.pitch=pitch;u.volume=1;
- u.onend=()=>{if(!buzzed){i=words.length-1;if($('qbstyle')&&$('qbstyle').checked)showProgress(i);else if(!($('tournament')&&$('tournament').checked))tick();paused=true;speechPaused=false;if(timer)clearInterval(timer);timer=null;$('pause').textContent='Ⅱ Pause';$('status').textContent=$('timerEnabled').checked?'Question finished. Timer started.':'Question finished.';if($('timerEnabled').checked)startAnswerTimer('finished');}};
+ boundaryActive=false;
+ u.onboundary=(e)=>{
+  if(buzzed||typeof e.charIndex!=='number')return;
+  if(e.name&&e.name!=='word')return;
+  let idx=0; for(let k=0;k<charStarts.length;k++){if(charStarts[k]<=e.charIndex)idx=k; else break}
+  let newI=startWord+idx; if(newI<=i)return;
+  if(!boundaryActive){boundaryActive=true; if(timer){clearInterval(timer);timer=null}}
+  i=newI;
+  if($('qbstyle')&&$('qbstyle').checked)showProgress(i); else if(!($('tournament')&&$('tournament').checked))tick();
+ };
+ u.onend=()=>{if(!buzzed){i=words.length-1;readingDone=true;if($('qbstyle')&&$('qbstyle').checked)showProgress(i);else if(!($('tournament')&&$('tournament').checked))tick();paused=true;speechPaused=false;if(timer)clearInterval(timer);timer=null;$('pause').textContent='Ⅱ Pause';$('status').textContent=$('timerEnabled').checked?'Question finished. Timer started.':'Question finished.';if($('timerEnabled').checked)startAnswerTimer('finished');}};
  if(timer)clearInterval(timer); timer=null; window.speechSynthesis.cancel(); window.speechSynthesis.speak(u); startHighlight(wpm);
 }
 function read(){if(!cur||buzzed)return;stop();if(!currentReadCounted){totalRead++;currentReadCounted=true;updateQBStats()}paused=false;speechPaused=false;$('pause').textContent='Ⅱ Pause';speakFrom(0)}
@@ -135,7 +146,7 @@ function buzz(){
  buzzed=true;pendingCelerity=words.length?Math.max(0,Math.min(1,(words.length-i)/words.length)):0;stop();
  const heard=words.slice(0,i+1).join(' ');
  powerBuzzed=hasPower && powerWordIndex>=0 && i < powerWordIndex;
- lastLineBuzzed=i>=lastLineStart;
+ lastLineBuzzed=readingDone;
  if($('tournament') && $('tournament').checked){ $('status').textContent=powerBuzzed?'Tournament buzz: BEFORE power':(hasPower?'Tournament buzz: AFTER power':'Tournament buzz: no power in question'); } else { $('status').textContent='Buzzed. Enter your answer and reveal.'; }
  $('buzz').disabled=true;$('answerrow').classList.remove('hidden');$('ans').focus();
  if($('timerEnabled').checked)startAnswerTimer('buzz');else $('countdown').textContent='';
@@ -155,12 +166,12 @@ function reveal(){
    let star=document.createElement('span');star.className='reveal-power-star';star.textContent='✦';$('correct').appendChild(star);
  }else{$('correct').textContent='Correct'}
  if(lastLineBuzzed){
-   $('wrong').textContent='Incorrect (Last line)';
+   $('wrong').textContent='Incorrect (Dead)';
    $('wrong').classList.add('lastline-flash');
  }else{$('wrong').textContent='Incorrect'}
- $('status').textContent='Answer revealed.'+(($('tournament')&&$('tournament').checked)?(powerBuzzed?' Power was passed.':(lastLineBuzzed?' Last line.':' Power was not passed.')):'');
+ $('status').textContent='Answer revealed.'+(($('tournament')&&$('tournament').checked)?(powerBuzzed?' Power was passed.':(lastLineBuzzed?' Dead question.':' Power was not passed.')):'');
 }
-async function load(){activeHistoryId=null;currentHistoryOutcome=null;currentHistoryPoints=0;stop();currentReadCounted=false;$('answerrow').classList.add('hidden');buzzed=false;powerBuzzed=false;lastLineBuzzed=false;$('ans').value='';$('buzz').disabled=false;$('official').classList.add('hidden');$('result').textContent='';['correct','wrong'].forEach(x=>{let b=$(x);b.disabled=true;b.classList.remove('lastline-flash','power-label-transition');b.textContent=x==='correct'?'Correct':'Incorrect';b.querySelectorAll('.reveal-power-star,.reveal-lastline,.power-star').forEach(s=>s.remove())});$('head').textContent='Loading…';let r=await api('/api/question',{category:checked('cats'),difficulty:checked('diffs'),search:$('search').value,powerOnly:$('powerOnly')&&$('powerOnly').checked});if(r.error){$('head').textContent='No tossup';$('q').textContent=r.error;return}cur=r;const scalar=scalarValue;const packetName=String(scalar(r.packet?.name)||scalar(r.packet?.number)||'Unknown');const setName=String(scalar(r.set?.name)||'Unknown');const qNo=Number(scalar(r.number))||0;const diff=scalar(r.difficulty);const packetId=scalar(r.packet?._id?.$oid)||String(scalar(r.packet?.name)||scalar(r.packet?.number)||'');const setId=scalar(r.set?._id?.$oid)||String(scalar(r.set?.name)||'');const packetRows=allQuestions.filter(x=>{const xp=scalar(x.packet?._id?.$oid)||String(scalar(x.packet?.name)||scalar(x.packet?.number)||'');const xs=scalar(x.set?._id?.$oid)||String(scalar(x.set?.name)||'');return xp===packetId&&xs===setId});const totalInPacket=packetRows.length||'?';$('head').textContent=`${r.category} · Difficulty ${diff} · ${setName} · Packet ${packetName} · Question ${qNo||'?'} of ${totalInPacket}`;$('meta').textContent='';show(r.question);$('status').textContent='Read aloud, or press Space to buzz.'}
+async function load(){activeHistoryId=null;currentHistoryOutcome=null;currentHistoryPoints=0;stop();currentReadCounted=false;$('answerrow').classList.add('hidden');buzzed=false;powerBuzzed=false;lastLineBuzzed=false;readingDone=false;$('ans').value='';$('buzz').disabled=false;$('official').classList.add('hidden');$('result').textContent='';['correct','wrong'].forEach(x=>{let b=$(x);b.disabled=true;b.classList.remove('lastline-flash','power-label-transition');b.textContent=x==='correct'?'Correct':'Incorrect';b.querySelectorAll('.reveal-power-star,.reveal-lastline,.power-star').forEach(s=>s.remove())});$('head').textContent='Loading…';let r=await api('/api/question',{category:checked('cats'),difficulty:checked('diffs'),search:$('search').value,powerOnly:$('powerOnly')&&$('powerOnly').checked});if(r.error){$('head').textContent='No tossup';$('q').textContent=r.error;return}cur=r;const scalar=scalarValue;const packetName=String(scalar(r.packet?.name)||scalar(r.packet?.number)||'Unknown');const setName=String(scalar(r.set?.name)||'Unknown');const qNo=Number(scalar(r.number))||0;const diff=scalar(r.difficulty);const packetId=scalar(r.packet?._id?.$oid)||String(scalar(r.packet?.name)||scalar(r.packet?.number)||'');const setId=scalar(r.set?._id?.$oid)||String(scalar(r.set?.name)||'');const packetRows=allQuestions.filter(x=>{const xp=scalar(x.packet?._id?.$oid)||String(scalar(x.packet?.name)||scalar(x.packet?.number)||'');const xs=scalar(x.set?._id?.$oid)||String(scalar(x.set?.name)||'');return xp===packetId&&xs===setId});const totalInPacket=packetRows.length||'?';$('head').textContent=`${r.category} · Difficulty ${diff} · ${setName} · Packet ${packetName} · Question ${qNo||'?'} of ${totalInPacket}`;$('meta').textContent='';show(r.question);$('status').textContent='Read aloud, or press Space to buzz.'}
 function updateQBStats(){const celerity=celerityCount?(celerityTotal/celerityCount):0;$('qbStats').textContent=`Power: ${powerCount} · Correct: ${correctCount} · Neg: ${negCount} · Dead: ${deadCount} · TU: ${totalRead} · Celerity: ${celerity.toFixed(3)}`}
 function mark(n,label){currentHistoryOutcome=label.replace(/:.*$/,'');currentHistoryPoints=n;document.querySelectorAll('.reveal-power-star,.power-star').forEach(s=>s.remove());score+=n;$('score').textContent=score;$('result').textContent=label;['correct','wrong'].forEach(x=>$(x).disabled=true)}
 async function init(){try{let m=await api('/api/meta');if(!m.categories.length)throw Error('No categories found in database');render('cats',m.categories);render('diffs',m.difficulties);$('meta').textContent=m.count.toLocaleString()+' tossups loaded';}catch(e){$('meta').textContent='Filter loading error: '+e.message;$('cats').textContent='Could not load categories';$('diffs').textContent='Could not load difficulties'}}
@@ -174,7 +185,7 @@ function spawnPowerStars(){
  }
 }
 async function nextQuestion(){if(loadingNext)return;loadingNext=true;$('skip').disabled=true;$('new').disabled=true;try{finalizeCurrentHistory();await load()}finally{loadingNext=false;$('skip').disabled=false;$('new').disabled=false}}
-$('start').onclick=read;$('pause').onclick=pauseResume;$('buzz').onclick=buzz;$('skip').onclick=nextQuestion;$('new').onclick=nextQuestion;$('check').onclick=()=>{if(!buzzed)return;reveal()};$('correct').onclick=()=>{const wasPower=powerBuzzed;if(wasPower)powerCount++;else correctCount++;if(pendingCelerity!==null){celerityTotal+=pendingCelerity;celerityCount++;pendingCelerity=null}updateQBStats();mark(wasPower?15:10,wasPower?'Correct (Power): +15':'Correct: +10');if(wasPower)spawnPowerStars()};$('wrong').onclick=()=>{if(lastLineBuzzed)deadCount++;else negCount++;updateQBStats();mark(lastLineBuzzed?0:-5,lastLineBuzzed?'Incorrect (Last line): 0':'Incorrect: -5')};
+$('start').onclick=read;$('pause').onclick=pauseResume;$('buzz').onclick=buzz;$('skip').onclick=nextQuestion;$('new').onclick=nextQuestion;$('check').onclick=()=>{if(!buzzed)return;reveal()};$('correct').onclick=()=>{const wasPower=powerBuzzed;if(wasPower)powerCount++;else correctCount++;if(pendingCelerity!==null){celerityTotal+=pendingCelerity;celerityCount++;pendingCelerity=null}updateQBStats();mark(wasPower?15:10,wasPower?'Correct (Power): +15':'Correct: +10');if(wasPower)spawnPowerStars()};$('wrong').onclick=()=>{if(lastLineBuzzed)deadCount++;else negCount++;updateQBStats();mark(lastLineBuzzed?0:-5,lastLineBuzzed?'Incorrect (Dead): 0':'Incorrect: -5')};
 $('clearStats').onclick=()=>{score=0;$('score').textContent='0';powerCount=0;correctCount=0;negCount=0;deadCount=0;totalRead=0;currentReadCounted=false;celerityTotal=0;celerityCount=0;pendingCelerity=null;updateQBStats();$('result').textContent='Stats and score cleared.'};$('showKeybinds').onclick=()=> $('keybindModal').classList.remove('hidden');$('closeKeybinds').onclick=()=> $('keybindModal').classList.add('hidden');$('keybindModal').onclick=e=>{if(e.target===$('keybindModal'))$('keybindModal').classList.add('hidden')};$('allc').onclick=()=>document.querySelectorAll('#cats input').forEach(x=>x.checked=true);$('nonec').onclick=()=>document.querySelectorAll('#cats input').forEach(x=>x.checked=false);$('alld').onclick=()=>document.querySelectorAll('#diffs input').forEach(x=>x.checked=true);$('noned').onclick=()=>document.querySelectorAll('#diffs input').forEach(x=>x.checked=false);$('reset').onclick=async()=>{stop();score=0;$('score').textContent='0';powerCount=0;correctCount=0;negCount=0;deadCount=0;totalRead=0;currentReadCounted=false;celerityTotal=0;celerityCount=0;pendingCelerity=null;updateQBStats();$('search').value='';document.querySelectorAll('#cats input,#diffs input').forEach(x=>x.checked=true);$('wpm').value=240;$('pitch').value=1;$('seconds').value=10;$('timerEnabled').checked=true;$('qbstyle').checked=false;$('tournament').checked=false;$('powerOnly').checked=false;$('historyEnabled').checked=true;if($('voice').options.length)$('voice').selectedIndex=0;$('keybindModal').classList.add('hidden');$('historyList').innerHTML='';historySeq=0;activeHistoryId=null;currentHistoryOutcome=null;currentHistoryPoints=0;$('result').textContent='Everything reset.';await load()};
 document.addEventListener('keydown',e=>{if(e.target.tagName==='INPUT'||e.target.tagName==='TEXTAREA')return;if(e.code==='Space'){e.preventDefault();buzz()}if(e.key.toLowerCase()==='p'){e.preventDefault();pauseResume()}if(e.key.toLowerCase()==='n'){e.preventDefault();nextQuestion()}if(e.key.toLowerCase()==='r'){e.preventDefault();read()}});
 function voiceset(){voices=window.speechSynthesis.getVoices()||[];$('voice').innerHTML=voices.map((v,n)=>`<option value="${n}">${v.name} (${v.lang})</option>`).join('');if(voices.length && !$('voice').dataset.userSelected){const score=v=>{const n=(v.name||'').toLowerCase();let s=0;if(/microsoft|google|natural|neural|enhanced|premium|online/.test(n))s+=5;if(/^en(-|_)/i.test(v.lang))s+=2;if(/us|gb|au/i.test(v.lang))s+=1;return s};let best=0;voices.forEach((v,i)=>{if(score(v)>score(voices[best]))best=i});$('voice').selectedIndex=best}}
@@ -191,6 +202,5 @@ if($('tournament')) $('tournament').onchange=()=>{
     if(cur){ if(!buzzed){ $('answerrow').classList.add('hidden'); $('official').classList.add('hidden'); $('correct').disabled=true; $('wrong').disabled=true; } show(cur.question); }
   }
 };
-</script>
-
 if($('historyEnabled'))$('historyEnabled').onchange=()=>{$('history').classList.toggle('hidden',!$('historyEnabled').checked);if(!$('historyEnabled').checked){$('historyList').innerHTML='';activeHistoryId=null}};
+</script>
