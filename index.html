@@ -19,7 +19,6 @@
 .history-good{color:#86efac}.history-bad{color:#fca5a5}.history-pending{color:#cbd5e1}
 .history-body{border-top:1px solid #475569;padding:12px 14px;background:#0b1222}
 .history-question{line-height:1.65;font-size:15px;white-space:pre-wrap}.history-meta{color:var(--muted);font-size:12px;margin-bottom:8px}.prepower{font-weight:800}
-#loadKokoroBtn{background:#1d4ed8;color:#fff;margin-bottom:10px;width:100%}
 </style>
 </head>
 <body>
@@ -27,13 +26,12 @@
 <main>
 <aside>
 <h1>Quizbowl Speaker</h1>
-<div class=muted>Tossups · Kokoro Local TTS · Scoring</div>
-<button id="loadKokoroBtn" type="button">Load Kokoro TTS Engine</button>
+<div id="ttsStatus" class=muted>Initializing audio model...</div>
 <label>Search</label><input id=search type=text placeholder="optional keyword">
 <label>Categories</label><div id=cats class=checks>Loading categories…</div><div class=row><button id=allc>All</button><button id=nonec>None</button></div>
 <label>Difficulties</label><div id=diffs class=checks>Loading difficulties…</div><div class=row><button id=alld>All</button><button id=noned>None</button></div>
 <details open><summary><b>Settings</b></summary>
-<label>Kokoro Voice</label>
+<label>Voice</label>
 <select id=voice>
   <optgroup label="American English — Female">
    <option value="af_heart" selected>af_heart</option>
@@ -85,11 +83,11 @@
 
 <section>
 <h2 id=head>Ready</h2>
-<div id=status class=muted>Click "Load Kokoro TTS Engine" to initialize, then load a question. Space buzzes. P pauses. N skips.</div>
+<div id=status class=muted>Loading questions and voice engine... Space buzzes. P pauses. N skips.</div>
 <div id=countdown class="score" aria-live="polite"></div>
 <div id=q class=question></div>
 <div id=powerNotice class="muted" style="margin-top:8px;font-weight:800"></div>
-<div class=row><button id=start>▶ Read</button><button id=pause>Ⅱ Pause</button><button id=buzz>Space: Buzz</button><button id=skip>N: Skip</button></div>
+<div class=row><button id=start disabled>▶ Read</button><button id=pause>Ⅱ Pause</button><button id=buzz>Space: Buzz</button><button id=skip>N: Skip</button></div>
 <audio id=audio style="display:none"></audio>
 <div class=answer><b>Your answer</b>
 <div id=answerrow class="answerrow hidden"><input id=ans placeholder="Type answer after buzzing"><button id=check>Reveal</button></div>
@@ -139,23 +137,19 @@ async function api(path,params={}){await loadData();if(path==='/api/meta'){retur
 function render(id,vals){$(id).innerHTML=vals.map(v=>`<label><input type=checkbox value="${String(v).replaceAll('"','&quot;')}"> ${v}</label>`).join('');$(id).querySelectorAll('input').forEach(x=>x.checked=true)}
 function clean(s){let d=document.createElement('div');d.innerHTML=s||'';return d.textContent||''}
 
-/* Kokoro TTS initialization & Audio generation */
-async function loadKokoro(){
-  if(tts) return tts;
-  $('loadKokoroBtn').disabled = true;
-  $('loadKokoroBtn').textContent = 'Loading Kokoro Model... (First load may take time)';$('status').textContent = 'Downloading/loading Kokoro WASM model...';
+/* Automatic Background TTS Loader */
+async function initTTS(){
   try {
+    $('ttsStatus').textContent = 'Loading audio model...';
     tts = await KokoroTTS.from_pretrained(MODEL_ID, { dtype: 'q8', device: 'wasm' });
-    $('loadKokoroBtn').textContent = 'Kokoro Loaded Successfully';$('status').textContent = 'Kokoro ready. Click Read or Press R.';
-    return tts;
+    $('ttsStatus').textContent = 'Audio engine ready';$('ttsStatus').style.color = '#86efac';
+    $('start').disabled = false;
+    $('status').textContent = 'Ready. Click Read or press R.';
   } catch(err) {
     console.error(err);
-    $('loadKokoroBtn').disabled = false;
-    $('loadKokoroBtn').textContent = 'Load Kokoro TTS Engine';$('status').textContent = 'Kokoro load failed: ' + (err?.message || err);
-    throw err;
+    $('ttsStatus').textContent = 'Audio engine failed to load';$('status').textContent = 'Error loading speech model. Check console.';
   }
 }
-$('loadKokoroBtn').onclick = () => loadKokoro().catch(()=>{});
 
 function encodeWav(float32, sampleRate) {
   const n = float32.length;
@@ -184,7 +178,7 @@ async function audioObjToBlob(audioObj) {
   const pcm = audioObj.audio || audioObj.data || null;
   const sampleRate = audioObj.sampling_rate || audioObj.sample_rate || 24000;
   if (pcm && pcm.length) return encodeWav(pcm, sampleRate);
-  throw new Error('Could not extract playable audio from Kokoro result.');
+  throw new Error('Could not extract playable audio from result.');
 }
 
 function estimateSyllables(word) {
@@ -310,11 +304,8 @@ function startAnswerTimer(reason){
 }
 
 async function read(){
-  if(!cur||buzzed)return;
+  if(!cur||buzzed||!tts)return;
   stop();
-  if(!tts){
-    try { await loadKokoro(); } catch(e){ return; }
-  }
   
   if(!currentReadCounted){totalRead++;currentReadCounted=true;updateQBStats()}
   
@@ -325,7 +316,7 @@ async function read(){
   
   const key = voice + '::' + wpm + '::' + text;
   if(key !== lastKey || !currentUrl){
-    $('status').textContent = `Generating audio with Kokoro (${voice})...`;
+    $('status').textContent = `Generating audio (${voice})...`;
     let audioObj;
     try {
       audioObj = await tts.generate(text, { voice, speed: rate });
@@ -441,7 +432,7 @@ async function load(){
   $('head').textContent=`${r.category} · Difficulty ${diff} · ${setName} · Packet ${packetName} · Question ${qNo||'?'} of ${totalInPacket}`;
   $('meta').textContent='';
   show(r.question);
-  $('status').textContent='Read aloud, or press Space to buzz.';
+  if(tts) $('status').textContent='Read aloud, or press Space to buzz.';
 }
 
 function updateQBStats(){
@@ -535,7 +526,9 @@ if($('tournament'))$('tournament').onchange=()=>{
 };
 if($('historyEnabled'))$('historyEnabled').onchange=()=>{$('history').classList.toggle('hidden',!$('historyEnabled').checked);if(!$('historyEnabled').checked){$('historyList').innerHTML='';activeHistoryId=null}};
 
+// Kick off automated loads immediately in the background
 init();
+initTTS();
 </script>
 </body>
 </html>
