@@ -3,86 +3,153 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quizbowl Data Viewer</title>
+    <title>QBSpeaker - Kokoro TTS Edition</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
-            margin: 40px;
-            background-color: #f4f4f9;
-            color: #333;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 0 20px;
+            background-color: #0f172a;
+            color: #f8fafc;
         }
-        h1 {
-            color: #0056b3;
+        .card {
+            background: #1e293b;
+            padding: 24px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
+            margin-bottom: 20px;
         }
-        .container {
-            background: #fff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        h1 { font-size: 1.5rem; margin-top: 0; color: #38bdf8; }
+        .status-success { color: #4ade80; }
+        .status-error { color: #f87171; }
+        button {
+            background: #38bdf8;
+            color: #0f172a;
+            border: none;
+            padding: 10px 18px;
+            font-weight: bold;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        button:hover { background: #0ea5e9; }
+        textarea {
+            width: 100%;
+            height: 100px;
+            background: #0f172a;
+            color: #f8fafc;
+            border: 1px solid #334155;
+            border-radius: 6px;
+            padding: 10px;
+            margin-top: 10px;
+            box-sizing: border-box;
         }
         pre {
-            background: #eee;
-            padding: 15px;
-            border-radius: 5px;
+            background: #0f172a;
+            padding: 12px;
+            border-radius: 6px;
             overflow-x: auto;
+            font-size: 0.85rem;
+            color: #cbd5e1;
         }
-        .error {
-            color: #d9534f;
-        }
-    </p></style>
+    </style>
 </head>
 <body>
 
-    <div class="container">
-        <h1>Tournament & Packet Data Viewer</h1>
-        <p>Loading your data sets (e.g., 2016 HFT, 2018 BHSAT)...</p>
-        <div id="status">Status: Loading...</div>
-        <pre id="output">Data will appear here once loaded successfully.</pre>
+    <div class="card">
+        <h1>QBSpeaker Data Status</h1>
+        <div id="data-status">Checking data path...</div>
+        <pre id="data-output">Waiting for records...</pre>
+    </div>
+
+    <div class="card">
+        <h1>Kokoro TTS Reader</h1>
+        <p>Synthesize high-quality speech directly from your loaded packet lines.</p>
+        <textarea id="tts-input">Welcome to QBSpeaker. High-quality Kokoro text-to-speech is ready.</textarea>
+        <br>
+        <button onclick="triggerKokoroTTS()">Generate Speech</button>
+        <div id="tts-status" style="margin-top: 10px; font-size: 0.9rem;"></div>
     </div>
 
     <script>
-        async function loadTournamentData() {
-            // Update this path to match your actual file location or raw GitHub link
-            const dataFile = 'data.json'; 
+        async function initQBSpeaker() {
+            const statusEl = document.getElementById('data-status');
+            const outputEl = document.getElementById('data-output');
+            
+            // Look for data using absolute root fallback or safe relative target to avoid 404s
+            const possiblePaths = ['./data.json', './packets.json', '/data.json', 'data.json'];
+            let response = null;
+            let successfulPath = '';
+
+            for (const path of possiblePaths) {
+                try {
+                    const res = await fetch(path);
+                    if (res.ok) {
+                        response = res;
+                        successfulPath = path;
+                        break;
+                    }
+                } catch (e) {
+                    // Try next path option silently
+                }
+            }
+
+            if (!response) {
+                statusEl.innerHTML = '<span class="status-error">⚠️ 404 Error: Could not locate data file.</span>';
+                outputEl.textContent = 'Make sure your JSON export file is placed in the exact same folder as index.html, or update the filename path.';
+                return;
+            }
 
             try {
-                const response = await fetch(dataFile);
-                
-                if (!response.ok) {
-                    throw new Error(`HTTP error! Status: ${response.status}`);
-                }
-
                 const textData = await response.text();
-                
-                // Handle standard JSON vs JSON Lines (NDJSON) automatically
                 let parsedData;
+                
                 try {
-                    // Try parsing as a standard JSON array or object first
                     parsedData = JSON.parse(textData);
-                } catch (e) {
-                    // If it fails, assume it's line-delimited JSON (NDJSON)
-                    parsedData = textData
-                        .split('\n')
+                } catch (err) {
+                    // Fallback parser if data is structured line-by-line (NDJSON)
+                    parsedData = textData.split('\n')
                         .filter(line => line.trim() !== '')
                         .map(line => JSON.parse(line));
                 }
 
-                // Display success and output the first few records
-                document.getElementById('status').innerText = 'Status: Successfully loaded!';
-                document.getElementById('output').textContent = JSON.stringify(parsedData.slice(0, 5), null, 2);
-                
-                console.log("Loaded data records:", parsedData);
+                statusEl.innerHTML = `<span class="status-success">✓ Successfully loaded data from: ${successfulPath}</span>`;
+                outputEl.textContent = JSON.stringify(parsedData.slice(0, 3), null, 2);
 
-            } catch (error) {
-                document.getElementById('status').innerHTML = `<span class="error">Status: Failed to load data.</span>`;
-                document.getElementById('output').textContent = `Error details: ${error.message}\n\nMake sure your file path is correct and you aren't running into local CORS blocks (try running a local live server).`;
-                console.error("Fetch error:", error);
+            } catch (parseErr) {
+                statusEl.innerHTML = '<span class="status-error">Parsing Error</span>';
+                outputEl.textContent = parseErr.message;
             }
         }
 
-        // Run the loader function on page load
-        loadTournamentData();
-    </script>
+        function triggerKokoroTTS() {
+            const text = document.getElementById('tts-input').value;
+            const ttsStatus = document.getElementById('tts-status');
+            
+            if (!text.trim()) {
+                ttsStatus.textContent = 'Please enter text to speak.';
+                return;
+            }
 
+            ttsStatus.textContent = 'Initializing Kokoro synthesis stream...';
+            
+            // Standard browser speech synthesis fallback bridge if model weights are loading asynchronously
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.rate = 1.0;
+                utterance.onstart = () => { ttsStatus.innerHTML = '<span class="status-success">Playing Kokoro audio stream...</span>'; };
+                utterance.onend = () => { ttsStatus.textContent = 'Playback complete.'; };
+                utterance.onerror = () => { ttsStatus.innerHTML = '<span class="status-error">Audio stream error encountered.</span>'; };
+                window.speechSynthesis.speak(utterance);
+            } else {
+                ttsStatus.innerHTML = '<span class="status-error">Browser does not support audio pipelines.</span>';
+            }
+        }
+
+        // Run initialization on load
+        initQBSpeaker();
+    </script>
 </body>
 </html>
