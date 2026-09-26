@@ -27,17 +27,10 @@
   <option value="piper">Piper WASM (Neural AI)</option>
   <option value="native">Native Web Speech API</option>
 </select>
-<div id=piperVoiceGroup>
-  <label>Piper Voice Model</label>
-  <select id=piperVoice>
-    <option value="en_US-hfc_female-medium">US Female (hfc-medium ~25MB)</option>
-    <option value="en_US-libritts_r-medium">US LibriTTS (~35MB)</option>
-  </select>
-</div>
-<div id=nativeVoiceGroup style="display:none">
-  <label>Native Voice</label>
-  <select id=voice></select>
-</div>
+
+<label id=voiceLabel>Voice Model</label>
+<select id=voice></select>
+
 <label>Speaking speed (WPM)</label><input id=wpm type=number min=80 max=400 step=5 value=240>
 <label>Pitch</label><input id=pitch type=number min=.5 max=2 step=.1 value=1>
 <label><input id="timerEnabled" type="checkbox" checked> Enable timer (buzzing and after question)</label><label>Timer duration (seconds)</label><input id=seconds type=number min=3 max=60 step=1 value=10><label><input id=qbstyle type=checkbox> QB Reader Style Reading</label>
@@ -52,6 +45,43 @@
 <script>
 const $=x=>document.getElementById(x);let cur,words=[],i=0,timer=null,paused=true,buzzed=false,score=0,voices=[],countTimer=null,speechResumeWord=0,speechPaused=false,qbStyleShown=0,hasPower=false,powerWordIndex=-1,powerBuzzed=false,lastLineBuzzed=false,readingDone=false,boundaryActive=false,powerCount=0,correctCount=0,negCount=0,deadCount=0,totalRead=0,currentReadCounted=false,celerityTotal=0,celerityCount=0,pendingCelerity=null;
 let piperAudio=null,piperAnimFrame=null,piperTimings=[];
+
+const piperVoices = [
+  { id: 'en_US-hfc_female-medium', name: 'US Female (hfc-medium ~25MB)' },
+  { id: 'en_US-libritts_r-medium', name: 'US LibriTTS (~35MB)' },
+  { id: 'en_US-amy-medium', name: 'US Amy (~25MB)' },
+  { id: 'en_GB-alan-medium', name: 'UK Alan (~25MB)' }
+];
+
+function updateVoiceDropdown() {
+  const engine = $('engine')?.value || 'piper';
+  const voiceSelect = $('voice');
+  const voiceLabel = $('voiceLabel');
+  if (!voiceSelect) return;
+
+  if (engine === 'piper') {
+    if (voiceLabel) voiceLabel.textContent = 'Piper Voice Model';
+    voiceSelect.innerHTML = piperVoices.map(v => `<option value="${v.id}">${v.name}</option>`).join('');
+  } else {
+    if (voiceLabel) voiceLabel.textContent = 'Native Web Speech Voice';
+    voices = window.speechSynthesis.getVoices() || [];
+    voiceSelect.innerHTML = voices.map((v, n) => `<option value="${n}">${v.name} (${v.lang})</option>`).join('');
+    if (voices.length && !voiceSelect.dataset.userSelected) {
+      const score = v => {
+        const n = (v.name || '').toLowerCase();
+        let s = 0;
+        if (/microsoft|google|natural|neural|enhanced|premium|online/.test(n)) s += 5;
+        if (/^en(-|_)/i.test(v.lang)) s += 2;
+        if (/us|gb|au/i.test(v.lang)) s += 1;
+        return s;
+      };
+      let best = 0;
+      voices.forEach((v, i) => { if (score(v) > score(voices[best])) best = i; });
+      voiceSelect.selectedIndex = best;
+    }
+  }
+}
+
 function checked(id){return [...$(id).querySelectorAll('input:checked')].map(x=>x.value)}
 let allQuestions=[];let dataReady=null;let historySeq=0,activeHistoryId=null,currentHistoryOutcome=null,currentHistoryPoints=0,loadingNext=false;
 
@@ -221,7 +251,7 @@ async function speakFrom(startWord) {
     readingDone = false;
     $('status').textContent = 'Generating Piper AI voice audio...';
     try {
-      const voiceId = $('piperVoice').value;
+      const voiceId = $('voice').value;
       const wavBlob = await tts.predict({ text: text, voiceId: voiceId });
       if (buzzed || paused) return;
 
@@ -290,7 +320,7 @@ function reveal(){
 async function load(){activeHistoryId=null;currentHistoryOutcome=null;currentHistoryPoints=0;stop();currentReadCounted=false;$('answerrow').classList.add('hidden');buzzed=false;powerBuzzed=false;lastLineBuzzed=false;readingDone=false;$('ans').value='';$('buzz').disabled=false;$('official').classList.add('hidden');$('result').textContent='';['correct','wrong'].forEach(x=>{let b=$(x);b.disabled=true;b.classList.remove('lastline-flash','power-label-transition');b.textContent=x==='correct'?'Correct':'Incorrect';b.querySelectorAll('.reveal-power-star,.reveal-lastline,.power-star').forEach(s=>s.remove())});$('head').textContent='Loading…';let r=await api('/api/question',{category:checked('cats'),difficulty:checked('diffs'),search:$('search').value,powerOnly:$('powerOnly')&&$('powerOnly').checked});if(r.error){$('head').textContent='No tossup';$('q').textContent=r.error;return}cur=r;const scalar=scalarValue;const packetName=String(scalar(r.packet?.name)||scalar(r.packet?.number)||'Unknown');const setName=String(scalar(r.set?.name)||'Unknown');const qNo=Number(scalar(r.number))||0;const diff=scalar(r.difficulty);const packetId=scalar(r.packet?._id?.$oid)||String(scalar(r.packet?.name)||scalar(r.packet?.number)||'');const setId=scalar(r.set?._id?.$oid)||String(scalar(r.set?.name)||'');const packetRows=allQuestions.filter(x=>{const xp=scalar(x.packet?._id?.$oid)||String(scalar(x.packet?.name)||scalar(x.packet?.number)||'');const xs=scalar(x.set?._id?.$oid)||String(scalar(x.set?.name)||'');return xp===packetId&&xs===setId});const totalInPacket=packetRows.length||'?';$('head').textContent=`${r.category} · Difficulty ${diff} · ${setName} · Packet ${packetName} · Question ${qNo||'?'} of ${totalInPacket}`;$('meta').textContent='';show(r.question);$('status').textContent='Read aloud, or press Space to buzz.'}
 function updateQBStats(){const celerity=celerityCount?(celerityTotal/celerityCount):0;$('qbStats').textContent=`Power: ${powerCount} · Correct: ${correctCount} · Neg: ${negCount} · Dead: ${deadCount} · TU: ${totalRead} · Celerity: ${celerity.toFixed(3)}`}
 function mark(n,label){currentHistoryOutcome=label.replace(/:.*$/,'');currentHistoryPoints=n;document.querySelectorAll('.reveal-power-star,.power-star').forEach(s=>s.remove());score+=n;$('score').textContent=score;$('result').textContent=label;['correct','wrong'].forEach(x=>$(x).disabled=true)}
-async function init(){try{let m=await api('/api/meta');if(!m.categories.length)throw Error('No categories found in database');render('cats',m.categories);render('diffs',m.difficulties);$('meta').textContent=m.count.toLocaleString()+' tossups loaded';}catch(e){$('meta').textContent='Filter loading error: '+e.message;$('cats').textContent='Could not load categories';$('diffs').textContent='Could not load difficulties'}}
+async function init(){try{let m=await api('/api/meta');if(!m.categories.length)throw Error('No categories found in database');render('cats',m.categories);render('diffs',m.difficulties);$('meta').textContent=m.count.toLocaleString()+' tossups loaded';await load();}catch(e){$('meta').textContent='Filter loading error: '+e.message;$('cats').textContent='Could not load categories';$('diffs').textContent='Could not load difficulties'}}
 function spawnPowerStars(){
  const b=$('correct');
  for(let n=0;n<7;n++){
@@ -304,13 +334,17 @@ async function nextQuestion(){if(loadingNext)return;loadingNext=true;$('skip').d
 $('start').onclick=read;$('pause').onclick=pauseResume;$('buzz').onclick=buzz;$('skip').onclick=nextQuestion;$('new').onclick=nextQuestion;$('check').onclick=()=>{if(!buzzed)return;reveal()};$('correct').onclick=()=>{const wasPower=powerBuzzed;if(wasPower)powerCount++;else correctCount++;if(pendingCelerity!==null){celerityTotal+=pendingCelerity;celerityCount++;pendingCelerity=null}updateQBStats();mark(wasPower?15:10,wasPower?'Correct (Power): +15':'Correct: +10');if(wasPower)spawnPowerStars()};$('wrong').onclick=()=>{if(lastLineBuzzed)deadCount++;else negCount++;updateQBStats();mark(lastLineBuzzed?0:-5,lastLineBuzzed?'Incorrect (Dead): 0':'Incorrect: -5')};
 $('clearStats').onclick=()=>{score=0;$('score').textContent='0';powerCount=0;correctCount=0;negCount=0;deadCount=0;totalRead=0;currentReadCounted=false;celerityTotal=0;celerityCount=0;pendingCelerity=null;updateQBStats();$('result').textContent='Stats and score cleared.'};$('showKeybinds').onclick=()=> $('keybindModal').classList.remove('hidden');$('closeKeybinds').onclick=()=> $('keybindModal').classList.add('hidden');$('keybindModal').onclick=e=>{if(e.target===$('keybindModal'))$('keybindModal').classList.add('hidden')};$('allc').onclick=()=>document.querySelectorAll('#cats input').forEach(x=>x.checked=true);$('nonec').onclick=()=>document.querySelectorAll('#cats input').forEach(x=>x.checked=false);$('alld').onclick=()=>document.querySelectorAll('#diffs input').forEach(x=>x.checked=true);$('noned').onclick=()=>document.querySelectorAll('#diffs input').forEach(x=>x.checked=false);$('reset').onclick=async()=>{stop();score=0;$('score').textContent='0';powerCount=0;correctCount=0;negCount=0;deadCount=0;totalRead=0;currentReadCounted=false;celerityTotal=0;celerityCount=0;pendingCelerity=null;updateQBStats();$('search').value='';document.querySelectorAll('#cats input,#diffs input').forEach(x=>x.checked=true);$('wpm').value=240;$('pitch').value=1;$('seconds').value=10;$('timerEnabled').checked=true;$('qbstyle').checked=false;$('tournament').checked=false;$('powerOnly').checked=false;$('historyEnabled').checked=true;if($('voice').options.length)$('voice').selectedIndex=0;$('keybindModal').classList.add('hidden');$('historyList').innerHTML='';historySeq=0;activeHistoryId=null;currentHistoryOutcome=null;currentHistoryPoints=0;$('result').textContent='Everything reset.';await load()};
 document.addEventListener('keydown',e=>{if(e.target.tagName==='INPUT'||e.target.tagName==='TEXTAREA')return;if(e.code==='Space'){e.preventDefault();buzz()}if(e.key.toLowerCase()==='p'){e.preventDefault();pauseResume()}if(e.key.toLowerCase()==='n'){e.preventDefault();nextQuestion()}if(e.key.toLowerCase()==='r'){e.preventDefault();read()}});
-function voiceset(){voices=window.speechSynthesis.getVoices()||[];$('voice').innerHTML=voices.map((v,n)=>`<option value="${n}">${v.name} (${v.lang})</option>`).join('');if(voices.length && !$('voice').dataset.userSelected){const score=v=>{const n=(v.name\vert{}\vert{}'').toLowerCase();let s=0;if(/microsoft\vert{}google\vert{}natural\vert{}neural\vert{}enhanced\vert{}premium\vert{}online/.test(n))s+=5;if(/^en(-\vert{}_)/i.test(v.lang))s+=2;if(/us\vert{}gb\vert{}au/i.test(v.lang))s+=1;return s};let best=0;voices.forEach((v,i)=>{if(score(v)>score(voices[best]))best=i});$('voice').selectedIndex=best}}
-if('speechSynthesis' in window){voiceset();window.speechSynthesis.onvoiceschanged=voiceset}if($('voice'))$('voice').onchange=()=>{$('voice').dataset.userSelected='1'}
+
+if('speechSynthesis' in window){
+  window.speechSynthesis.onvoiceschanged = () => {
+    if ($('engine')?.value === 'native') updateVoiceDropdown();
+  };
+}
+if($('voice')) $('voice').onchange=()=>{$('voice').dataset.userSelected='1'};
+if($('engine'))$('engine').onchange=()=>{ updateVoiceDropdown(); };
 if($('qbstyle'))$('qbstyle').onchange=()=>{speechResumeWord=0; speechPaused=false; qbStyleShown=0; if(cur)show(cur.question)};
-if($('engine'))$('engine').onchange=()=>{
-  const val=$('engine').value;
-  $('piperVoiceGroup').style.display=val==='piper'?'block':'none';$('nativeVoiceGroup').style.display=val==='native'?'block':'none';
-};
+
+updateVoiceDropdown();
 init();
 
 if($('tournament'))$('tournament').onchange=()=>{
