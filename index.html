@@ -1,7 +1,6 @@
-<!doctype html>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Quizbowl Speaker</title>
+<!doctype html><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Quizbowl Speaker</title>
+<!-- Piper WASM Library -->
+<script src="https://cdn.jsdelivr.net/npm/@therealtimex/piper-tts-web@1.1.0/dist/index.umd.js"></script>
 <style>
 :root{color-scheme:dark;--bg:#0b1020;--panel:#151d31;--line:#334155;--txt:#f8fafc;--muted:#aab6cc;--accent:#60a5fa}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--txt);font:16px/1.5 system-ui}main{max-width:1300px;margin:auto;padding:18px;display:grid;grid-template-columns:320px 1fr;gap:18px}aside,section{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px}h1{margin:0 0 4px;font-size:25px}h2{margin:0 0 8px}.muted{color:var(--muted);font-size:13px}label{display:block;margin:13px 0 6px;font-weight:700}input,button,select{font:inherit}input[type=text],input[type=number],select{width:100%;padding:9px;border-radius:8px;border:1px solid var(--line);background:#0b1222;color:var(--txt)}button{padding:9px 12px;border:1px solid var(--line);border-radius:8px;background:#26344d;color:var(--txt);font-weight:700;cursor:pointer}button:hover{border-color:var(--accent)}button:disabled{opacity:.4}.checks{max-height:230px;overflow:auto;border:1px solid var(--line);padding:9px;border-radius:8px}.checks label{font-weight:400;margin:3px 0;display:flex;gap:8px}.row{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}.question{font-size:25px;line-height:1.65;min-height:210px;max-height:500px;overflow:auto;padding:10px;border:1px solid var(--line);border-radius:8px}.word.active{background:#b45309;border-radius:4px;padding:0 2px}.answer{margin-top:14px;border-top:1px solid var(--line);padding-top:14px}.answerrow{display:flex;gap:8px}.answerrow input{flex:1}.hidden{display:none!important}.keybind-modal{position:fixed;inset:0;background:rgba(0,0,0,.65);display:flex;align-items:center;justify-content:center;z-index:1000;padding:20px}.keybind-card{position:relative;width:min(420px,100%);background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:24px;box-shadow:0 12px 40px rgba(0,0,0,.4)}.keybind-card h3{margin:0 0 14px}.keybind-card ul{margin:0;padding-left:22px}.keybind-close{position:absolute;right:10px;top:8px;background:transparent;border:0;font-size:24px;padding:2px 8px}.score{font-size:22px;font-weight:800;margin:8px 0}.good{background:#14532d}.bad{background:#7f1d1d}.power-flash{position:relative;overflow:visible}.power-star{position:absolute;color:#facc15;font-size:clamp(15px,2.2vw,23px);pointer-events:none;z-index:5;animation:powerStarFloat .72s ease-out forwards;transform-origin:center}.reveal-power-star{position:absolute;right:2px;top:-9px;color:#facc15;font-size:23px;pointer-events:none;z-index:6;opacity:1!important;animation:none!important;transform:none!important}.power-label-transition{animation:labelFade .24s ease-out}@keyframes powerStarFloat{0%{opacity:0;transform:translate(0,5px) rotate(-10deg) scale(.65)}18%{opacity:1}100%{opacity:0;transform:translate(var(--dx),-12px) rotate(18deg) scale(1)}}@keyframes slowSpin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}@keyframes labelFade{0%{opacity:.25;transform:translateY(2px)}100%{opacity:1;transform:translateY(0)}}@keyframes powerStars{0%{opacity:0;transform:rotate(-7deg) scale(.72)}12%{opacity:1}28%{opacity:1;transform:rotate(-2deg) scale(1)}100%{opacity:0;transform:rotate(7deg) scale(1.18)}}.lastline-flash{background:#6b7280!important;color:#fff!important;animation:none!important}@media(max-width:850px){main{grid-template-columns:1fr;padding:10px}.question{font-size:21px}}
@@ -23,7 +22,22 @@
 <label>Categories</label><div id=cats class=checks>Loading categories…</div><div class=row><button id=allc>All</button><button id=nonec>None</button></div>
 <label>Difficulties</label><div id=diffs class=checks>Loading difficulties…</div><div class=row><button id=alld>All</button><button id=noned>None</button></div>
 <details open><summary><b>Settings</b></summary>
-<label>Voice</label><select id=voice></select>
+<label>Speech Engine</label>
+<select id=engine>
+  <option value="piper">Piper WASM (Neural AI)</option>
+  <option value="native">Native Web Speech API</option>
+</select>
+<div id=piperVoiceGroup>
+  <label>Piper Voice Model</label>
+  <select id=piperVoice>
+    <option value="en_US-hfc_female-medium">US Female (hfc-medium ~25MB)</option>
+    <option value="en_US-libritts_r-medium">US LibriTTS (~35MB)</option>
+  </select>
+</div>
+<div id=nativeVoiceGroup style="display:none">
+  <label>Native Voice</label>
+  <select id=voice></select>
+</div>
 <label>Speaking speed (WPM)</label><input id=wpm type=number min=80 max=400 step=5 value=240>
 <label>Pitch</label><input id=pitch type=number min=.5 max=2 step=.1 value=1>
 <label><input id="timerEnabled" type="checkbox" checked> Enable timer (buzzing and after question)</label><label>Timer duration (seconds)</label><input id=seconds type=number min=3 max=60 step=1 value=10><label><input id=qbstyle type=checkbox> QB Reader Style Reading</label>
@@ -37,6 +51,7 @@
 <div class=answer><b>Your answer</b><div id=answerrow class="answerrow hidden"><input id=ans placeholder="Type answer after buzzing"><button id=check>Reveal</button></div><div id=official class="muted hidden"></div><div class=row><button id=correct class=good disabled>Correct</button><button id=wrong class=bad disabled>Incorrect</button></div><div id=result class=muted></div><div class=score>Score: <span id=score>0</span> <span id=qbStats class="muted" style="margin-left:14px;font-size:15px;font-weight:700">Power: 0 · Correct: 0 · Neg: 0 · Dead: 0 · Tossups read: 0 · Celerity: 0.000</span> <button id=clearStats type=button style="margin-left:10px;font-size:14px;padding:5px 9px">Clear stats</button></div><div id=history class=history><h3>Question history</h3><div id=historyList></div></div></div></section></main><div id=keybindModal class="keybind-modal hidden" role="dialog" aria-modal="true" aria-labelledby="keybindTitle"><div class=keybind-card><button id=closeKeybinds class=keybind-close aria-label="Close keybinds">×</button><h3 id=keybindTitle>Keybinds</h3><ul><li><b>R</b> — Start reading tossup</li><li><b>N</b> — Skip / next tossup</li><li><b>P</b> — Pause / resume</li><li><b>Space</b> — Buzz</li></ul></div></div>
 <script>
 const $=x=>document.getElementById(x);let cur,words=[],i=0,timer=null,paused=true,buzzed=false,score=0,voices=[],countTimer=null,speechResumeWord=0,speechPaused=false,qbStyleShown=0,hasPower=false,powerWordIndex=-1,powerBuzzed=false,lastLineBuzzed=false,readingDone=false,boundaryActive=false,powerCount=0,correctCount=0,negCount=0,deadCount=0,totalRead=0,currentReadCounted=false,celerityTotal=0,celerityCount=0,pendingCelerity=null;
+let piperAudio=null,piperAnimFrame=null,piperTimings=[];
 function checked(id){return [...$(id).querySelectorAll('input:checked')].map(x=>x.value)}
 let allQuestions=[];let dataReady=null;let historySeq=0,activeHistoryId=null,currentHistoryOutcome=null,currentHistoryPoints=0,loadingNext=false;
 
@@ -47,10 +62,7 @@ function boldPowerText(text){const plain=clean(text);const ws=plain.trim().split
 function addHistoryEntry(r){if(!$('historyEnabled')?.checked)return null;const m=questionMeta(r);const id=++historySeq;activeHistoryId=id;const el=document.createElement('details');el.className='history-item';el.dataset.historyId=String(id);el.innerHTML=`<summary><span class="history-answer">${esc(clean(r.answer||'Unknown answer'))}</span><span class="history-status history-pending">Pending</span></summary><div class="history-body"><div class="history-meta">${esc(m.category)} · ${esc(m.setName)} · Packet ${esc(m.packetName)} · Question ${m.qNo||'?'} · Difficulty ${esc(m.difficulty)}</div><div class="history-question">${boldPowerText(r.question||'')}</div><div class="history-result history-pending" style="margin-top:10px">Not scored yet</div></div>`;$('historyList').prepend(el);return id}
 function updateHistory(outcome,points){if(!activeHistoryId)return;const el=$('historyList').querySelector(`[data-history-id="${activeHistoryId}"]`);if(!el)return;const top=el.querySelector('.history-status');const result=el.querySelector('.history-result');top.textContent=outcome;top.className='history-status '+(points>0?'history-good':points<0?'history-bad':'history-pending');result.textContent=`${outcome}${points>0?' · +'+points:points<0?' · '+points:' · 0 points'}`;result.className='history-result '+(points>0?'history-good':points<0?'history-bad':'history-pending')}
 function finalizeCurrentHistory(){if(!cur||!$('historyEnabled')?.checked)return;const id=addHistoryEntry(cur);if(id&&currentHistoryOutcome)updateHistory(currentHistoryOutcome,currentHistoryPoints);else if(id)updateHistory('Skipped',0)}
-
-// FIXED DATA LOADER FOR NDJSON FORMAT
-async function loadData(){if(dataReady)return dataReady;dataReady=(async()=>{const names=["questions-1.json.gz","questions-2.json.gz","questions-3.json.gz","questions-4.json.gz"];const parts=await Promise.all(names.map(async name=>{const r=await fetch(name);if(!r.ok)throw Error('Could not load '+name);const b=await r.arrayBuffer();const text=await new Response(new Blob([b]).stream().pipeThrough(new DecompressionStream('gzip'))).text();return text.trim().split('\n').filter(Boolean).map(line=>JSON.parse(line))}));allQuestions=parts.flat();return allQuestions})();return dataReady}
-
+async function loadData(){if(dataReady)return dataReady;dataReady=(async()=>{const names=["questions-1.json.gz","questions-2.json.gz","questions-3.json.gz","questions-4.json.gz"];const parts=await Promise.all(names.map(async name=>{const r=await fetch(name);if(!r.ok)throw Error('Could not load '+name);const b=await r.arrayBuffer();const text=await new Response(new Blob([b]).stream().pipeThrough(new DecompressionStream('gzip'))).text();return JSON.parse(text)}));allQuestions=parts.flat();return allQuestions})();return dataReady}
 async function api(path,params={}){await loadData();if(path==='/api/meta'){return {categories:[...new Set(allQuestions.map(x=>x.category).filter(Boolean))].sort(),difficulties:[...new Set(allQuestions.map(x=>String(typeof x.difficulty==='object'?x.difficulty.$numberInt:x.difficulty)).filter(Boolean))].sort((a,b)=>+a-+b),count:allQuestions.length}}if(path==='/api/question'){let rows=allQuestions.slice();if(params.category?.length)rows=rows.filter(x=>params.category.includes(x.category));if(params.difficulty?.length)rows=rows.filter(x=>params.difficulty.includes(String(typeof x.difficulty==='object'?x.difficulty.$numberInt:x.difficulty)));if(params.powerOnly)rows=rows.filter(x=>/\(\s*\*\s*\)/.test(clean(x.question||'')));const s=(params.search||'').trim().toLowerCase();if(s)rows=rows.filter(x=>String(x.question||'').toLowerCase().includes(s)||String(x.answer||'').toLowerCase().includes(s));if(!rows.length)return {error:'No tossups match the selected filters.'};return rows[Math.floor(Math.random()*rows.length)]}return {error:'Not found'}}
 function render(id,vals){$(id).innerHTML=vals.map(v=>`<label><input type=checkbox value="${String(v).replaceAll('"','&quot;')}"> ${v}</label>`).join('');$(id).querySelectorAll('input').forEach(x=>x.checked=true)}
 function clean(s){let d=document.createElement('div');d.innerHTML=s||'';return d.textContent||''}
@@ -59,6 +71,14 @@ function stop(){
  timer=null;
  if(countTimer)clearInterval(countTimer);
  countTimer=null;
+ if(piperAudio){
+   piperAudio.pause();
+   piperAudio=null;
+ }
+ if(piperAnimFrame){
+   cancelAnimationFrame(piperAnimFrame);
+   piperAnimFrame=null;
+ }
  $('countdown').textContent='';
  paused=true;
  speechPaused=false;
@@ -66,15 +86,27 @@ function stop(){
  if('speechSynthesis' in window)window.speechSynthesis.cancel();
 }
 function pauseResume(){
- if(!cur||buzzed||!('speechSynthesis' in window))return;
+ if(!cur||buzzed)return;
+ const engine=$('engine')?.value||'piper';
  if(!paused){
    speechPaused=true; paused=true;
-   window.speechSynthesis.cancel();
+   if(engine==='piper'&&piperAudio){
+     piperAudio.pause();
+     if(piperAnimFrame)cancelAnimationFrame(piperAnimFrame);
+   }else if('speechSynthesis' in window){
+     window.speechSynthesis.cancel();
+   }
    if(timer)clearInterval(timer); timer=null;
    $('pause').textContent='▶ Resume'; $('status').textContent='Paused.';
  }else{
    paused=false; speechPaused=false; $('pause').textContent='Ⅱ Pause';
-   speakFrom(Math.max(0,i+1)); $('status').textContent='Reading resumed.';
+   if(engine==='piper'&&piperAudio&&piperAudio.paused&&piperAudio.readyState>=2){
+     piperAudio.play();
+     updatePiperWordTracking();
+     $('status').textContent='Reading resumed.';
+   }else{
+     speakFrom(Math.max(0,i+1));
+   }
  }
 }
 function show(text){
@@ -118,29 +150,116 @@ function startHighlight(wpm){
  tick();
 }
 function startAnswerTimer(reason){if(!$('timerEnabled')\vert{}\vert{}!$('timerEnabled').checked)return;if(countTimer)clearInterval(countTimer);let left=Math.max(3,Math.min(60,parseInt($('seconds').value,10)\vert{}\vert{}10));$('countdown').textContent=(reason==='finished'?'Time after question: ':'Time left: ')+left+'s';countTimer=setInterval(()=>{left--;$('countdown').textContent=(reason==='finished'?'Time after question: ':'Time left: ')+left+'s';if(left<=0){clearInterval(countTimer);countTimer=null;$('countdown').textContent='Time expired';if(!buzzed){buzzed=true;lastLineBuzzed=readingDone;powerBuzzed=false;$('answerrow').classList.remove('hidden');$('status').textContent='Question timer expired. Reveal the answer.';}reveal();}},1000)}
-function speakFrom(startWord){
- if(!cur||buzzed)return;
- let wpm=Math.max(80,Math.min(400,parseInt($('wpm').value,10)||240));
- let pitch=Math.max(.5,Math.min(2,+$('pitch').value||1));
- let sliceWords=words.slice(startWord);
- let text=sliceWords.join(' '); if(!text)return;
- readingDone=false;
- let charStarts=[]; let acc=0; sliceWords.forEach(w=>{charStarts.push(acc);acc+=w.length+1});
- let u=new SpeechSynthesisUtterance(text),v=voices[Number($('voice').value)];
- if(v)u.voice=v;u.lang=v?v.lang:'en-US';u.rate=Math.max(.5,Math.min(2,wpm/240));u.pitch=pitch;u.volume=1;
- boundaryActive=false;
- u.onboundary=(e)=>{
-  if(buzzed||typeof e.charIndex!=='number')return;
-  if(e.name&&e.name!=='word')return;
-  let idx=0; for(let k=0;k<charStarts.length;k++){if(charStarts[k]<=e.charIndex)idx=k; else break}
-  let newI=startWord+idx; if(newI<=i)return;
-  if(!boundaryActive){boundaryActive=true; if(timer){clearInterval(timer);timer=null}}
-  i=newI;
-  if($('qbstyle')&&$('qbstyle').checked)showProgress(i); else if(!($('tournament')&&$('tournament').checked))tick();
- };
- u.onend=()=>{if(!buzzed){i=words.length-1;readingDone=true;if($('qbstyle')&&$('qbstyle').checked)showProgress(i);else if(!($('tournament')&&$('tournament').checked))tick();paused=true;speechPaused=false;if(timer)clearInterval(timer);timer=null;$('pause').textContent='Ⅱ Pause';$('status').textContent=$('timerEnabled').checked?'Question finished. Timer started.':'Question finished.';if($('timerEnabled').checked)startAnswerTimer('finished');}};
- if(timer)clearInterval(timer); timer=null; window.speechSynthesis.cancel(); window.speechSynthesis.speak(u); startHighlight(wpm);
+
+function calculatePiperTimings(startWord, totalDurationSec) {
+  const sliceWords = words.slice(startWord);
+  const totalChars = sliceWords.reduce((acc, w) => acc + w.length, 0) || 1;
+  let curr = 0;
+  piperTimings = sliceWords.map((w, idx) => {
+    const dur = (w.length / totalChars) * totalDurationSec;
+    const item = { wordIndex: startWord + idx, start: curr, end: curr + dur };
+    curr += dur;
+    return item;
+  });
 }
+
+function updatePiperWordTracking() {
+  if (!piperAudio || piperAudio.paused || paused || buzzed) return;
+  const t = piperAudio.currentTime;
+  for (let k = 0; k < piperTimings.length; k++) {
+    if (t >= piperTimings[k].start && t < piperTimings[k].end) {
+      if (i !== piperTimings[k].wordIndex) {
+        i = piperTimings[k].wordIndex;
+        if ($('qbstyle') &&$('qbstyle').checked) showProgress(i);
+        else if (!($('tournament') &&$('tournament').checked)) tick();
+      }
+      break;
+    }
+  }
+  piperAnimFrame = requestAnimationFrame(updatePiperWordTracking);
+}
+
+function speakNativeFrom(startWord) {
+  let wpm = Math.max(80, Math.min(400, parseInt($('wpm').value, 10) || 240));
+  let pitch = Math.max(.5, Math.min(2, +$('pitch').value || 1));
+  let sliceWords = words.slice(startWord);
+  let text = sliceWords.join(' '); if (!text) return;
+  readingDone = false;
+  let charStarts = []; let acc = 0; sliceWords.forEach(w => { charStarts.push(acc); acc += w.length + 1; });
+  let u = new SpeechSynthesisUtterance(text), v = voices[Number($('voice').value)];
+  if (v) u.voice = v; u.lang = v ? v.lang : 'en-US'; u.rate = Math.max(.5, Math.min(2, wpm / 240)); u.pitch = pitch; u.volume = 1;
+  boundaryActive = false;
+  u.onboundary = (e) => {
+    if (buzzed || typeof e.charIndex !== 'number') return;
+    if (e.name && e.name !== 'word') return;
+    let idx = 0; for (let k = 0; k < charStarts.length; k++) { if (charStarts[k] <= e.charIndex) idx = k; else break; }
+    let newI = startWord + idx; if (newI <= i) return;
+    if (!boundaryActive) { boundaryActive = true; if (timer) { clearInterval(timer); timer = null; } }
+    i = newI;
+    if ($('qbstyle') &&$('qbstyle').checked) showProgress(i); else if (!($('tournament') &&$('tournament').checked)) tick();
+  };
+  u.onend = () => {
+    if (!buzzed) {
+      i = words.length - 1; readingDone = true;
+      if ($('qbstyle') &&$('qbstyle').checked) showProgress(i); else if (!($('tournament') &&$('tournament').checked)) tick();
+      paused = true; speechPaused = false; if (timer) clearInterval(timer); timer = null;
+      $('pause').textContent = 'Ⅱ Pause';
+      $('status').textContent =$('timerEnabled').checked ? 'Question finished. Timer started.' : 'Question finished.';
+      if ($('timerEnabled').checked) startAnswerTimer('finished');
+    }
+  };
+  if (timer) clearInterval(timer); timer = null; window.speechSynthesis.cancel(); window.speechSynthesis.speak(u); startHighlight(wpm);
+}
+
+async function speakFrom(startWord) {
+  if (!cur || buzzed) return;
+  const engine = $('engine')?.value || 'piper';
+
+  if (engine === 'piper' && typeof tts !== 'undefined') {
+    let sliceWords = words.slice(startWord);
+    let text = sliceWords.join(' '); if (!text) return;
+    readingDone = false;
+    $('status').textContent = 'Generating Piper AI voice audio...';
+    try {
+      const voiceId = $('piperVoice').value;
+      const wavBlob = await tts.predict({ text: text, voiceId: voiceId });
+      if (buzzed || paused) return;
+
+      const audioUrl = URL.createObjectURL(wavBlob);
+      piperAudio = new Audio(audioUrl);
+      let wpm = Math.max(80, Math.min(400, parseInt($('wpm').value, 10) || 240));
+      piperAudio.playbackRate = Math.max(0.5, Math.min(2.0, wpm / 240));
+
+      piperAudio.onloadedmetadata = () => {
+        if (buzzed || paused) return;
+        $('status').textContent = 'Reading with Piper WASM...';
+        const durationSec = piperAudio.duration / piperAudio.playbackRate;
+        calculatePiperTimings(startWord, durationSec);
+        piperAudio.play();
+        updatePiperWordTracking();
+      };
+
+      piperAudio.onended = () => {
+        if (!buzzed) {
+          i = words.length - 1; readingDone = true;
+          if ($('qbstyle') &&$('qbstyle').checked) showProgress(i); else if (!($('tournament') &&$('tournament').checked)) tick();
+          paused = true; speechPaused = false;
+          if (piperAnimFrame) cancelAnimationFrame(piperAnimFrame);
+          $('pause').textContent = 'Ⅱ Pause';
+          $('status').textContent =$('timerEnabled').checked ? 'Question finished. Timer started.' : 'Question finished.';
+          if ($('timerEnabled').checked) startAnswerTimer('finished');
+        }
+      };
+    } catch (err) {
+      console.warn('Piper error, falling back to Native Web Speech:', err);
+      $('status').textContent = 'Piper error. Falling back to native browser speech.';
+      speakNativeFrom(startWord);
+    }
+  } else {
+    speakNativeFrom(startWord);
+  }
+}
+
 function read(){if(!cur||buzzed)return;stop();if(!currentReadCounted){totalRead++;currentReadCounted=true;updateQBStats()}paused=false;speechPaused=false;$('pause').textContent='Ⅱ Pause';speakFrom(0)}
 function buzz(){
  if(!cur||buzzed)return;
@@ -171,7 +290,7 @@ function reveal(){
 async function load(){activeHistoryId=null;currentHistoryOutcome=null;currentHistoryPoints=0;stop();currentReadCounted=false;$('answerrow').classList.add('hidden');buzzed=false;powerBuzzed=false;lastLineBuzzed=false;readingDone=false;$('ans').value='';$('buzz').disabled=false;$('official').classList.add('hidden');$('result').textContent='';['correct','wrong'].forEach(x=>{let b=$(x);b.disabled=true;b.classList.remove('lastline-flash','power-label-transition');b.textContent=x==='correct'?'Correct':'Incorrect';b.querySelectorAll('.reveal-power-star,.reveal-lastline,.power-star').forEach(s=>s.remove())});$('head').textContent='Loading…';let r=await api('/api/question',{category:checked('cats'),difficulty:checked('diffs'),search:$('search').value,powerOnly:$('powerOnly')&&$('powerOnly').checked});if(r.error){$('head').textContent='No tossup';$('q').textContent=r.error;return}cur=r;const scalar=scalarValue;const packetName=String(scalar(r.packet?.name)||scalar(r.packet?.number)||'Unknown');const setName=String(scalar(r.set?.name)||'Unknown');const qNo=Number(scalar(r.number))||0;const diff=scalar(r.difficulty);const packetId=scalar(r.packet?._id?.$oid)||String(scalar(r.packet?.name)||scalar(r.packet?.number)||'');const setId=scalar(r.set?._id?.$oid)||String(scalar(r.set?.name)||'');const packetRows=allQuestions.filter(x=>{const xp=scalar(x.packet?._id?.$oid)||String(scalar(x.packet?.name)||scalar(x.packet?.number)||'');const xs=scalar(x.set?._id?.$oid)||String(scalar(x.set?.name)||'');return xp===packetId&&xs===setId});const totalInPacket=packetRows.length||'?';$('head').textContent=`${r.category} · Difficulty ${diff} · ${setName} · Packet ${packetName} · Question ${qNo||'?'} of ${totalInPacket}`;$('meta').textContent='';show(r.question);$('status').textContent='Read aloud, or press Space to buzz.'}
 function updateQBStats(){const celerity=celerityCount?(celerityTotal/celerityCount):0;$('qbStats').textContent=`Power: ${powerCount} · Correct: ${correctCount} · Neg: ${negCount} · Dead: ${deadCount} · TU: ${totalRead} · Celerity: ${celerity.toFixed(3)}`}
 function mark(n,label){currentHistoryOutcome=label.replace(/:.*$/,'');currentHistoryPoints=n;document.querySelectorAll('.reveal-power-star,.power-star').forEach(s=>s.remove());score+=n;$('score').textContent=score;$('result').textContent=label;['correct','wrong'].forEach(x=>$(x).disabled=true)}
-async function init(){try{let m=await api('/api/meta');if(!m.categories.length)throw Error('No categories found in database');render('cats',m.categories);render('diffs',m.difficulties);$('meta').textContent=m.count.toLocaleString()+' tossups loaded';}catch(e){$('meta').innerHTML=`<b>Error: Run a local server (e.g. python -m http.server) to bypass file network blocks.</b><br>Details: `+e.message;$('cats').textContent='Could not load categories';$('diffs').textContent='Could not load difficulties'}}
+async function init(){try{let m=await api('/api/meta');if(!m.categories.length)throw Error('No categories found in database');render('cats',m.categories);render('diffs',m.difficulties);$('meta').textContent=m.count.toLocaleString()+' tossups loaded';}catch(e){$('meta').textContent='Filter loading error: '+e.message;$('cats').textContent='Could not load categories';$('diffs').textContent='Could not load difficulties'}}
 function spawnPowerStars(){
  const b=$('correct');
  for(let n=0;n<7;n++){
@@ -185,39 +304,13 @@ async function nextQuestion(){if(loadingNext)return;loadingNext=true;$('skip').d
 $('start').onclick=read;$('pause').onclick=pauseResume;$('buzz').onclick=buzz;$('skip').onclick=nextQuestion;$('new').onclick=nextQuestion;$('check').onclick=()=>{if(!buzzed)return;reveal()};$('correct').onclick=()=>{const wasPower=powerBuzzed;if(wasPower)powerCount++;else correctCount++;if(pendingCelerity!==null){celerityTotal+=pendingCelerity;celerityCount++;pendingCelerity=null}updateQBStats();mark(wasPower?15:10,wasPower?'Correct (Power): +15':'Correct: +10');if(wasPower)spawnPowerStars()};$('wrong').onclick=()=>{if(lastLineBuzzed)deadCount++;else negCount++;updateQBStats();mark(lastLineBuzzed?0:-5,lastLineBuzzed?'Incorrect (Dead): 0':'Incorrect: -5')};
 $('clearStats').onclick=()=>{score=0;$('score').textContent='0';powerCount=0;correctCount=0;negCount=0;deadCount=0;totalRead=0;currentReadCounted=false;celerityTotal=0;celerityCount=0;pendingCelerity=null;updateQBStats();$('result').textContent='Stats and score cleared.'};$('showKeybinds').onclick=()=> $('keybindModal').classList.remove('hidden');$('closeKeybinds').onclick=()=> $('keybindModal').classList.add('hidden');$('keybindModal').onclick=e=>{if(e.target===$('keybindModal'))$('keybindModal').classList.add('hidden')};$('allc').onclick=()=>document.querySelectorAll('#cats input').forEach(x=>x.checked=true);$('nonec').onclick=()=>document.querySelectorAll('#cats input').forEach(x=>x.checked=false);$('alld').onclick=()=>document.querySelectorAll('#diffs input').forEach(x=>x.checked=true);$('noned').onclick=()=>document.querySelectorAll('#diffs input').forEach(x=>x.checked=false);$('reset').onclick=async()=>{stop();score=0;$('score').textContent='0';powerCount=0;correctCount=0;negCount=0;deadCount=0;totalRead=0;currentReadCounted=false;celerityTotal=0;celerityCount=0;pendingCelerity=null;updateQBStats();$('search').value='';document.querySelectorAll('#cats input,#diffs input').forEach(x=>x.checked=true);$('wpm').value=240;$('pitch').value=1;$('seconds').value=10;$('timerEnabled').checked=true;$('qbstyle').checked=false;$('tournament').checked=false;$('powerOnly').checked=false;$('historyEnabled').checked=true;if($('voice').options.length)$('voice').selectedIndex=0;$('keybindModal').classList.add('hidden');$('historyList').innerHTML='';historySeq=0;activeHistoryId=null;currentHistoryOutcome=null;currentHistoryPoints=0;$('result').textContent='Everything reset.';await load()};
 document.addEventListener('keydown',e=>{if(e.target.tagName==='INPUT'||e.target.tagName==='TEXTAREA')return;if(e.code==='Space'){e.preventDefault();buzz()}if(e.key.toLowerCase()==='p'){e.preventDefault();pauseResume()}if(e.key.toLowerCase()==='n'){e.preventDefault();nextQuestion()}if(e.key.toLowerCase()==='r'){e.preventDefault();read()}});
-
-// FIXED VOICE INITIALIZATION AND FILTERING FOR ONYX & BELLA
-function voiceset(){
-  voices=window.speechSynthesis.getVoices()||[];
-  if(voices.length === 0){
-    setTimeout(voiceset, 100);
-    return;
-  }
-  
-  let targetVoices = voices.filter(v => v.name.includes("Onyx") || v.name.includes("Bella"));
-  if(targetVoices.length > 0){
-    voices = targetVoices; // Only show Onyx and Bella if your OS/browser has them installed
-  }
-  
-  $('voice').innerHTML=voices.map((v,n)=>`<option value="${n}">${v.name} (${v.lang})</option>`).join('');
-  if(voices.length && !$('voice').dataset.userSelected){
-    const score=v=>{
-      const n=(v.name||'').toLowerCase();
-      let s=0;
-      if(n.includes('onyx') || n.includes('bella')) s+=100; // Heavily prioritize Onyx and Bella
-      if(/microsoft|google|natural|neural|enhanced|premium|online/.test(n))s+=5;
-      if(/^en(-|_)/i.test(v.lang))s+=2;
-      if(/us|gb|au/i.test(v.lang))s+=1;
-      return s;
-    };
-    let best=0;
-    voices.forEach((v,i)=>{if(score(v)>score(voices[best]))best=i});
-    $('voice').selectedIndex=best;
-  }
-}
-
+function voiceset(){voices=window.speechSynthesis.getVoices()||[];$('voice').innerHTML=voices.map((v,n)=>`<option value="${n}">${v.name} (${v.lang})</option>`).join('');if(voices.length && !$('voice').dataset.userSelected){const score=v=>{const n=(v.name\vert{}\vert{}'').toLowerCase();let s=0;if(/microsoft\vert{}google\vert{}natural\vert{}neural\vert{}enhanced\vert{}premium\vert{}online/.test(n))s+=5;if(/^en(-\vert{}_)/i.test(v.lang))s+=2;if(/us\vert{}gb\vert{}au/i.test(v.lang))s+=1;return s};let best=0;voices.forEach((v,i)=>{if(score(v)>score(voices[best]))best=i});$('voice').selectedIndex=best}}
 if('speechSynthesis' in window){voiceset();window.speechSynthesis.onvoiceschanged=voiceset}if($('voice'))$('voice').onchange=()=>{$('voice').dataset.userSelected='1'}
 if($('qbstyle'))$('qbstyle').onchange=()=>{speechResumeWord=0; speechPaused=false; qbStyleShown=0; if(cur)show(cur.question)};
+if($('engine'))$('engine').onchange=()=>{
+  const val=$('engine').value;
+  $('piperVoiceGroup').style.display=val==='piper'?'block':'none';$('nativeVoiceGroup').style.display=val==='native'?'block':'none';
+};
 init();
 
 if($('tournament'))$('tournament').onchange=()=>{
