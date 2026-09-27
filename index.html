@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" data-theme="light">
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -7,10 +7,10 @@
 <meta name="description" content="Practice quizbowl tossups read word by word. Buzz in, get powers, and track your points per tossup heard.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bungee&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,ital,wght@8..60,0,400;8..60,0,600;8..60,0,700;8..60,1,400&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bungee&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&display=swap" rel="stylesheet">
 <style>
 :root{
- color-scheme:light dark;
+ color-scheme:light;
  --background:oklch(0.955 0.008 250);--foreground:oklch(0.24 0.04 260);
  --card:oklch(0.99 0.003 250);--card-foreground:oklch(0.24 0.04 260);
  --popover:oklch(0.99 0.003 250);--popover-foreground:oklch(0.24 0.04 260);
@@ -23,15 +23,6 @@
  --border:oklch(0.86 0.012 250);--input:oklch(0.86 0.012 250);--ring:oklch(0.58 0.215 27);
  --radius:.5rem;
  --font-display:'Bungee',system-ui,sans-serif;--font-serif:'Source Serif 4',Georgia,serif;--font-mono:'IBM Plex Mono',ui-monospace,monospace;
- --qtext-size: 21px;
-}
-:root[data-theme="dark"] {
- --background: oklch(0.18 0.01 250); --foreground: oklch(0.95 0.01 250);
- --card: oklch(0.22 0.01 250); --card-foreground: oklch(0.95 0.01 250);
- --popover: oklch(0.22 0.01 250); --popover-foreground: oklch(0.95 0.01 250);
- --muted: oklch(0.26 0.01 250); --muted-foreground: oklch(0.7 0.01 250);
- --border: oklch(0.32 0.01 250); --input: oklch(0.32 0.01 250);
- --primary: oklch(0.70 0.20 27); --success: oklch(0.65 0.15 155);
 }
 *{box-sizing:border-box}
 html,body{margin:0;padding:0}
@@ -44,12 +35,12 @@ kbd{font-family:var(--font-mono)}
 
 /* ---------- layout ---------- */
 .wrap{display:flex;min-height:100dvh;flex-direction:column}
-header.top{border-bottom:2px solid var(--foreground);background:var(--card)}
+header.top{border-bottom:2px solid oklch(0.24 0.04 260/.85);background:var(--card)}
 .top-inner{max-width:1200px;margin:0 auto;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:16px;padding:16px}
 .logo{display:flex;flex-direction:column;gap:2px}
 .logo h1{font-family:var(--font-display);font-size:28px;line-height:1;margin:0;font-weight:400}
 .logo h1 span{color:var(--primary)}
-.logo .tag{font-size:14px;font-family:var(--font-serif);font-style:italic;color:var(--muted-foreground)}
+.logo .tag{font-size:11px;color:var(--muted-foreground)}
 .scoreboard{display:flex;align-items:center;gap:22px;flex-wrap:wrap}
 .scoreboard div{display:flex;flex-direction:column}
 .scoreboard dt{font-size:10px;letter-spacing:.12em;color:var(--muted-foreground);text-transform:uppercase}
@@ -63,21 +54,21 @@ aside.sidecol{display:flex;flex-direction:column;gap:32px}
 aside h2{font-family:var(--font-serif);font-size:18px;font-weight:700;margin:0 0 12px}
 
 /* ---------- card ---------- */
-.card{background:var(--card);border:2px solid var(--foreground);border-radius:.9rem;box-shadow:4px 4px 0 0 var(--foreground);padding:20px}
-.hover-grow .card{transition:transform .2s,box-shadow .2s}
-.hover-grow .card:hover{transform:translateY(-2px) scale(1.01);box-shadow:6px 6px 0 0 var(--foreground)}
+.card{background:var(--card);border:2px solid oklch(0.24 0.04 260/.85);border-radius:.9rem;box-shadow:4px 4px 0 0 var(--foreground);padding:20px}
 #qstage{min-height:280px;display:flex;flex-direction:column;gap:18px;position:relative;overflow:hidden}
 .qmeta{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;font-size:12px;color:var(--muted-foreground)}
 .qmeta b{color:var(--foreground);text-transform:uppercase;letter-spacing:.08em;font-weight:600}
-.qtext{font-family:var(--font-serif);font-size:var(--qtext-size);line-height:1.7;color:var(--foreground)}
+.qtext{font-family:var(--font-serif);font-size:21px;line-height:1.7;color:var(--foreground)}
+@media(min-width:768px){.qtext{font-size:23px}}
 .qtext .power{display:inline-block;transform:translateY(-1px);border-radius:3px;background:oklch(0.58 0.215 27/.1);padding:0 5px;font-family:var(--font-mono);font-size:13px;font-weight:600;color:var(--primary)}
 .qtext .buzzpill{display:inline-flex;align-items:center;transform:translateY(-1px);border-radius:999px;background:var(--primary);color:var(--primary-foreground);padding:1px 9px;margin:0 4px;font-family:var(--font-mono);font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase}
-.qtext .after{color:var(--muted-foreground)}
-.qtext .cursor{display:inline-block;width:2px;height:1.1em;background:var(--foreground);vertical-align:-2px;animation:blink 1s step-end infinite}
+.qtext .after{color:oklch(0.48 0.025 260/.7)}
+.qtext .cursor{display:inline-block;width:2px;height:1.1em;background:oklch(0.24 0.04 260/.6);vertical-align:-2px;animation:blink 1s step-end infinite}
 @keyframes blink{50%{opacity:0}}
 .empty-state{flex:1;display:flex;flex-direction:column;justify-content:center;gap:10px;align-items:flex-start}
 .empty-state p.lede{font-family:var(--font-serif);font-size:22px;color:var(--foreground);margin:0}
 .empty-state p.sub{font-size:13px;color:var(--muted-foreground);margin:0}
+.empty-state .pmark{color:var(--primary);font-weight:600}
 .tournament-hidden{color:transparent;user-select:none}
 .tournament-hidden *{color:transparent!important}
 
@@ -85,12 +76,12 @@ aside h2{font-family:var(--font-serif);font-size:18px;font-weight:700;margin:0 0
 .buzzrow{display:flex;flex-direction:column;align-items:center;gap:20px}
 @media(min-width:768px){.buzzrow{flex-direction:row;align-items:center}}
 .buzzer-wrap{display:flex;flex-direction:column;align-items:center;gap:8px;flex-shrink:0}
-.buzzer{position:relative;display:flex;align-items:center;justify-content:center;width:96px;height:96px;border-radius:999px;border:4px solid var(--foreground);background:var(--card);box-shadow:0 6px 0 0 var(--foreground);cursor:pointer;transition:transform .15s,box-shadow .15s;outline:none;padding:0}
+.buzzer{position:relative;display:flex;align-items:center;justify-content:center;width:96px;height:96px;border-radius:999px;border:4px solid oklch(0.24 0.04 260/.85);background:var(--card);box-shadow:0 6px 0 0 var(--foreground);cursor:pointer;transition:transform .15s,box-shadow .15s;outline:none;padding:0}
 .buzzer:hover:not(:disabled){transform:translateY(-2px)}
 .buzzer:active:not(:disabled){transform:translateY(6px);box-shadow:0 1px 0 0 var(--foreground)}
 .buzzer:disabled{opacity:.5;cursor:not-allowed}
 .buzzer.lit{transform:translateY(6px);box-shadow:0 1px 0 0 var(--foreground)}
-.buzzer .dot{width:64px;height:64px;border-radius:999px;border:2px solid oklch(0.58 0.215 27/.2);background:oklch(0.58 0.215 27/.25);transition:background .15s,box-shadow .15s}
+.buzzer .dot{width:64px;height:64px;border-radius:999px;border:2px solid oklch(0.24 0.04 260/.2);background:oklch(0.58 0.215 27/.25);transition:background .15s,box-shadow .15s}
 .buzzer.lit .dot{background:var(--primary);box-shadow:0 0 28px 6px var(--primary)}
 .buzzer-label{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted-foreground)}
 .action-col{display:flex;flex:1;width:100%;flex-direction:column;gap:10px}
@@ -109,17 +100,19 @@ aside h2{font-family:var(--font-serif);font-size:18px;font-weight:700;margin:0 0
 .btn-ghost:hover:not(:disabled){background:var(--muted)}
 .btn-sm{height:30px;padding:0 11px;font-size:12px;border-radius:.45rem}
 .btn kbd{margin-left:4px;border:1px solid currentColor;opacity:.55;border-radius:4px;padding:0 5px;font-size:10px}
+.iconbtn svg{width:15px;height:15px;flex-shrink:0}
 
 /* ---------- answer form ---------- */
 .answerform{display:flex;flex-direction:column;gap:10px;width:100%}
+.answerform .prompt{font-size:13px;font-weight:600;color:var(--primary);margin:0}
 .answerrow2{display:flex;gap:8px}
-.answerrow2 input{flex:1;min-width:0;height:44px;border-radius:.55rem;border:2px solid var(--foreground);background:var(--card);padding:0 12px;font-family:var(--font-serif);font-size:17px;outline:none}
+.answerrow2 input{flex:1;min-width:0;height:44px;border-radius:.55rem;border:2px solid oklch(0.24 0.04 260/.8);background:var(--card);padding:0 12px;font-family:var(--font-serif);font-size:17px;outline:none}
 .answerrow2 input:focus{box-shadow:0 0 0 3px oklch(0.58 0.215 27/.35)}
 .timebar{height:6px;width:100%;border-radius:999px;background:var(--muted);overflow:hidden}
 .timebar i{display:block;height:100%;background:var(--primary);transform-origin:left;transition:transform .1s linear}
 
 /* ---------- result panel ---------- */
-.result{display:flex;flex-direction:column;gap:10px;border-top:2px dashed var(--border);padding-top:16px}
+.result{display:flex;flex-direction:column;gap:10px;border-top:2px dashed oklch(0.24 0.04 260/.2);padding-top:16px}
 .result-row{display:flex;flex-wrap:wrap;align-items:center;gap:10px;font-size:13px}
 .tag{border-radius:.45rem;padding:2px 9px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;font-size:12px}
 .tag.good{background:var(--success);color:var(--success-foreground)}
@@ -129,36 +122,41 @@ aside h2{font-family:var(--font-serif);font-size:18px;font-weight:700;margin:0 0
 .result .ans u{text-decoration-color:var(--primary);text-underline-offset:3px}
 .result .meta2{font-size:11px;color:var(--muted-foreground);margin:0}
 
-/* ---------- sidebar filters ---------- */
+/* ---------- chips ---------- */
 .chipwrap{display:flex;flex-wrap:wrap;gap:6px}
 .chip{border:1px solid var(--border);background:var(--card);color:var(--foreground);border-radius:.45rem;padding:5px 9px;font-size:12px;font-family:var(--font-mono);cursor:pointer;transition:background .1s}
-.chip:hover{border-color:var(--foreground)}
+.chip:hover{border-color:oklch(0.24 0.04 260/.5)}
 .chip.active{border-color:var(--foreground);background:var(--foreground);color:var(--background)}
 .legend{font-size:10px;letter-spacing:.1em;color:var(--muted-foreground);text-transform:uppercase;margin-bottom:8px;display:block}
 .hint{font-size:11px;color:var(--muted-foreground);margin:6px 0 0}
 fieldset{border:0;padding:0;margin:0 0 20px}
 .searchbox{width:100%;height:36px;border-radius:.5rem;border:1px solid var(--border);background:var(--card);padding:0 10px;font-size:13px;margin-bottom:16px}
+.field{display:flex;flex-direction:column;gap:2px;margin-bottom:14px}
+.field label{font-size:12px;font-weight:600}
+.field select{height:36px;border-radius:.5rem;border:1px solid var(--border);background:var(--card);padding:0 8px;font-size:12px}
 .field-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:9px 0;border-bottom:1px solid var(--border)}
 .field-row:last-child{border-bottom:0}
 .field-row .fl{display:flex;flex-direction:column;gap:1px}
 .field-row .fl b{font-size:12.5px}
 .field-row .fl small{font-size:10.5px;color:var(--muted-foreground)}
 
-/* ---------- switch & slider ---------- */
+/* ---------- switch ---------- */
 .swtch{position:relative;display:inline-flex;width:34px;height:19px;border-radius:999px;background:var(--input);border:0;cursor:pointer;flex-shrink:0;transition:background .15s}
 .swtch.on{background:var(--primary)}
 .swtch i{position:absolute;top:2px;left:2px;width:15px;height:15px;border-radius:999px;background:var(--card);transition:transform .15s}
 .swtch.on i{transform:translateX(15px)}
+
+/* ---------- digital slider ---------- */
 .dslider{display:flex;align-items:center;gap:10px;width:100%}
-.dslider .track{position:relative;flex:1;height:32px;border-radius:.45rem;border:2px solid var(--foreground);background:var(--foreground);padding:0 6px;box-shadow:inset 0 2px 6px rgb(0 0 0/.4);display:flex;align-items:center}
+.dslider .track{position:relative;flex:1;height:32px;border-radius:.45rem;border:2px solid oklch(0.24 0.04 260/.85);background:var(--foreground);padding:0 6px;box-shadow:inset 0 2px 6px rgb(0 0 0/.4);display:flex;align-items:center}
 .dslider .segs{display:flex;gap:3px;height:16px;width:100%;pointer-events:none}
 .dslider .segs span{flex:1;border-radius:2px;background:oklch(1 0 0/.1)}
 .dslider .segs span.on{background:var(--success);box-shadow:0 0 6px var(--success)}
 .dslider .segs span.on.hot{background:var(--primary);box-shadow:0 0 6px var(--primary)}
 .dslider input[type=range]{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;margin:0}
-.dslider output{width:66px;flex-shrink:0;text-align:center;border-radius:.45rem;border:2px solid var(--foreground);background:var(--foreground);color:var(--success);padding:5px 0;font-size:12.5px;font-weight:600}
+.dslider output{width:66px;flex-shrink:0;text-align:center;border-radius:.45rem;border:2px solid oklch(0.24 0.04 260/.85);background:var(--foreground);color:var(--success);padding:5px 0;font-size:12.5px;font-weight:600}
 
-/* ---------- history & presets ---------- */
+/* ---------- history ---------- */
 .hitem{border-bottom:1px solid var(--border)}
 .hitem summary{list-style:none;cursor:pointer;padding:11px 0;display:flex;flex-direction:column;gap:6px}
 .hitem summary::-webkit-details-marker{display:none}
@@ -174,49 +172,56 @@ fieldset{border:0;padding:0;margin:0 0 20px}
 .hitem .hq{font-family:var(--font-serif);font-size:13.5px;line-height:1.6}
 .hitem .hgiven{font-size:11.5px;color:var(--muted-foreground)}
 .emptyhist{font-size:12px;color:var(--muted-foreground);line-height:1.6}
-.pstep{display:flex;flex-direction:column;align-items:center;gap:8px;border:2px solid var(--foreground);border-radius:.5rem;background:var(--background);padding:10px}
+
+/* ---------- point stepper ---------- */
+.pstep{display:flex;flex-direction:column;align-items:center;gap:8px;border:2px solid oklch(0.24 0.04 260/.85);border-radius:.5rem;background:var(--background);padding:10px}
 .pstep label{border-radius:4px;padding:1px 8px;font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase}
 .pstep label.good{background:var(--success);color:var(--success-foreground)}
 .pstep label.bad{background:var(--primary);color:var(--primary-foreground)}
 .pstep label.neutral{background:var(--muted);color:var(--muted-foreground)}
 .pstep .row2{display:flex;align-items:center;gap:5px}
 .pstep button{width:26px;height:26px;border-radius:.4rem;border:1px solid var(--border);background:var(--card);cursor:pointer}
-.pstep input{width:52px;height:30px;text-align:center;border-radius:.4rem;border:2px solid var(--foreground);background:var(--foreground);color:var(--success);font-weight:600}
+.pstep input{width:52px;height:30px;text-align:center;border-radius:.4rem;border:2px solid oklch(0.24 0.04 260/.85);background:var(--foreground);color:var(--success);font-weight:600}
 .presets{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
 
 /* ---------- settings dialog ---------- */
-.dlg-overlay{position:fixed;inset:0;background:rgb(0 0 0/.4);backdrop-filter:blur(3px);z-index:100;display:flex;align-items:center;justify-content:center;padding:20px}
-.dlg{width:min(760px,100%);height:600px;max-height:90dvh;display:flex;border:2px solid var(--foreground);border-radius:.9rem;overflow:hidden;box-shadow:6px 6px 0 0 var(--foreground);background:var(--popover)}
-.dlg-nav{flex-shrink:0;width:200px;background:var(--foreground);color:var(--background);padding:18px 14px;display:flex;flex-direction:column;gap:14px}
+.dlg-overlay{position:fixed;inset:0;background:rgb(0 0 0/.15);backdrop-filter:blur(2px);z-index:100;display:flex;align-items:center;justify-content:center;padding:20px}
+.dlg{width:min(760px,100%);max-height:min(680px,90dvh);display:flex;border:2px solid oklch(0.24 0.04 260/.85);border-radius:.9rem;overflow:hidden;box-shadow:6px 6px 0 0 var(--foreground);background:var(--popover)}
+.dlg-nav{flex-shrink:0;width:190px;background:var(--foreground);color:var(--background);padding:18px 14px;display:flex;flex-direction:column;gap:14px}
 .dlg-nav h3{font-family:var(--font-display);font-size:21px;font-weight:400;margin:0}
 .dlg-nav .sub{font-size:11px;color:oklch(0.955 0.008 250/.6)}
-.dlg-tab{display:flex;align-items:center;gap:9px;border:2px solid transparent;border-radius:.5rem;padding:9px 10px;cursor:pointer;text-align:left;background:none;color:inherit;opacity:0.75}
-.dlg-tab.active{border-color:var(--background);background:var(--background);color:var(--foreground);opacity:1}
+.dlg-tab{display:flex;align-items:center;gap:9px;border:2px solid transparent;border-radius:.5rem;padding:9px 10px;cursor:pointer;color:oklch(0.955 0.008 250/.75);text-align:left;background:none}
+.dlg-tab.active{border-color:var(--background);background:var(--background);color:var(--foreground)}
 .dlg-tab b{display:block;font-size:12.5px;font-weight:600}
-.dlg-tab small{display:block;font-size:10.5px;opacity:0.75}
+.dlg-tab small{display:block;font-size:10.5px;color:oklch(0.48 0.025 260)}
+.dlg-tab.active small{color:var(--muted-foreground)}
+.dlg-tab:not(.active) small{color:oklch(0.955 0.008 250/.5)}
 .dlg-body{flex:1;overflow-y:auto;padding:20px;display:flex;flex-direction:column;gap:16px;background:var(--background)}
-.setgroup{border:2px solid var(--foreground);border-radius:.7rem;background:var(--card);box-shadow:3px 3px 0 0 var(--foreground)}
-.setgroup header{display:flex;justify-content:space-between;gap:10px;align-items:flex-start;border-bottom:2px dashed var(--border);padding:11px 14px}
+.setgroup{border:2px solid oklch(0.24 0.04 260/.85);border-radius:.7rem;background:var(--card);box-shadow:3px 3px 0 0 var(--foreground)}
+.setgroup header{display:flex;justify-content:space-between;gap:10px;align-items:flex-start;border-bottom:2px dashed oklch(0.24 0.04 260/.15);padding:11px 14px}
 .setgroup header h4{margin:0;font-family:var(--font-serif);font-size:14.5px}
 .setgroup header p{margin:2px 0 0;font-size:11.5px;color:var(--muted-foreground)}
+.setgroup .body{padding:0 14px}
 .dlg-close{position:absolute;top:10px;right:12px;background:none;border:0;font-size:20px;cursor:pointer;color:var(--muted-foreground)}
 @media(max-width:640px){.dlg{flex-direction:column;max-height:92dvh}.dlg-nav{width:100%;flex-direction:row;overflow-x:auto}.dlg-nav h3,.dlg-nav .sub{display:none}}
 
 /* ---------- vfx ---------- */
 .flash-overlay{position:fixed;inset:0;pointer-events:none;z-index:200;opacity:0}
 .flash-overlay.go{animation:flashfade .5s ease-out}
-@keyframes flashfade{0%{opacity:var(--vfx-opacity,0.35);background:var(--primary)}100%{opacity:0}}
+@keyframes flashfade{0%{opacity:.35;background:var(--primary)}100%{opacity:0}}
+.shake{animation:shake .35s}
 @keyframes shake{10%,90%{transform:translateX(-1px)}20%,80%{transform:translateX(2px)}30%,50%,70%{transform:translateX(-4px)}40%,60%{transform:translateX(4px)}}
-.star{position:absolute;color:oklch(0.8 0.19 90);pointer-events:none;font-size:18px;animation:starfloat .8s ease-out forwards; z-index:10;}
+.star{position:absolute;color:oklch(0.8 0.19 90);pointer-events:none;font-size:18px;animation:starfloat .8s ease-out forwards}
 @keyframes starfloat{0%{opacity:0;transform:translate(0,6px) rotate(-10deg) scale(.6)}20%{opacity:1}100%{opacity:0;transform:translate(var(--dx,0),-18px) rotate(16deg) scale(1.1)}}
 
-footer.bottom{border-top:1px solid var(--border); margin-top: auto;}
+footer.bottom{border-top:1px solid var(--border)}
 footer.bottom p{max-width:1200px;margin:0 auto;padding:14px 16px;font-size:11.5px;color:var(--muted-foreground)}
+footer.bottom a{text-decoration:underline;text-underline-offset:2px}
 </style>
 </head>
 <body>
 <div class="flash-overlay" id="flashOverlay"></div>
-<div class="wrap" id="mainWrap">
+<div class="wrap">
 
 <header class="top">
  <div class="top-inner">
@@ -260,7 +265,7 @@ footer.bottom p{max-width:1200px;margin:0 auto;padding:14px 16px;font-size:11.5p
    </div>
    <div class="field-row" style="border-bottom:0">
     <div class="fl"><b>Voice</b></div>
-    <select id="voice" style="max-width:150px; background:var(--card); border-radius:4px; height:28px"></select>
+    <select id="voice" style="max-width:150px"></select>
    </div>
    <p class="hint" id="metaLine"></p>
    <div style="display:flex;gap:8px;margin-top:12px">
@@ -289,23 +294,25 @@ footer.bottom p{max-width:1200px;margin:0 auto;padding:14px 16px;font-size:11.5p
  <div class="dlg" role="dialog" aria-modal="true" aria-label="Settings" style="position:relative">
   <button class="dlg-close" id="dlgClose" aria-label="Close settings">×</button>
   <nav class="dlg-nav">
-   <div><h3>Settings</h3><div class="sub">Saved automatically</div></div>
+   <div><h3>Settings</h3><div class="sub">Saved on this device automatically.</div></div>
    <button class="dlg-tab active" data-tab="game"><b>Configuration</b><small>Scoring, timers, speed</small></button>
-   <button class="dlg-tab" data-tab="vfx"><b>Visual effects</b><small>Intensity and shakes</small></button>
-   <button class="dlg-tab" data-tab="display"><b>Display</b><small>Theme, sizing, layout</small></button>
-   <button class="dlg-tab" data-tab="audio"><b>Audio</b><small>Sounds and music</small></button>
+   <button class="dlg-tab" data-tab="display"><b>Display</b><small>Reading style &amp; effects</small></button>
   </nav>
   <div class="dlg-body" id="dlgBody"></div>
  </div>
 </div>
 
-<script>
+<script type="module">
 /* =========================================================================
-   QBSpeaker — Fully updated v0-style build
+   QBSpeaker — static single-file build
+   - v0-styled UI, vanilla JS, no build step
+   - Data: reads questions-1..4.json.gz from the same folder (client-side gzip)
+   - Speech: local Kokoro/HeadTTS in-browser speech with real word timestamps
    ========================================================================= */
 const $=id=>document.getElementById(id);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 function clean(html){const d=document.createElement('div');d.innerHTML=html||'';return d.textContent||''}
+function scalarValue(v){return v&&typeof v==='object'?(v.$numberInt??v.$numberLong??v.name??v.value??''):v}
 const ALLOWED_TAGS=new Set(['b','u','i','em','strong']);
 function sanitizeAnswerHtml(html){
  const e=String(html??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
@@ -314,14 +321,15 @@ function sanitizeAnswerHtml(html){
 const POWER_MARK='(*)';
 function tokenize(question){return clean(question).trim().split(/\s+/).filter(Boolean)}
 
+/* ---------------- data loading (matches the repo's local file layout) ---------------- */
 let allQuestions=[],dataReady=null;
 async function loadData(){
  if(dataReady)return dataReady;
  dataReady=(async()=>{
   const names=['questions-1.json.gz','questions-2.json.gz','questions-3.json.gz','questions-4.json.gz'];
   const parts=await Promise.all(names.map(async name=>{
-   const r=await fetch(name).catch(()=>({ok:false}));
-   if(!r.ok)return []; // Graceful fallback if files don't exist in local env
+   const r=await fetch(name);
+   if(!r.ok)throw Error('Could not load '+name);
    const buf=await r.arrayBuffer();
    const text=await new Response(new Blob([buf]).stream().pipeThrough(new DecompressionStream('gzip'))).text();
    return JSON.parse(text);
@@ -332,23 +340,29 @@ async function loadData(){
  return dataReady;
 }
 function toTossup(r){
- const packetName=String(r.packet?.name||r.packet?.number||'');
- const setName=String(r.set?.name||'Unknown');
- const year=r.set?.year||null;
- const difficulty=Number(r.difficulty)||0;
+ const packetName=String(scalarValue(r.packet?.name)||scalarValue(r.packet?.number)||'');
+ const setName=String(scalarValue(r.set?.name)||'Unknown');
+ const year=scalarValue(r.set?.year)||null;
+ const difficulty=Number(scalarValue(r.difficulty))||0;
  const answer=String(r.answer||'');
  return {
-  id:String(r._id?.$oid||Math.random()),
+  id:String(scalarValue(r._id?.$oid)||Math.random()),
   question:String(r.question||''),
-  answer, answerSanitized:clean(answer),
-  category:String(r.category||'Unknown'), subcategory:String(r.subcategory||''),
-  difficulty, setName, year:year?Number(year):null, packet:packetName, number:Number(r.number)||null,
+  answer,
+  answerSanitized:clean(answer),
+  category:String(r.category||'Unknown'),
+  subcategory:String(r.subcategory||''),
+  difficulty,
+  setName,
+  year:year?Number(year):null,
+  packet:packetName,
+  number:Number(scalarValue(r.number))||null,
  };
 }
 function queryTossup(settings){
  let rows=allQuestions;
  if(settings.categories.length)rows=rows.filter(x=>settings.categories.includes(x.category));
- if(settings.difficulties.length)rows=rows.filter(x=>settings.difficulties.includes(Number(x.difficulty)));
+ if(settings.difficulties.length)rows=rows.filter(x=>settings.difficulties.includes(Number(scalarValue(x.difficulty))));
  if(settings.powerOnly)rows=rows.filter(x=>/\(\s*\*\s*\)/.test(clean(x.question||'')));
  const s=(settings.search||'').trim().toLowerCase();
  if(s)rows=rows.filter(x=>String(x.question||'').toLowerCase().includes(s)||String(x.answer||'').toLowerCase().includes(s));
@@ -356,18 +370,18 @@ function queryTossup(settings){
  return toTossup(rows[Math.floor(Math.random()*rows.length)]);
 }
 
-/* ---------------- catalogue & filters ---------------- */
+/* ---------------- category / difficulty catalogue ---------------- */
 const CATEGORY_ORDER=['Literature','History','Science','Fine Arts','Religion','Mythology','Philosophy','Social Science','Current Events','Geography','Other Academic','Pop Culture'];
 const DIFFICULTY_LABELS={1:'Middle School',2:'Easy HS',3:'Regular HS',4:'Hard HS',5:'Nationals HS',6:'Easy College',7:'Regular College',8:'Hard College',9:'Open',10:'Hard Open'};
 let availableCategories=[],availableDifficulties=[];
 function computeCatalogue(){
  const cats=new Set(),diffs=new Set();
- allQuestions.forEach(x=>{if(x.category)cats.add(x.category);const d=Number(x.difficulty);if(d)diffs.add(d)});
+ allQuestions.forEach(x=>{if(x.category)cats.add(x.category);const d=Number(scalarValue(x.difficulty));if(d)diffs.add(d)});
  availableCategories=[...cats].sort((a,b)=>{const ia=CATEGORY_ORDER.indexOf(a),ib=CATEGORY_ORDER.indexOf(b);if(ia<0&&ib<0)return a.localeCompare(b);if(ia<0)return 1;if(ib<0)return -1;return ia-ib});
  availableDifficulties=[...diffs].sort((a,b)=>a-b);
 }
 
-/* ================= scoring model ================= */
+/* ================= scoring model (mirrors the v0 rules) ================= */
 const DEFAULT_POINTS={power:15,ten:10,neg:-5,dead:0};
 let rules={powersEnabled:true,negsEnabled:true,points:{...DEFAULT_POINTS}};
 function isCorrectOutcome(o){return o==='power'||o==='ten'}
@@ -379,47 +393,28 @@ function wrongOutcome(buzzedDuringReading){return rules.negsEnabled&&buzzedDurin
 function pointsFor(o){switch(o){case'power':return rules.points.power;case'ten':return rules.points.ten;case'neg':return rules.points.neg;case'dead':return rules.points.dead;default:return 0}}
 const OUTCOME_LABELS={power:'Power',ten:'Correct',neg:'Neg',zero:'Incorrect',dead:'Dead tossup'};
 
-/* ================= preferences ================= */
+/* ================= preferences (persisted to localStorage) ================= */
 const DEFAULT_PREFS={
- game:{wpm:240,pitch:1,buzzSeconds:8,deadSeconds:5,autoAdvance:0,powersEnabled:true,negsEnabled:true,points:{...DEFAULT_POINTS}, tournament:false, readingCursor:true},
- vfx:{level:70},
- display:{theme:'light', textSize:21, hoverGrow:true},
- audio:{soundEffects:true, buzzerSound:'beep', musicVolume:50},
+ game:{wpm:240,pitch:1,buzzSeconds:8,deadSeconds:5,autoAdvance:0,powersEnabled:true,negsEnabled:true,points:{...DEFAULT_POINTS}},
+ display:{textSize:'md',readingCursor:true,tournament:false,vfx:70,soundEffects:true},
 };
 let prefs=loadPrefs();
-function loadPrefs(){
- try{
-  const raw=localStorage.getItem('qbspeaker-prefs');
-  if(!raw)return structuredClone(DEFAULT_PREFS);
-  const p=JSON.parse(raw);
-  return {
-   game:{...DEFAULT_PREFS.game, ...p.game, points:{...DEFAULT_PREFS.game.points, ...p.game?.points}},
-   vfx:{...DEFAULT_PREFS.vfx, ...p.vfx},
-   display:{...DEFAULT_PREFS.display, ...p.display},
-   audio:{...DEFAULT_PREFS.audio, ...p.audio}
-  };
- }catch(e){return structuredClone(DEFAULT_PREFS)}
-}
-function savePrefs(){
- localStorage.setItem('qbspeaker-prefs',JSON.stringify(prefs));
- rules.powersEnabled=prefs.game.powersEnabled;rules.negsEnabled=prefs.game.negsEnabled;rules.points={...prefs.game.points};
- renderScoringLine();
-}
-function applyDisplayPrefs() {
- document.documentElement.setAttribute('data-theme', prefs.display.theme);
- document.documentElement.style.setProperty('--qtext-size', prefs.display.textSize + 'px');
- $('mainWrap').classList.toggle('hover-grow', prefs.display.hoverGrow);
-}
+function loadPrefs(){try{const raw=localStorage.getItem('qbspeaker-prefs');if(!raw)return structuredClone(DEFAULT_PREFS);const parsed=JSON.parse(raw);return {game:{...DEFAULT_PREFS.game,...parsed.game,points:{...DEFAULT_PREFS.game.points,...parsed.game?.points}},display:{...DEFAULT_PREFS.display,...parsed.display}}}catch(e){return structuredClone(DEFAULT_PREFS)}}
+function savePrefs(){localStorage.setItem('qbspeaker-prefs',JSON.stringify(prefs));rules.powersEnabled=prefs.game.powersEnabled;rules.negsEnabled=prefs.game.negsEnabled;rules.points={...prefs.game.points};renderScoringLine()}
 rules.powersEnabled=prefs.game.powersEnabled;rules.negsEnabled=prefs.game.negsEnabled;rules.points={...prefs.game.points};
+
+/* ================= settings (packet filters — not persisted) ================= */
 let settings={categories:[],difficulties:[],search:'',powerOnly:false};
 
-/* ================= reader state ================= */
-let phase='loading'; // loading|reading|dead-wait|buzzed|revealed|done|idle
+/* ================= reader state machine ================= */
+let phase='loading'; // loading|reading|dead-wait|buzzed|revealed|done
 let tossup=null,words=[],revealed=0,paused=false,buzzWord=null,buzzedDuringReading=false;
 let deadline=null,countInterval=null,result=null,history=[];
-let powerIndex=-1, answerDraft='', loadingNext=false;
+let powerIndex=-1;
+let answerDraft='';
+let loadingNext=false;
 
-async function nextTossup(isInitial=false){
+async function nextTossup(){
  if(loadingNext)return;
  loadingNext=true;
  stopSpeech();
@@ -428,96 +423,150 @@ async function nextTossup(isInitial=false){
   await loadData();
   if(!availableCategories.length)computeCatalogue();
   const t=queryTossup(settings);
-  if(!t){
-   tossup=null;phase='done';result=null;words=[];render();
-   if(allQuestions.length>0) renderError('No tossups match the selected filters.');
-   loadingNext=false;return;
-  }
-  tossup=t;words=tokenize(t.question);revealed=0;buzzWord=null;buzzedDuringReading=false;answerDraft='';result=null;
+  if(!t){tossup=null;phase='done';result=null;words=[];render();renderError('No tossups match the selected filters.');loadingNext=false;return}
+  tossup=t;words=tokenize(t.question);revealed=0;paused=false;buzzWord=null;buzzedDuringReading=false;answerDraft='';result=null;
   powerIndex=words.findIndex(w=>w.replace(/[.,;:!?]+$/,'')===POWER_MARK);
-  
-  if (isInitial === true) {
-   paused=true; phase='reading'; render(); loadingNext=false;
-  } else {
-   paused=false; phase='reading'; render(); loadingNext=false; beginSpeaking();
-  }
+  phase='reading';
+  render();
+  loadingNext=false;
+  beginSpeaking();
  }catch(e){
   loadingNext=false;phase=tossup?'done':'loading';render();renderError(e.message||'Failed to load tossup');
  }
 }
 function renderError(msg){$('actionCol').insertAdjacentHTML('beforeend',`<p class="errline" role="alert">${esc(msg)}</p>`)}
 
-/* ---------------- speech synthesis (boundary tracking) ---------------- */
-let voices=[],fallbackTimer=null,boundaryActive=false;
-function voiceset(){
- voices=window.speechSynthesis?window.speechSynthesis.getVoices()||[]:[];
- $('voice').innerHTML=voices.map((v,n)=>`<option value="${n}">${esc(v.name)} (${esc(v.lang)})</option>`).join('');
- if(voices.length&&!$('voice').dataset.userSelected){
-  let best=0;
-  const score=v=>{let s=0;if(/microsoft|google|natural/i.test(v.name))s+=5;if(/^en(-|_)/i.test(v.lang))s+=2;return s};
-  voices.forEach((v,i)=>{if(score(v)>score(voices[best]))best=i});
-  $('voice').selectedIndex=best;
- }
+/* ---------------- local Kokoro speech + real word timing ---------------- */
+import { HeadTTS } from "https://cdn.jsdelivr.net/npm/@met4citizen/headtts@1.3/+esm";
+
+let headtts=null;
+let audioCtx=null;
+let sourceNode=null;
+let audioData=null;
+let trackFrame=null;
+let voices=['af_bella','af_heart','af_sky','af_nova'];
+let voiceReady=false;
+let speechGeneration=0;
+let ignoreAudioEnd=false;
+
+function setupKokoroVoices(){
+ const el=$('voice');
+ if(!el)return;
+ el.innerHTML=voices.map(v=>`<option value="${esc(v)}">${esc(v)}</option>`).join('');
+ const saved=localStorage.getItem('qbspeaker-kokoro-voice');
+ if(saved&&voices.includes(saved))el.value=saved;
+ el.onchange=()=>localStorage.setItem('qbspeaker-kokoro-voice',el.value);
 }
-if('speechSynthesis' in window){voiceset();window.speechSynthesis.onvoiceschanged=voiceset}
-$('voice').onchange=()=>{$('voice').dataset.userSelected='1'};
+setupKokoroVoices();
+
+async function ensureKokoro(){
+ if(headtts)return headtts;
+ headtts=new HeadTTS({endpoints:['webgpu','wasm'],languages:['en-us'],voices});
+ await headtts.connect();
+ return headtts;
+}
 
 function stopSpeech(){
- if(fallbackTimer){clearInterval(fallbackTimer);fallbackTimer=null}
- if('speechSynthesis' in window)window.speechSynthesis.cancel();
+ speechGeneration++;
+ ignoreAudioEnd=true;
+ if(trackFrame)cancelAnimationFrame(trackFrame);
+ trackFrame=null;
+ if(sourceNode){try{sourceNode.stop()}catch(e){}try{sourceNode.disconnect()}catch(e){}sourceNode=null}
 }
-function speakFrom(startWord){
- if(!tossup)return;
- const slice=words.slice(startWord); const text=slice.join(' '); if(!text)return;
- const charStarts=[];let acc=0;slice.forEach(w=>{charStarts.push(acc);acc+=w.length+1});
- const u=new SpeechSynthesisUtterance(text);
- const v=voices[Number($('voice').value)];
- if(v)u.voice=v;u.lang=v?v.lang:'en-US';
- u.rate=Math.max(.5,Math.min(2,prefs.game.wpm/240));
- u.pitch=Math.max(.5,Math.min(2,prefs.game.pitch));
- u.volume=1;
- boundaryActive=false;
- u.onboundary=(e)=>{
-  if(phase!=='reading'||typeof e.charIndex!=='number')return;
-  if(e.name&&e.name!=='word')return;
-  let idx=0;for(let k=0;k<charStarts.length;k++){if(charStarts[k]<=e.charIndex)idx=k;else break}
-  const newRevealed=startWord+idx+1;
-  if(newRevealed<=revealed)return;
-  if(!boundaryActive){boundaryActive=true;if(fallbackTimer){clearInterval(fallbackTimer);fallbackTimer=null}}
-  revealed=newRevealed; renderQuestionOnly();
- };
- u.onend=()=>{if(phase==='reading'){revealed=words.length; enterDeadWait();}};
- window.speechSynthesis.cancel(); window.speechSynthesis.speak(u);
- startFallbackPacing(startWord);
+
+function currentVoice(){return $('voice')?.value||'af_bella'}
+function kokoroSpeed(){return Math.max(.5,Math.min(2,Number(prefs.game.wpm||240)/240))}
+
+async function speakFrom(startWord){
+ if(!tossup||phase!=='reading')return;
+ const generation=++speechGeneration;
+ ignoreAudioEnd=false;
+ const slice=words.slice(startWord);
+ const text=slice.join(' ');
+ if(!text){revealed=words.length;enterDeadWait();return}
+
+ stopSpeech();
+ boundaryActive=true;
+ try{
+  const tts=await ensureKokoro();
+  if(generation!==speechGeneration||phase!=='reading'||paused)return;
+  tts.setup({
+   voice:currentVoice(),
+   language:'en-us',
+   speed:kokoroSpeed(),
+   audioEncoding:'wav'
+  });
+
+  const messages=await tts.synthesize({input:text});
+  if(generation!==speechGeneration||phase!=='reading'||paused)return;
+  const audioMessage=messages.find(m=>m.type==='audio');
+  if(!audioMessage||!audioMessage.data)throw new Error('Kokoro did not return audio data.');
+  audioData=audioMessage.data;
+  if(!audioData.audio||!audioData.wtimes||!audioData.wdurations||!audioData.words){
+   throw new Error('Kokoro returned audio without word timing data.');
+  }
+
+  audioCtx=audioCtx||new (window.AudioContext||window.webkitAudioContext)();
+  await audioCtx.resume();
+  sourceNode=audioCtx.createBufferSource();
+  sourceNode.buffer=audioData.audio;
+  sourceNode.connect(audioCtx.destination);
+
+  const startedAt=audioCtx.currentTime;
+  sourceNode.start(startedAt);
+  sourceNode.onended=()=>{
+   if(ignoreAudioEnd||generation!==speechGeneration||phase!=='reading')return;
+   revealed=words.length;
+   renderQuestionOnly();
+   enterDeadWait();
+  };
+
+  trackKokoro(startedAt,startWord);
+ }catch(e){
+  console.error(e);
+  stopSpeech();
+  // Keep the app usable if local Kokoro cannot initialize.
+  // We do not silently switch to browser TTS because that would change timing behavior.
+  revealed=words.length;
+  renderQuestionOnly();
+  phase='dead-wait';
+  startDeadline(prefs.game.deadSeconds,()=>finish('dead',''));
+  render();
+  renderError('Local Kokoro could not generate this tossup: '+(e.message||e));
+ }
 }
-function startFallbackPacing(startWord){
- const ms=Math.max(80,60000/Math.max(80,Math.min(400,prefs.game.wpm)));
- if(fallbackTimer)clearInterval(fallbackTimer);
- fallbackTimer=setInterval(()=>{
-  if(phase!=='reading'||paused||boundaryActive)return;
-  if(revealed>=words.length){clearInterval(fallbackTimer);fallbackTimer=null;return}
-  revealed++;renderQuestionOnly();
- },ms);
+
+function trackKokoro(startedAt,startWord){
+ if(!audioCtx||!audioData)return;
+ const now=audioCtx.currentTime;
+ const elapsed=(now-startedAt)*1000;
+ let localIndex=-1;
+ for(let k=0;k<audioData.words.length;k++){
+  const a=audioData.wtimes[k],b=a+audioData.wdurations[k];
+  if(elapsed>=a&&elapsed<b){localIndex=k;break}
+ }
+ if(localIndex>=0){
+  const next=startWord+localIndex+1;
+  if(next>revealed){revealed=Math.min(words.length,next);renderQuestionOnly()}
+ }
+ if(phase==='reading')trackFrame=requestAnimationFrame(()=>trackKokoro(startedAt,startWord));
 }
+
 function beginSpeaking(){
- if(!('speechSynthesis' in window)){revealed=words.length;enterDeadWait();return}
- speakFrom(0);
+ speakFrom(Math.max(0,revealed));
 }
+
 function togglePause(){
  if(phase!=='reading')return;
- if(!paused){paused=true;stopSpeech();}else{paused=false;speakFrom(Math.max(0,revealed));}
+ if(!paused){
+  paused=true;
+  stopSpeech();
+ }else{
+  paused=false;
+  speakFrom(Math.max(0,revealed));
+ }
  render();
 }
-function enterDeadWait(){stopSpeech(); phase='dead-wait'; startDeadline(prefs.game.deadSeconds,()=>finish('dead','')); render();}
-function startDeadline(seconds,onExpire){
- clearDeadlineTimer(); deadline=Date.now()+seconds*1000;
- countInterval=setInterval(()=>{
-  const remain=(deadline-Date.now())/1000;
-  if(remain<=0){clearDeadlineTimer();onExpire()}else renderTimebar();
- },100);
- renderTimebar();
-}
-function clearDeadlineTimer(){if(countInterval){clearInterval(countInterval);countInterval=null}deadline=null}
 
 /* ---------------- buzz / reveal / grade ---------------- */
 function buzz(){
@@ -525,14 +574,28 @@ function buzz(){
  buzzedDuringReading=phase==='reading';
  buzzWord=phase==='reading'?Math.max(revealed-1,0):words.length-1;
  stopSpeech();clearDeadlineTimer();
- answerDraft=''; phase='buzzed'; flash();
+ answerDraft='';
+ phase='buzzed';
+ flash();
  startDeadline(prefs.game.buzzSeconds,()=>revealAnswer());
- render(); setTimeout(()=>{const a=$('answerInput');if(a)a.focus()},0);
+ render();
+ setTimeout(()=>{const a=$('answerInput');if(a)a.focus()},0);
 }
-function revealAnswer(){if(phase!=='buzzed')return;clearDeadlineTimer();phase='revealed';render();}
-function grade(outcome){finish(outcome,answerDraft);}
+function revealAnswer(){
+ if(phase!=='buzzed')return;
+ clearDeadlineTimer();
+ phase='revealed';
+ render();
+}
+function grade(outcome){
+ const given=answerDraft;
+ finish(outcome,given);
+}
 function finish(outcome,given){
- clearDeadlineTimer(); result={outcome,given}; phase='done'; revealed=words.length;
+ clearDeadlineTimer();
+ result={outcome,given};
+ phase='done';
+ revealed=words.length;
  history=[{tossup,outcome,given,buzzWord,totalWords:words.length,powerIndex,buzzedDuringReading:outcome==='dead'?false:buzzedDuringReading,overridden:false},...history];
  playResultSound(outcome);
  if(outcome==='power')spawnStars();
@@ -541,7 +604,8 @@ function finish(outcome,given){
  if(prefs.game.autoAdvance>0)setTimeout(()=>{if(phase==='done')nextTossup()},prefs.game.autoAdvance*1000);
 }
 function overrideHistory(index){
- const entry=history[index]; if(!entry||entry.outcome==='dead')return;
+ const entry=history[index];
+ if(!entry||entry.outcome==='dead')return;
  const outcome=isCorrectOutcome(entry.outcome)?wrongOutcome(entry.buzzedDuringReading):correctOutcome(entry.powerIndex,entry.buzzWord);
  history=history.map((h,i)=>i===index?{...h,outcome,overridden:!h.overridden}:h);
  if(index===0&&result)result={...result,outcome};
@@ -549,10 +613,10 @@ function overrideHistory(index){
 }
 function clearHistory(){history=[];render()}
 
-/* ---------------- WebAudio SFX & Animations ---------------- */
+/* ---------------- tiny WebAudio SFX (no external assets) ---------------- */
 let actx=null;
 function beep(freq,dur,type,gain){
- if(!prefs.audio.soundEffects)return;
+ if(!prefs.display.soundEffects)return;
  try{
   actx=actx||new (window.AudioContext||window.webkitAudioContext)();
   const o=actx.createOscillator(),g=actx.createGain();
@@ -563,37 +627,17 @@ function beep(freq,dur,type,gain){
   o.stop(actx.currentTime+dur);
  }catch(e){}
 }
-function playBuzzer() {
- if(!prefs.audio.soundEffects) return;
- const t = prefs.audio.buzzerSound;
- if(t === 'beep') beep(440, .12, 'square', .05);
- else if(t === 'buzz') beep(120, .3, 'sawtooth', .08);
- else if(t === 'ding') { beep(880, .15, 'sine', .06); setTimeout(() => beep(1100, .25, 'sine', .05), 150); }
-}
 function playResultSound(outcome){
- if(!prefs.audio.soundEffects)return;
  if(outcome==='power'){beep(880,.12,'square',.06);setTimeout(()=>beep(1175,.18,'square',.06),110)}
  else if(outcome==='ten'){beep(700,.15,'sine',.06)}
  else if(outcome==='neg'){beep(160,.25,'sawtooth',.07)}
  else if(outcome==='zero'){beep(220,.15,'sine',.05)}
 }
-function flash(){
- playBuzzer();
- if(prefs.vfx.level===0)return;
- const el=$('flashOverlay');
- el.style.setProperty('--vfx-opacity', (prefs.vfx.level/100)*0.35);
- el.classList.remove('go');void el.offsetWidth;el.classList.add('go');
-}
-function shakeCard(){
- if(prefs.vfx.level===0)return;
- const el=$('qstage');el.style.animation='none';void el.offsetWidth;
- el.style.animation=`shake ${0.35 * (prefs.vfx.level/100)}s`;
-}
+function flash(){beep(440,.05,'square',.04);const el=$('flashOverlay');el.classList.remove('go');void el.offsetWidth;el.classList.add('go')}
+function shakeCard(){const el=$('qstage');el.classList.remove('shake');void el.offsetWidth;el.classList.add('shake')}
 function spawnStars(){
- if(prefs.vfx.level===0)return;
  const host=$('qstage');
- const numStars = Math.max(1, Math.round(7 * (prefs.vfx.level / 100)));
- for(let n=0;n<numStars;n++){
+ for(let n=0;n<7;n++){
   const s=document.createElement('span');s.className='star';s.textContent='✦';
   s.style.left=(8+Math.random()*78)+'%';s.style.top=(8+Math.random()*55)+'%';
   s.style.setProperty('--dx',(-18+Math.random()*36)+'px');
@@ -609,15 +653,17 @@ function renderScoringLine(){
  $('scoringLine').textContent=(g.powersEnabled?`Powers ${fmtSigned(g.points.power)}, `:'')+`tens ${fmtSigned(g.points.ten)}`+(g.negsEnabled?`, negs ${fmtSigned(g.points.neg)}`:'')+'.';
 }
 function renderScoreboard(){
- const heard=history.length, count=o=>history.filter(h=>h.outcome===o).length;
+ const heard=history.length;
+ const count=o=>history.filter(h=>h.outcome===o).length;
  const points=history.reduce((sum,h)=>sum+pointsFor(h.outcome),0);
  const ppth=heard?(points/heard).toFixed(2):'0.00';
  const stats=[['Points',points],['P/10/N',`${count('power')}/${count('ten')}/${count('neg')}`],['TUH',heard],['PPTUH',ppth]];
  $('scoreboard').innerHTML=stats.map(([l,v])=>`<div><dt>${l}</dt><dd>${v}</dd></div>`).join('');
 }
 function renderQuestionOnly(){
- const box=$('qtext');if(!box)return;
- if(prefs.game.tournament&&phase!=='done'){box.parentElement.classList.add('tournament-hidden');return}
+ const box=$('qtext');
+ if(!box)return;
+ if(prefs.display.tournament&&phase!=='done'){box.parentElement.classList.add('tournament-hidden');return}
  box.parentElement.classList.remove('tournament-hidden');
  const visible=words.slice(0,revealed);
  let html='';
@@ -627,11 +673,15 @@ function renderQuestionOnly(){
   else html+=`<span${afterBuzz?' class="after"':''}>${esc(w)}</span> `;
   if(buzzWord===i)html+=`<span class="buzzpill">Buzz</span> `;
  });
- if(phase==='reading'&&!paused&&prefs.game.readingCursor)html+='<span class="cursor"></span>';
+ if(phase==='reading'&&!paused&&prefs.display.readingCursor)html+='<span class="cursor"></span>';
  box.innerHTML=html;
 }
 function render(){
- renderScoreboard();renderStage();renderActionCol();renderBuzzer();renderHistory();
+ renderScoreboard();
+ renderStage();
+ renderActionCol();
+ renderBuzzer();
+ renderHistory();
 }
 function renderStage(){
  const host=$('qstage');
@@ -655,7 +705,8 @@ function renderStage(){
  wireOverrideButtons(host);
 }
 function renderResultPanel(){
- const points=pointsFor(result.outcome), tone=points>0?'good':points<0?'bad':'neutral';
+ const points=pointsFor(result.outcome);
+ const tone=points>0?'good':points<0?'bad':'neutral';
  const overridden=history[0]?.overridden;
  return `<div class="result">
   <div class="result-row">
@@ -677,37 +728,26 @@ function wireOverrideButtons(root){
  (root||document).querySelectorAll('.ovr-btn').forEach(btn=>{btn.onclick=()=>overrideHistory(Number(btn.dataset.hidx))});
 }
 function renderTimebar(){
- const bar=$('timebarFill');
+ const bar=document.getElementById('timebarFill');
  const remain=deadline?Math.max(0,(deadline-Date.now())/1000):0;
- if(phase==='dead-wait'){const line=$('deadwaitline');if(line)line.textContent=`Question over. Buzz within ${Math.ceil(remain)}s`;}
+ if(phase==='dead-wait'){
+  const line=$('deadwaitline');
+  if(line)line.textContent=`Question over. Buzz within ${Math.ceil(remain)}s`;
+ }
  if(bar){const total=phase==='buzzed'?prefs.game.buzzSeconds:prefs.game.deadSeconds;bar.style.transform=`scaleX(${Math.max(0,remain/total)})`}
 }
 function renderActionCol(){
  const host=$('actionCol');
  if(phase==='buzzed'||phase==='revealed'){
-  host.innerHTML=`<div class="answerform">
-   <div class="answerrow2">
-    <input id="answerInput" autocomplete="off" spellcheck="false" placeholder="Type your answer" ${phase==='revealed'?'disabled':''}>
-    <button type="button" class="btn btn-primary" id="revealBtn" ${phase==='revealed'?'disabled':''}>${phase==='revealed'?'Revealed':'Reveal'}</button>
-   </div>
-   <div class="timebar"><i id="timebarFill"></i></div>
-   ${phase==='revealed'?`<div style="display:flex;flex-direction:column;gap:10px">
-     <p class="ans" style="font-size:15px"><span style="font-family:var(--font-mono);font-size:11px;font-weight:600;letter-spacing:.08em;color:var(--muted-foreground);text-transform:uppercase">Official answer </span>${sanitizeAnswerHtml(tossup.answer)}</p>
-     <div class="action-row"><button type="button" class="btn btn-outline" id="gradeCorrect" style="border-color:var(--success);color:var(--success)">Correct</button><button type="button" class="btn btn-outline" id="gradeWrong" style="border-color:var(--primary);color:var(--primary)">Incorrect</button></div>
-    </div>`:''}
-  </div>`;
+  host.innerHTML=answerFormHtml();
   const input=$('answerInput');
   if(input){input.value=answerDraft;input.oninput=e=>{answerDraft=e.target.value};input.onkeydown=e=>{if(e.key==='Enter'){e.preventDefault();revealAnswer()}};}
   renderTimebar();
-  const rb=$('revealBtn');if(rb)rb.onclick=revealAnswer;
-  const gc=$('gradeCorrect');if(gc)gc.onclick=()=>grade(correctOutcome(powerIndex,buzzWord));
-  const gw=$('gradeWrong');if(gw)gw.onclick=()=>grade(wrongOutcome(buzzedDuringReading));
  }else{
   const label=phase==='reading'?'Skip':'Next tossup';
-  const pauseLabel=paused?(revealed===0?'▶ Start':'▶ Resume'):'Ⅱ Pause';
   host.innerHTML=`<div class="action-row">
    <button class="btn btn-primary" id="skipBtn" ${phase==='loading'?'disabled':''}>${label} <kbd style="margin-left:6px">N</kbd></button>
-   <button class="btn btn-outline" id="pauseBtn" ${phase!=='reading'?'disabled':''}>${pauseLabel} <kbd style="margin-left:6px">P</kbd></button>
+   <button class="btn btn-outline" id="pauseBtn" ${phase!=='reading'?'disabled':''}>${paused?'▶ Resume':'Ⅱ Pause'} <kbd style="margin-left:6px">P</kbd></button>
    <button class="btn btn-outline" id="settingsBtn2" type="button">⚙ Settings</button>
   </div>`;
   $('skipBtn').onclick=nextTossup;
@@ -715,6 +755,33 @@ function renderActionCol(){
   $('settingsBtn2').onclick=openSettings;
  }
 }
+function answerFormHtml(){
+ const revealedPhase=phase==='revealed';
+ return `<div class="answerform">
+  <div class="answerrow2">
+   <input id="answerInput" autocomplete="off" spellcheck="false" placeholder="Type your answer" ${revealedPhase?'disabled':''}>
+   <button type="button" class="btn btn-primary" id="revealBtn" ${revealedPhase?'disabled':''}>${revealedPhase?'Revealed':'Reveal'}</button>
+  </div>
+  <div class="timebar"><i id="timebarFill"></i></div>
+  ${revealedPhase?revealedGradeHtml():''}
+ </div>`;
+}
+function revealedGradeHtml(){
+ return `<div style="display:flex;flex-direction:column;gap:10px">
+  <p class="ans" style="font-size:15px"><span style="font-family:var(--font-mono);font-size:11px;font-weight:600;letter-spacing:.08em;color:var(--muted-foreground);text-transform:uppercase">Official answer </span>${sanitizeAnswerHtml(tossup.answer)}</p>
+  <div class="action-row">
+   <button type="button" class="btn btn-outline" id="gradeCorrect" style="border-color:var(--success);color:var(--success)">Correct</button>
+   <button type="button" class="btn btn-outline" id="gradeWrong" style="border-color:var(--primary);color:var(--primary)">Incorrect</button>
+  </div>
+ </div>`;
+}
+function wireAnswerButtons(){
+ const rb=$('revealBtn');if(rb)rb.onclick=revealAnswer;
+ const gc=$('gradeCorrect');if(gc)gc.onclick=()=>grade(correctOutcome(powerIndex,buzzWord));
+ const gw=$('gradeWrong');if(gw)gw.onclick=()=>grade(wrongOutcome(buzzedDuringReading));
+}
+const _origRenderActionCol=renderActionCol;
+renderActionCol=function(){_origRenderActionCol();wireAnswerButtons()};
 
 function renderBuzzer(){
  const armed=phase==='reading'||phase==='dead-wait';
@@ -725,7 +792,8 @@ function renderBuzzer(){
  $('buzzerLabel').textContent=lit?'Locked in':'Space to buzz';
 }
 function renderHistory(){
- const list=$('historyList');$('emptyHist').classList.toggle('hidden',history.length>0);
+ const list=$('historyList');
+ $('emptyHist').classList.toggle('hidden',history.length>0);
  list.innerHTML=history.map((h,i)=>{
   const points=pointsFor(h.outcome);
   const tone=points>0?'good':points<0?'bad':'neutral';
@@ -752,22 +820,29 @@ function renderHistory(){
 function renderFilters(){
  $('cats').innerHTML=availableCategories.map(c=>`<button type="button" class="chip ${settings.categories.includes(c)?'active':''}" data-c="${esc(c)}">${esc(c)}</button>`).join('');
  $('cats').querySelectorAll('.chip').forEach(chip=>chip.onclick=()=>{
-  const c=chip.dataset.c; settings.categories=settings.categories.includes(c)?settings.categories.filter(x=>x!==c):[...settings.categories,c]; renderFilters();
+  const c=chip.dataset.c;
+  settings.categories=settings.categories.includes(c)?settings.categories.filter(x=>x!==c):[...settings.categories,c];
+  renderFilters();
  });
  $('catLegend').textContent='Categories'+(settings.categories.length?'':' (all)');
  $('diffs').innerHTML=availableDifficulties.map(d=>`<button type="button" class="chip ${settings.difficulties.includes(d)?'active':''}" data-d="${d}" title="${DIFFICULTY_LABELS[d]||''}">${d}</button>`).join('');
  $('diffs').querySelectorAll('.chip').forEach(chip=>chip.onclick=()=>{
-  const d=Number(chip.dataset.d); settings.difficulties=settings.difficulties.includes(d)?settings.difficulties.filter(x=>x!==d):[...settings.difficulties,d]; renderFilters();
+  const d=Number(chip.dataset.d);
+  settings.difficulties=settings.difficulties.includes(d)?settings.difficulties.filter(x=>x!==d):[...settings.difficulties,d];
+  renderFilters();
  });
  $('diffLegend').textContent='Difficulty'+(settings.difficulties.length?'':' (all)');
  $('diffHint').textContent=settings.difficulties.length?settings.difficulties.map(d=>DIFFICULTY_LABELS[d]).join(', '):'1 = Middle School through 10 = Hard Open';
- $('powerOnly').classList.toggle('on',settings.powerOnly);$('powerOnly').setAttribute('aria-checked',String(settings.powerOnly));
+ $('powerOnly').classList.toggle('on',settings.powerOnly);
+ $('powerOnly').setAttribute('aria-checked',String(settings.powerOnly));
 }
-$('powerOnly').onclick=()=>{settings.powerOnly=!settings.powerOnly;renderFilters()};$('search').oninput=e=>{settings.search=e.target.value};
+$('powerOnly').onclick=()=>{settings.powerOnly=!settings.powerOnly;renderFilters()};
+$('search').oninput=e=>{settings.search=e.target.value};
 
 /* ================= settings dialog ================= */
 function openSettings(){$('dlgOverlay').classList.remove('hidden');renderDialog()}
-function closeSettings(){$('dlgOverlay').classList.add('hidden')}$('settingsBtn').onclick=openSettings;
+function closeSettings(){$('dlgOverlay').classList.add('hidden')}
+$('settingsBtn').onclick=openSettings;
 $('dlgClose').onclick=closeSettings;
 $('dlgOverlay').onclick=e=>{if(e.target===$('dlgOverlay'))closeSettings()};
 let dlgTab='game';
@@ -787,7 +862,11 @@ function updateSliderVisual(id,value,min,max,format,unit){
 }
 function switchHtml(id,checked){return `<button type="button" class="swtch ${checked?'on':''}" id="${id}" role="switch" aria-checked="${checked}"><i></i></button>`}
 function pointStepperHtml(id,label,tone,value){
- return `<div class="pstep"><label class="${tone}">${label}</label><div class="row2"><button type="button" data-step="-5" data-target="${id}">−</button><input type="number" id="${id}" value="${value}"><button type="button" data-step="5" data-target="${id}">+</button></div></div>`;
+ return `<div class="pstep"><label class="${tone}">${label}</label><div class="row2">
+  <button type="button" data-step="-5" data-target="${id}">−</button>
+  <input type="number" id="${id}" value="${value}">
+  <button type="button" data-step="5" data-target="${id}">+</button>
+ </div></div>`;
 }
 const PRESETS=[
  {label:'NAQT',points:{power:15,ten:10,neg:-5,dead:0},powers:true,negs:true},
@@ -799,173 +878,84 @@ function activePreset(){
  const g=prefs.game;
  return PRESETS.find(p=>p.powers===g.powersEnabled&&p.negs===g.negsEnabled&&Object.keys(p.points).every(k=>p.points[k]===g.points[k]))?.label;
 }
-
-let currentMusic = null;
-window.searchMusic = async function() {
- const q = $('musicSearch').value; if(!q) return;
- const resC = $('musicResults'); resC.innerHTML = '<span style="font-size:12px; color:var(--muted-foreground)">Searching iTunes...</span>';
- try {
-  const res = await fetch(`https://itunes.apple.com/search?term=${encodeURIComponent(q)}&entity=song&limit=4`);
-  const data = await res.json();
-  if(!data.results.length) { resC.innerHTML = '<span style="font-size:12px;">No results found.</span>'; return; }
-  resC.innerHTML = data.results.map(r => `
-   <div style="display:flex; align-items:center; gap:10px; margin-top:8px; background:var(--background); padding:6px; border-radius:6px; border:1px solid var(--border)">
-    <img src="${r.artworkUrl60}" style="width:40px; height:40px; border-radius:4px;">
-    <div style="flex:1; line-height:1.2; overflow:hidden;">
-     <div style="font-size:12px; font-weight:bold; white-space:nowrap; text-overflow:ellipsis;">${esc(r.trackName)}</div>
-     <div style="font-size:10.5px; color:var(--muted-foreground); white-space:nowrap; text-overflow:ellipsis;">${esc(r.artistName)}</div>
-    </div>
-    <button type="button" class="btn btn-sm btn-outline" onclick="playMusic('${r.previewUrl}')">Play</button>
-   </div>
-  `).join('');
- } catch (e) { resC.innerHTML = '<span style="font-size:12px; color:var(--primary)">Error fetching music.</span>'; }
-};
-window.playMusic = function(url) {
- if(currentMusic) { currentMusic.pause(); currentMusic = null; }
- if(!url) return;
- currentMusic = new Audio(url);
- currentMusic.loop = true; currentMusic.volume = (prefs.audio.musicVolume / 100);
- currentMusic.play().catch(e=>console.error('Audio blocked:', e));
-};
-window.stopMusic = function() { if(currentMusic) { currentMusic.pause(); currentMusic = null; } };
-
 function renderDialog(){
  document.querySelectorAll('.dlg-tab').forEach(t=>t.classList.toggle('active',t.dataset.tab===dlgTab));
- const g=prefs.game, v=prefs.vfx, d=prefs.display, a=prefs.audio, body=$('dlgBody');
- 
+ const g=prefs.game,d=prefs.display;
+ const body=$('dlgBody');
  if(dlgTab==='game'){
   body.innerHTML=`
-   <section class="setgroup"><header><div><h4>Reading</h4><p>Speed, pitch, and reading style.</p></div></header>
-    <div class="body">
-     <div class="field-row"><div class="fl"><b>Speaking speed</b><small>Speed of the synthesized voice.</small></div><div style="width:200px">${sliderHtml('wpm','Speaking speed',g.wpm,80,400,' WPM',x=>x+' WPM')}</div></div>
-     <div class="field-row"><div class="fl"><b>Voice pitch</b><small>Pitch of the synthesized voice.</small></div><div style="width:200px">${sliderHtml('pitch2','Pitch',Math.round(g.pitch*10),5,20,'',x=>(x/10).toFixed(1))}</div></div>
-     <div class="field-row"><div class="fl"><b>Tournament mode</b><small>Hide the question text — audio only.</small></div>${switchHtml('sw-tournament',g.tournament)}</div>
-     <div class="field-row" style="border-bottom:0"><div class="fl"><b>Reading cursor</b><small>A blinking caret follows the last word read.</small></div>${switchHtml('sw-cursor',g.readingCursor)}</div>
+   <section class="setgroup"><header><div><h4>Reading</h4><p>How the moderator reads each tossup.</p></div></header>
+    <div class="body" style="padding:12px 14px">${sliderHtml('wpm','Speaking speed',g.wpm,80,400,' WPM',v=>v+' WPM')}
+    <div style="height:12px"></div>${sliderHtml('pitch2','Pitch',Math.round(g.pitch*10),5,20,'',v=>(v/10).toFixed(1))}</div>
+   </section>
+   <section class="setgroup"><header><div><h4>Timers</h4><p>How long you get after buzzing and after the question ends.</p></div></header>
+    <div class="body" style="display:flex;flex-direction:column;gap:14px;padding:12px 14px">
+     ${sliderHtml('buzzSeconds','Answer timer',g.buzzSeconds,3,30,'s',v=>v+'s')}
+     ${sliderHtml('deadSeconds','Dead-air timer',g.deadSeconds,1,15,'s',v=>v+'s')}
+     ${sliderHtml('autoAdvance','Auto-advance',g.autoAdvance,0,15,'s',v=>v===0?'OFF':v+'s')}
     </div>
    </section>
-   <section class="setgroup"><header><div><h4>Timers</h4><p>How long you get after buzzing and at the end.</p></div></header>
-    <div class="body">
-     <div class="field-row"><div class="fl"><b>Answer timer</b><small>Seconds allowed after buzzing.</small></div><div style="width:200px">${sliderHtml('buzzSeconds','Answer timer',g.buzzSeconds,3,30,'s',x=>x+'s')}</div></div>
-     <div class="field-row"><div class="fl"><b>Dead-air timer</b><small>Seconds to wait after question ends.</small></div><div style="width:200px">${sliderHtml('deadSeconds','Dead-air timer',g.deadSeconds,1,15,'s',x=>x+'s')}</div></div>
-     <div class="field-row" style="border-bottom:0"><div class="fl"><b>Auto-advance</b><small>Automatically load the next tossup.</small></div><div style="width:200px">${sliderHtml('autoAdvance','Auto-advance',g.autoAdvance,0,15,'s',x=>x===0?'OFF':x+'s')}</div></div>
-    </div>
-   </section>
-   <section class="setgroup"><header><div><h4>Scoring</h4><p>Point values applied to the scoreboard.</p></div>${activePreset()?`<span style="background:var(--foreground);color:var(--background);border-radius:6px;padding:2px 8px;font-size:10.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase">${activePreset()}</span>`:''}</header>
+   <section class="setgroup"><header><div><h4>Scoring</h4><p>Point values applied to the scoreboard and scoresheet.</p></div>${activePreset()?`<span style="background:var(--foreground);color:var(--background);border-radius:6px;padding:2px 8px;font-size:10.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase">${activePreset()}</span>`:''}</header>
     <div class="body" style="padding:12px 14px">
      <div class="presets">${PRESETS.map(p=>`<button type="button" class="chip ${activePreset()===p.label?'active':''}" data-preset="${p.label}">${p.label}</button>`).join('')}</div>
      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
-      ${pointStepperHtml('pts-power','Power','good',g.points.power)} ${pointStepperHtml('pts-ten','Correct','good',g.points.ten)}
-      ${pointStepperHtml('pts-neg','Neg','bad',g.points.neg)} ${pointStepperHtml('pts-dead','Dead','neutral',g.points.dead)}
+      ${pointStepperHtml('pts-power','Power','good',g.points.power)}
+      ${pointStepperHtml('pts-ten','Correct','good',g.points.ten)}
+      ${pointStepperHtml('pts-neg','Neg','bad',g.points.neg)}
+      ${pointStepperHtml('pts-dead','Dead','neutral',g.points.dead)}
      </div>
      <div class="field-row"><div class="fl"><b>Powers</b><small>Buzzing before the (*) earns the power value.</small></div>${switchHtml('sw-powers',g.powersEnabled)}</div>
      <div class="field-row" style="border-bottom:0"><div class="fl"><b>Negs</b><small>Wrong answers while reading cost the neg value.</small></div>${switchHtml('sw-negs',g.negsEnabled)}</div>
     </div>
-   </section>
-   <div style="text-align:right; margin-top:10px;"><button class="btn btn-outline btn-sm" id="resetConfig">Reset Config</button></div>`;
-  
-  wireSlider('wpm',80,400,x=>x+' WPM',null,x=>{prefs.game.wpm=x;savePrefs()});
-  wireSlider('pitch2',5,20,x=>(x/10).toFixed(1),null,x=>{prefs.game.pitch=x/10;savePrefs()});
-  wireSlider('buzzSeconds',3,30,x=>x+'s',null,x=>{prefs.game.buzzSeconds=x;savePrefs()});
-  wireSlider('deadSeconds',1,15,x=>x+'s',null,x=>{prefs.game.deadSeconds=x;savePrefs()});
-  wireSlider('autoAdvance',0,15,x=>x===0?'OFF':x+'s',null,x=>{prefs.game.autoAdvance=x;savePrefs()});
-  wireSwitch('sw-tournament',x=>{prefs.game.tournament=x;savePrefs();renderQuestionOnly()});
-  wireSwitch('sw-cursor',x=>{prefs.game.readingCursor=x;savePrefs();renderQuestionOnly()});
+   </section>`;
+  wireSlider('wpm',80,400,v=>v+' WPM',null,v=>{prefs.game.wpm=v;savePrefs()});
+  wireSlider('pitch2',5,20,v=>(v/10).toFixed(1),null,v=>{prefs.game.pitch=v/10;savePrefs()});
+  wireSlider('buzzSeconds',3,30,v=>v+'s',null,v=>{prefs.game.buzzSeconds=v;savePrefs()});
+  wireSlider('deadSeconds',1,15,v=>v+'s',null,v=>{prefs.game.deadSeconds=v;savePrefs()});
+  wireSlider('autoAdvance',0,15,v=>v===0?'OFF':v+'s',null,v=>{prefs.game.autoAdvance=v;savePrefs()});
   body.querySelectorAll('[data-preset]').forEach(b=>b.onclick=()=>{
-   const p=PRESETS.find(x=>x.label===b.dataset.preset); prefs.game.points={...p.points};prefs.game.powersEnabled=p.powers;prefs.game.negsEnabled=p.negs;savePrefs();renderDialog();
+   const p=PRESETS.find(x=>x.label===b.dataset.preset);
+   prefs.game.points={...p.points};prefs.game.powersEnabled=p.powers;prefs.game.negsEnabled=p.negs;savePrefs();renderDialog();
   });
-  ['power','ten','neg','dead'].forEach(k=>{const el=$('pts-'+k);if(el)el.onchange=()=>{prefs.game.points[k]=Math.max(-50,Math.min(50,Math.round(Number(el.value)||0)));savePrefs();renderDialog()};});
+  ['power','ten','neg','dead'].forEach(k=>{
+   const el=$('pts-'+k);if(el)el.onchange=()=>{prefs.game.points[k]=Math.max(-50,Math.min(50,Math.round(Number(el.value)||0)));savePrefs();renderDialog()};
+  });
   body.querySelectorAll('[data-step]').forEach(b=>b.onclick=()=>{
-   const k=b.dataset.target.replace('pts-',''); prefs.game.points[k]=Math.max(-50,Math.min(50,(prefs.game.points[k]||0)+Number(b.dataset.step)));savePrefs();renderDialog();
+   const input=$(b.dataset.target);const k=b.dataset.target.replace('pts-','');
+   prefs.game.points[k]=Math.max(-50,Math.min(50,(prefs.game.points[k]||0)+Number(b.dataset.step)));savePrefs();renderDialog();
   });
-  wireSwitch('sw-powers',x=>{prefs.game.powersEnabled=x;savePrefs();renderDialog()}); wireSwitch('sw-negs',x=>{prefs.game.negsEnabled=x;savePrefs();renderDialog()});
- 
- } else if(dlgTab==='vfx') {
+  wireSwitch('sw-powers',v=>{prefs.game.powersEnabled=v;savePrefs();renderDialog()});
+  wireSwitch('sw-negs',v=>{prefs.game.negsEnabled=v;savePrefs();renderDialog()});
+ }else{
   body.innerHTML=`
-   <section class="setgroup"><header><div><h4>Animations</h4><p>Screen flashes and shaking intensity.</p></div></header>
-    <div class="body" style="padding:12px 14px">${sliderHtml('vfxLevel','VFX Intensity',v.level,0,100,'%')}</div>
-   </section>
-   <div style="text-align:right; margin-top:10px;"><button class="btn btn-outline btn-sm" id="resetVfx">Reset Visual</button></div>`;
-  wireSlider('vfxLevel',0,100,x=>x+'%',null,x=>{prefs.vfx.level=x;savePrefs()});
- 
- } else if(dlgTab==='display') {
-  body.innerHTML=`
-   <section class="setgroup"><header><div><h4>Appearance</h4><p>Theme and text settings.</p></div></header>
+   <section class="setgroup"><header><div><h4>Reading style</h4><p>How the question is displayed while read.</p></div></header>
     <div class="body">
-     <div class="field-row"><div class="fl"><b>Theme</b><small>Light or dark mode.</small></div>
-      <select id="themeSelect" style="border-radius:4px; height:28px; background:var(--card);">
-       <option value="light" ${d.theme==='light'?'selected':''}>Light</option>
-       <option value="dark" ${d.theme==='dark'?'selected':''}>Dark</option>
-      </select>
-     </div>
-     <div class="field-row"><div class="fl"><b>Tossup text size</b><small>Adjust question text size.</small></div><div style="width:200px">${sliderHtml('textSize','Text Size',d.textSize,14,32,'px')}</div></div>
-     <div class="field-row" style="border-bottom:0"><div class="fl"><b>Hover grow</b><small>Cards expand slightly on hover.</small></div>${switchHtml('sw-hover',d.hoverGrow)}</div>
+     <div class="field-row"><div class="fl"><b>Tournament mode</b><small>Hide the question text — audio only, like a real moderator read.</small></div>${switchHtml('sw-tournament',d.tournament)}</div>
+     <div class="field-row" style="border-bottom:0"><div class="fl"><b>Reading cursor</b><small>A blinking caret follows the last word read.</small></div>${switchHtml('sw-cursor',d.readingCursor)}</div>
     </div>
    </section>
-   <div style="text-align:right; margin-top:10px;"><button class="btn btn-outline btn-sm" id="resetDisplay">Reset Display</button></div>`;
-  const ts=$('themeSelect');if(ts)ts.onchange=(e)=>{prefs.display.theme=e.target.value;savePrefs();applyDisplayPrefs();};
-  wireSlider('textSize',14,32,x=>x+'px',null,x=>{prefs.display.textSize=x;savePrefs();applyDisplayPrefs();});
-  wireSwitch('sw-hover',x=>{prefs.display.hoverGrow=x;savePrefs();applyDisplayPrefs();});
-
- } else if(dlgTab==='audio') {
-  body.innerHTML=`
-   <section class="setgroup"><header><div><h4>Sounds</h4><p>Buzzer and result effects.</p></div></header>
+   <section class="setgroup"><header><div><h4>Effects</h4><p>Sounds for buzzing and results.</p></div></header>
     <div class="body">
-     <div class="field-row"><div class="fl"><b>Sound effects</b><small>Play tones for events.</small></div>${switchHtml('sw-sfx',a.soundEffects)}</div>
-     <div class="field-row" style="border-bottom:0"><div class="fl"><b>Buzzer sound</b><small>Sound played when buzzing.</small></div>
-      <select id="buzzerSound" style="border-radius:4px; height:28px; background:var(--card);">
-       <option value="beep" ${a.buzzerSound==='beep'?'selected':''}>Classic Beep</option>
-       <option value="buzz" ${a.buzzerSound==='buzz'?'selected':''}>Harsh Buzz</option>
-       <option value="ding" ${a.buzzerSound==='ding'?'selected':''}>Ding</option>
-      </select>
-     </div>
+     <div class="field-row" style="border-bottom:0"><div class="fl"><b>Sound effects</b><small>Buzzer beep and result tones.</small></div>${switchHtml('sw-sfx',d.soundEffects)}</div>
     </div>
-   </section>
-   <section class="setgroup"><header><div><h4>Music Library</h4><p>Search and play background music.</p></div></header>
-    <div class="body" style="padding:12px 14px">
-     <div style="display:flex; gap:8px">
-      <input type="text" id="musicSearch" class="searchbox" style="margin:0; flex:1" placeholder="Search for any song...">
-      <button class="btn btn-primary btn-sm" style="height:36px" id="musicSearchBtn">Search</button>
-     </div>
-     <div id="musicResults" style="margin-top:12px; max-height:165px; overflow-y:auto;"></div>
-     <div style="margin-top:12px; border-top:1px dashed var(--border); padding-top:12px; display:flex; align-items:center; justify-content:space-between;">
-      <span style="font-size:12px; font-weight:bold;">Music Volume</span>
-      <div style="width:200px">${sliderHtml('musicVolume','Volume',a.musicVolume,0,100,'%')}</div>
-     </div>
-     <div style="margin-top:12px;"><button class="btn btn-outline btn-sm" id="stopMusicBtn">Stop Music</button></div>
-    </div>
-   </section>
-   <div style="text-align:right; margin-top:10px;"><button class="btn btn-outline btn-sm" id="resetAudio">Reset Audio</button></div>`;
-  
-  wireSwitch('sw-sfx',x=>{prefs.audio.soundEffects=x;savePrefs()});
-  const bs=$('buzzerSound');if(bs)bs.onchange=(e)=>{prefs.audio.buzzerSound=e.target.value;savePrefs()};
-  wireSlider('musicVolume',0,100,x=>x+'%',null,x=>{prefs.audio.musicVolume=x;if(currentMusic)currentMusic.volume=x/100;savePrefs()});
-  
-  const msb=$('musicSearchBtn'); if(msb) msb.onclick=window.searchMusic;
-  const msi=$('musicSearch'); if(msi) msi.onkeydown=e=>{if(e.key==='Enter')window.searchMusic();};
-  const smb=$('stopMusicBtn'); if(smb) smb.onclick=window.stopMusic;
+   </section>`;
+  wireSwitch('sw-tournament',v=>{prefs.display.tournament=v;savePrefs();renderQuestionOnly()});
+  wireSwitch('sw-cursor',v=>{prefs.display.readingCursor=v;savePrefs()});
+  wireSwitch('sw-sfx',v=>{prefs.display.soundEffects=v;savePrefs()});
  }
- 
- const rc = $('resetConfig'); if(rc) rc.onclick=()=>{prefs.game=structuredClone(DEFAULT_PREFS.game); savePrefs(); renderDialog();};
- const rd = $('resetDisplay'); if(rd) rd.onclick=()=>{prefs.display=structuredClone(DEFAULT_PREFS.display); savePrefs(); applyDisplayPrefs(); renderDialog();};
- const rv = $('resetVfx'); if(rv) rv.onclick=()=>{prefs.vfx=structuredClone(DEFAULT_PREFS.vfx); savePrefs(); renderDialog();};
- const ra = $('resetAudio'); if(ra) ra.onclick=()=>{prefs.audio=structuredClone(DEFAULT_PREFS.audio); savePrefs(); renderDialog();};
 }
-
 function wireSlider(id,min,max,format,unit,onChange){
  const el=$(id);if(!el)return;
  el.oninput=()=>{const v=Number(el.value);onChange(v);updateSliderVisual(id,v,min,max,format,unit)};
 }
 function wireSwitch(id,onChange){const el=$(id);if(el)el.onclick=()=>onChange(!el.classList.contains('on'))}
 
-/* ================= keybinds ================= */
+/* ================= keybinds (Space/N/P — no modal) ================= */
 document.addEventListener('keydown',e=>{
  const t=e.target;
  if(t&&(t.tagName==='INPUT'||t.tagName==='TEXTAREA'||t.isContentEditable))return;
  if(e.metaKey||e.ctrlKey||e.altKey)return;
- if(e.code==='Space'&&(phase==='reading'||phase==='dead-wait'||phase==='idle')){
-  e.preventDefault();
-  if(phase==='idle'){nextTossup();} else {buzz();}
- }
+ if(e.code==='Space'&&(phase==='reading'||phase==='dead-wait')){e.preventDefault();buzz()}
  else if(e.key==='n'&&(phase==='reading'||phase==='done')){nextTossup()}
  else if(e.key==='p'){togglePause()}
 });
@@ -974,18 +964,17 @@ $('clearHistory').onclick=clearHistory;
 
 /* ================= boot ================= */
 (async function init(){
- applyDisplayPrefs();
  renderScoringLine();
  render();
  try{
   await loadData();
   computeCatalogue();
   renderFilters();
-  $('metaLine').textContent=allQuestions.length.toLocaleString()+' tossups loaded';
+  $('metaLine').textContent=allQuestions.length.toLocaleString()+' tossups loaded · local Kokoro speech ready';
  }catch(e){
   $('metaLine').textContent='Data loading error: '+e.message;
  }
- nextTossup(true); // Loads first question but leaves it paused at 0 words.
+ nextTossup();
 })();
 </script>
 </body>
