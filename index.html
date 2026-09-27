@@ -36,7 +36,7 @@ kbd{font-family:var(--font-mono)}
 /* ---------- layout ---------- */
 .wrap{display:flex;min-height:100dvh;flex-direction:column}
 header.top{border-bottom:2px solid oklch(0.24 0.04 260/.85);background:var(--card)}
-.top-inner{max-width:1200px;margin:0 auto;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:16px;padding:16px}
+.top-inner{max-width:1200px;margin:0 auto;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:16px;padding:16px}.top-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 .logo{display:flex;flex-direction:column;gap:2px}
 .logo h1{font-family:var(--font-display);font-size:28px;line-height:1;margin:0;font-weight:400}
 .logo h1 span{color:var(--primary)}
@@ -63,6 +63,7 @@ aside h2{font-family:var(--font-serif);font-size:18px;font-weight:700;margin:0 0
 .qtext .power{display:inline-block;transform:translateY(-1px);border-radius:3px;background:oklch(0.58 0.215 27/.1);padding:0 5px;font-family:var(--font-mono);font-size:13px;font-weight:600;color:var(--primary)}
 .qtext .buzzpill{display:inline-flex;align-items:center;transform:translateY(-1px);border-radius:999px;background:var(--primary);color:var(--primary-foreground);padding:1px 9px;margin:0 4px;font-family:var(--font-mono);font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase}
 .qtext .after{color:oklch(0.48 0.025 260/.7)}
+.qtext .prepower{font-weight:700}.hitem .prepower{font-weight:700}
 .qtext .cursor{display:inline-block;width:2px;height:1.1em;background:oklch(0.24 0.04 260/.6);vertical-align:-2px;animation:blink 1s step-end infinite}
 @keyframes blink{50%{opacity:0}}
 .empty-state{flex:1;display:flex;flex-direction:column;justify-content:center;gap:10px;align-items:flex-start}
@@ -200,27 +201,27 @@ fieldset{border:0;padding:0;margin:0 0 20px}
 
 /* ---------- music popover ---------- */
 .popanchor{position:relative;display:inline-block}
-.popover-panel{position:fixed;z-index:120;top:0;left:0;width:320px;border:2px solid oklch(0.24 0.04 260/.85);border-radius:.7rem;background:var(--popover);box-shadow:4px 4px 0 0 var(--foreground);overflow:hidden}
+.popover-panel{position:fixed;max-width:calc(100vw - 16px);z-index:120;top:0;left:0;width:320px;border:2px solid oklch(0.24 0.04 260/.85);border-radius:.7rem;background:var(--popover);box-shadow:4px 4px 0 0 var(--foreground);overflow:hidden}
 .popover-head{display:flex;align-items:center;justify-content:space-between;gap:8px;background:var(--foreground);color:var(--background);padding:10px 14px}
 .popover-head b{font-family:var(--font-display);font-size:15px;font-weight:400;display:block}
 .popover-head small{font-size:10.5px;color:oklch(0.955 0.008 250/.6)}
 .popover-head button{background:none;border:0;color:inherit;cursor:pointer;font-size:15px}
-.music-player{display:flex;align-items:center;gap:12px;padding:12px 14px;border-bottom:2px dashed oklch(0.24 0.04 260/.15);background:var(--card)}
+.music-player{display:flex;align-items:center;gap:12px;padding:12px 14px;min-width:0;border-bottom:2px dashed oklch(0.24 0.04 260/.15);background:var(--card)}
 .buzz-vis{flex-shrink:0;width:48px;height:48px;border-radius:50%;border:3px solid oklch(0.24 0.04 260/.85);background:var(--foreground);display:flex;align-items:center;justify-content:center;position:relative;box-shadow:inset 0 0 0 4px oklch(0.58 0.215 27/.25)}
 .buzz-vis .buzz-core{width:22px;height:22px;border-radius:50%;background:var(--primary);border:2px solid oklch(0.24 0.04 260/.5);box-shadow:0 0 0 3px oklch(0.58 0.215 27/.35)}
 .buzz-vis.spinning{animation:buzzspin 2.4s linear infinite}
 .buzz-vis.spinning .buzz-core{animation:buzzpulse .8s ease-in-out infinite}
 @keyframes buzzspin{to{transform:rotate(360deg)}}
 @keyframes buzzpulse{0%,100%{transform:scale(1);box-shadow:0 0 0 3px oklch(0.58 0.215 27/.35)}50%{transform:scale(1.12);box-shadow:0 0 8px 4px oklch(0.58 0.215 27/.55)}}
-.music-controls{flex:1;min-width:0;display:flex;flex-direction:column;gap:6px}
+.music-controls{flex:1;min-width:0;overflow:hidden;display:flex;flex-direction:column;gap:6px}
 .music-now{font-family:var(--font-serif);font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .music-now.idle{color:var(--muted-foreground);font-weight:500}
-.music-transport{display:flex;align-items:center;gap:6px}
+.music-transport{display:flex;align-items:center;gap:6px;flex-wrap:nowrap}
 .music-transport button{width:30px;height:30px;border-radius:.4rem;border:2px solid oklch(0.24 0.04 260/.85);background:var(--background);cursor:pointer;font-size:12px;display:flex;align-items:center;justify-content:center;padding:0}
 .music-transport button:hover{background:var(--muted)}
 .music-transport button:disabled{opacity:.4;cursor:not-allowed}
 .music-search-wrap{padding:8px 10px 4px}
-.music-search{width:100%;border:2px solid oklch(0.24 0.04 260/.85);border-radius:.45rem;background:var(--background);padding:7px 10px;font-size:12.5px}
+.music-search{width:100%;max-width:100%;border:2px solid oklch(0.24 0.04 260/.85);border-radius:.45rem;background:var(--background);padding:7px 10px;font-size:12.5px}
 .music-search:focus{outline:2px solid var(--ring);outline-offset:1px}
 .music-didyoumean{padding:4px 14px 0;font-size:11px;color:var(--muted-foreground)}
 .music-didyoumean button{background:none;border:0;color:var(--primary);font:inherit;cursor:pointer;text-decoration:underline;padding:0}
@@ -299,7 +300,11 @@ footer.bottom a{text-decoration:underline;text-underline-offset:2px}
    <h1>QB<span>Speaker</span></h1>
    <span class="tag">a quizbowl reader by Jason Huang</span>
   </div>
-  <dl class="scoreboard" id="scoreboard"></dl>
+  <div class="top-actions">
+   <dl class="scoreboard" id="scoreboard"></dl>
+   <button class="btn btn-outline" id="settingsBtn" type="button">⚙ Settings</button>
+   <button class="btn btn-outline" id="musicBtn" type="button">🎵 <span id="musicBtnLabel">Music</span></button>
+  </div>
  </div>
 </header>
 
@@ -329,14 +334,6 @@ footer.bottom a{text-decoration:underline;text-underline-offset:2px}
     <div class="chipwrap" id="diffs"></div>
     <p class="hint" id="diffHint">1 = Middle School through 10 = Hard Open</p>
    </fieldset>
-   <div class="field-row">
-    <div class="fl"><b>Power marks only</b><small>Only load tossups containing a power mark</small></div>
-    <button class="swtch" id="powerOnly" role="switch" aria-checked="false"><i></i></button>
-   </div>
-   <div class="field-row" style="border-bottom:0">
-    <div class="fl"><b>Voice</b></div>
-    <select id="voice" style="max-width:150px"></select>
-   </div>
    <p class="hint" id="metaLine"></p>
   </section>
 
@@ -633,6 +630,7 @@ const Sound=(()=>{
   getHistory(){return playHistory.slice()},
   play(trackId,opts={}){
    const c=audio();const track=TRACKS.find(t=>t.id===trackId);
+   if(c&&c.state==='suspended')c.resume();
    if(!c||!track)return;
    if(!opts.fromHistory&&musicState.trackId)playHistory.push(musicState.trackId);
    this.stop();
@@ -733,7 +731,7 @@ const initVfxLayer=(()=>{
 
 /* ================= preferences (persisted to localStorage) ================= */
 const DEFAULT_PREFS={
- game:{wpm:240,pitch:1,buzzSeconds:8,deadSeconds:5,autoAdvance:0,powersEnabled:true,negsEnabled:true,points:{...DEFAULT_POINTS},readingStyle:'qbreader'},
+ game:{wpm:240,pitch:1,buzzSeconds:10,deadSeconds:5,autoAdvance:0,powersEnabled:true,negsEnabled:true,points:{...DEFAULT_POINTS},readingStyle:'qbreader'},
  visual:{vfx:70,buzzFlash:true,confetti:true,shake:true,hoverGrow:true,readingCursor:true,textSize:'md'},
  audio:{master:80,sfx:70,music:40,buzzSound:'lockout',clickSound:true,resultSounds:true,tickSound:false},
 };
@@ -743,7 +741,7 @@ function loadPrefs(){
   const raw=localStorage.getItem('qbspeaker-prefs');
   if(!raw)return structuredClone(DEFAULT_PREFS);
   const parsed=JSON.parse(raw);
-  const game={...DEFAULT_PREFS.game,...parsed.game,points:{...DEFAULT_PREFS.game.points,...parsed.game?.points}};
+  const game={...DEFAULT_PREFS.game,...parsed.game,autoAdvance:parsed.game?.autoAdvance??0,points:{...DEFAULT_PREFS.game.points,...parsed.game?.points}};
   const visual={...DEFAULT_PREFS.visual,...parsed.visual};
   // Migrate legacy tournament flag into readingStyle
   if(!game.readingStyle){
@@ -774,7 +772,7 @@ Sound.setVolumes(prefs.audio);
 let settings={categories:[],difficulties:[],search:'',powerOnly:false};
 
 /* ================= reader state machine ================= */
-let phase='loading'; // loading|reading|dead-wait|buzzed|revealed|done
+let phase='idle'; // idle|loading|reading|dead-wait|buzzed|revealed|done
 let tossup=null,words=[],revealed=0,paused=false,buzzWord=null,buzzedDuringReading=false;
 let deadline=null,countInterval=null,result=null,history=[];
 let powerIndex=-1;
@@ -808,15 +806,17 @@ function renderError(msg){$('actionCol').insertAdjacentHTML('beforeend',`<p clas
 let voices=[],fallbackTimer=null,keepAliveTimer=null,lastBoundaryAt=0,speechStartedAt=0,intentionalStop=false;
 function voiceset(){
  voices=window.speechSynthesis?window.speechSynthesis.getVoices()||[]:[];
- $('voice').innerHTML=voices.map((v,n)=>`<option value="${n}">${esc(v.name)} (${esc(v.lang)})</option>`).join('');
- if(voices.length&&!$('voice').dataset.userSelected){
+ const voiceSelect=$('voice');
+ if(!voiceSelect)return;
+ voiceSelect.innerHTML=voices.map((v,n)=>`<option value="${n}">${esc(v.name)} (${esc(v.lang)})</option>`).join('');
+ if(voices.length&&!voiceSelect.dataset.userSelected){
   const score=v=>{const n=(v.name||'').toLowerCase();let s=0;if(/microsoft|google|natural|neural|enhanced|premium|online/.test(n))s+=5;if(/^en(-|_)/i.test(v.lang))s+=2;if(/us|gb|au/i.test(v.lang))s+=1;return s};
   let best=0;voices.forEach((v,i)=>{if(score(v)>score(voices[best]))best=i});
-  $('voice').selectedIndex=best;
+  voiceSelect.selectedIndex=best;
  }
 }
 if('speechSynthesis' in window){voiceset();window.speechSynthesis.onvoiceschanged=voiceset}
-$('voice').onchange=()=>{$('voice').dataset.userSelected='1'};
+document.addEventListener('change',e=>{if(e.target&&e.target.id==='voice')e.target.dataset.userSelected='1'});
 
 function stopSpeech(){
  if(fallbackTimer){clearInterval(fallbackTimer);fallbackTimer=null}
@@ -991,29 +991,42 @@ function renderScoreboard(){
  const stats=[['Points',points],['P/10/N',`${count('power')}/${count('ten')}/${count('neg')}`],['TUH',heard],['PPTUH',ppth]];
  $('scoreboard').innerHTML=stats.map(([l,v])=>`<div><dt>${l}</dt><dd>${v}</dd></div>`).join('');
 }
+function formatQuestionHtml(text,boldPowerLead=false){
+ const ws=tokenize(text||'');
+ let passed=false,html='';
+ ws.forEach(w=>{
+  if(w===POWER_MARK){passed=true;html+=`<span class="power">(*)</span> `;return}
+  const cls=boldPowerLead&&!passed?'prepower':'';
+  html+=`<span class="${cls}">${esc(w)}</span> `;
+ });
+ return html;
+}
 function renderQuestionOnly(){
  const box=$('qtext');
  if(!box)return;
  const style=prefs.game.readingStyle||'qbreader';
- if(style==='tournament'&&phase!=='done'){box.parentElement.classList.add('tournament-hidden');return}
+ if(style==='tournament'&&phase!=='done'){box.parentElement.classList.add('tournament-hidden');box.innerHTML='';return}
  box.parentElement.classList.remove('tournament-hidden');
  let html='';
  if(style==='all'&&phase!=='done'){
+  let passedPower=false;
   words.forEach((w,i)=>{
    const read=i<revealed;
    const isCurrent=phase==='reading'&&!paused&&i===revealed-1;
-   const cls=[read?'reading-highlight':'reading-ahead',isCurrent?'current':''].filter(Boolean).join(' ');
-   if(w===POWER_MARK)html+=`<span class="power ${cls}" title="Power mark: buzz before here for ${rules.points.power} points">(*)</span> `;
+   const cls=[read?'reading-highlight':'reading-ahead',isCurrent?'current':'',!passedPower?'prepower':''].filter(Boolean).join(' ');
+   if(w===POWER_MARK){passedPower=true;html+=`<span class="power ${cls}" title="Power mark: buzz before here for ${rules.points.power} points">(*)</span> `;}
    else html+=`<span class="${cls}">${esc(w)}</span> `;
    if(buzzWord===i)html+=`<span class="buzzpill">Buzz</span> `;
   });
   if(phase==='reading'&&!paused&&prefs.visual.readingCursor)html+='<span class="cursor"></span>';
  }else{
+  let passedPower=false;
   const visible=words.slice(0,revealed);
   visible.forEach((w,i)=>{
    const afterBuzz=phase==='done'&&buzzWord!==null&&i>buzzWord;
-   if(w===POWER_MARK)html+=`<span class="power" title="Power mark: buzz before here for ${rules.points.power} points">(*)</span> `;
-   else html+=`<span${afterBuzz?' class="after"':''}>${esc(w)}</span> `;
+   const pre=!passedPower;
+   if(w===POWER_MARK){passedPower=true;html+=`<span class="power" title="Power mark: buzz before here for ${rules.points.power} points">(*)</span> `;}
+   else html+=`<span class="${afterBuzz?'after ':''}${pre?'prepower':''}">${esc(w)}</span> `;
    if(buzzWord===i)html+=`<span class="buzzpill">Buzz</span> `;
   });
   if(phase==='reading'&&!paused&&prefs.visual.readingCursor)html+='<span class="cursor"></span>';
@@ -1030,9 +1043,13 @@ function render(){
 function renderStage(){
  const host=$('qstage');
  if(!tossup){
-  host.innerHTML=phase==='loading'
-   ?`<p style="font-size:13px;color:var(--muted-foreground)" role="status">Pulling a tossup from the packet…</p>`
-   :`<div class="empty-state"><p class="lede">No tossup loaded.</p><p class="sub">Check your filters, or that the data files are next to this page.</p></div>`;
+  if(phase==='idle'){
+   host.innerHTML=`<div class="empty-state"><p class="lede">For 10 points, press Start and buzz when you know it.</p><p class="sub">Questions read word by word. Buzz before the <span class="pmark">(*)</span> for power. Space buzzes, N skips, P pauses.</p></div>`;
+  }else{
+   host.innerHTML=phase==='loading'
+    ?`<p style="font-size:13px;color:var(--muted-foreground)" role="status">Pulling a tossup from the packet…</p>`
+    :`<div class="empty-state"><p class="lede">No tossup loaded.</p><p class="sub">Check your filters, or that the data files are next to this page.</p></div>`;
+  }
   return;
  }
  const diffLabel=DIFFICULTY_LABELS[tossup.difficulty]||'';
@@ -1089,14 +1106,16 @@ function renderActionCol(){
   renderTimebar();
  }else{
   const canAdvance=phase==='reading'||phase==='done';
-  const label=phase==='reading'?'Skip':'Next tossup';
+  const idle=phase==='idle';
+  const label=idle?'Start speaking':phase==='reading'?'Skip':'Next tossup';
   host.innerHTML=`<div class="action-row">
-   <button class="btn btn-primary" id="skipBtn" ${canAdvance?'':'disabled'}>${label} <kbd style="margin-left:6px">N</kbd></button>
+   <button class="btn btn-primary" id="skipBtn" ${idle||canAdvance?'':'disabled'}>${label} <kbd style="margin-left:6px">N</kbd></button>
    <button class="btn btn-outline" id="pauseBtn" ${phase!=='reading'?'disabled':''}>${paused?'▶ Resume':'Ⅱ Pause'} <kbd style="margin-left:6px">P</kbd></button>
    <button class="btn btn-outline" id="settingsBtn" type="button">⚙ Settings</button>
    <button class="btn btn-outline" id="musicBtn" type="button">🎵 <span id="musicBtnLabel">Music</span></button>
+
   </div>`;
-  $('skipBtn').onclick=nextTossup;
+  $('skipBtn').onclick=()=>{if(idle)nextTossup();else nextTossup()};
   $('pauseBtn').onclick=togglePause;
   $('settingsBtn').onclick=openSettings;
   wireMusicButton();
@@ -1152,10 +1171,10 @@ function renderHistory(){
     <div class="hbottom"><div class="hbar">${buzzPct!==null?`<span style="left:${buzzPct}%"></span>`:''}</div><span class="hcat">${esc(h.tossup.category)}</span></div>
    </summary>
    <div class="hbody">
-    <p class="hq">${esc(h.tossup.question)}</p>
+    <p class="hq">${formatQuestionHtml(h.tossup.question,true)}</p>
     <p class="hq"><span style="font-family:var(--font-mono);font-size:10.5px;font-weight:600;letter-spacing:.08em;color:var(--muted-foreground);text-transform:uppercase">Answer </span>${sanitizeAnswerHtml(h.tossup.answer)}</p>
     ${h.given?`<p class="hgiven">You said: <span style="color:var(--foreground)">${esc(h.given)}</span></p>`:''}
-    <p class="hgiven">${esc(h.tossup.setName)}${h.tossup.year?' ('+h.tossup.year+')':''}</p>
+    <p class="hgiven">${esc(h.tossup.setName)}${h.tossup.year?' ('+h.tossup.year+')':''}${h.tossup.packet?' / Packet '+esc(h.tossup.packet):''}${h.tossup.number?' / #'+esc(h.tossup.number):''}</p>
     ${overrideButtonHtml(h.outcome,i)?`<div>${overrideButtonHtml(h.outcome,i)}</div>`:''}
    </div>
   </details></li>`;
@@ -1180,10 +1199,7 @@ function renderFilters(){
  });
  $('diffLegend').textContent='Difficulty'+(settings.difficulties.length?'':' (all)');
  $('diffHint').textContent=settings.difficulties.length?settings.difficulties.map(d=>DIFFICULTY_LABELS[d]).join(', '):'1 = Middle School through 10 = Hard Open';
- $('powerOnly').classList.toggle('on',settings.powerOnly);
- $('powerOnly').setAttribute('aria-checked',String(settings.powerOnly));
 }
-$('powerOnly').onclick=()=>{settings.powerOnly=!settings.powerOnly;renderFilters()};
 $('search').oninput=e=>{settings.search=e.target.value};
 
 /* ================= settings dialog ================= */
@@ -1195,6 +1211,7 @@ function showToast(msg){
 }
 function openSettings(){$('dlgOverlay').classList.remove('hidden');renderDialog()}
 function closeSettings(){$('dlgOverlay').classList.add('hidden')}
+$('settingsBtn').onclick=openSettings;
 $('dlgClose').onclick=closeSettings;
 $('dlgOverlay').onclick=e=>{if(e.target===$('dlgOverlay'))closeSettings()};
 let dlgTab='game';
@@ -1236,7 +1253,7 @@ function filterTracks(q){
   const d=Math.min(levenshtein(q,t.title),...t.title.split(/\s+/).map(w=>levenshtein(q,w)));
   if(d<bestDist){bestDist=d;best=t}
  });
- if(best&&bestDist<=Math.max(3,Math.floor(q.length*0.45)))return {matches:[],suggestion:best};
+ if(best&&bestDist<=Math.max(3,Math.ceil(q.length*0.5)))return {matches:[],suggestion:best};
  return {matches:[],suggestion:null};
 }
 function renderMusicPopover(){
@@ -1394,27 +1411,33 @@ function renderDialog(){
  if(dlgTab==='game'){
   const rs=g.readingStyle||'qbreader';
   body.innerHTML=`
-   <section class="setgroup"><header><div><h4>Reading Styles</h4><p>How tossup text is shown while the speaker reads. Only one mode can be active.</p></div></header>
+   <section class="setgroup"><header><div><h4>Reading Styles</h4><p>Choose exactly one way the tossup is displayed while it is being read.</p></div></header>
     <div class="body" style="padding:12px 14px">
-     <div class="field-row"><div class="fl"><b>All text</b><small>Full tossup is visible; a highlight follows the word being read.</small></div>${switchHtml('sw-rs-all',rs==='all')}</div>
-     <div class="field-row"><div class="fl"><b>qbreader style</b><small>Words appear one-by-one as the speaker reads them.</small></div>${switchHtml('sw-rs-qbreader',rs==='qbreader')}</div>
-     <div class="field-row" style="border-bottom:0"><div class="fl"><b>Tournament mode</b><small>No text is shown — audio only, like a real tournament moderator.</small></div>${switchHtml('sw-rs-tournament',rs==='tournament')}</div>
+     <div class="field-row"><div class="fl"><b>All Text</b><small>Entire tossup is visible; highlighting follows the speaker.</small></div>${switchHtml('sw-rs-all',rs==='all')}</div>
+     <div class="field-row"><div class="fl"><b>QBReader Style Reading</b><small>Words appear progressively as the speaker reads them.</small></div>${switchHtml('sw-rs-qbreader',rs==='qbreader')}</div>
+     <div class="field-row" style="border-bottom:0"><div class="fl"><b>Tournament Mode</b><small>No tossup text is shown while reading.</small></div>${switchHtml('sw-rs-tournament',rs==='tournament')}</div>
     </div>
    </section>
-   <section class="setgroup"><header><div><h4>Reading</h4><p>How the moderator reads each tossup.</p></div></header>
+   <section class="setgroup"><header><div><h4>Speech</h4><p>Voice timing and tone. WPM controls both TTS speed and word-reveal timing.</p></div></header>
     <div class="body" style="padding:12px 14px">
-     <div class="slider-label"><span>Speaking speed</span><small>Words per minute for the TTS voice</small></div>
-     ${sliderHtml('wpm','Speaking speed',g.wpm,80,400,' WPM',v=>v+' WPM')}
+     <div class="slider-label"><span>WPM</span><small>Words per minute for speech and tracking</small></div>
+     ${sliderHtml('wpm','WPM',g.wpm,80,400,' WPM',v=>v+' WPM')}
      <div style="height:12px"></div>
      <div class="slider-label"><span>Pitch</span><small>Higher = brighter voice; lower = deeper</small></div>
      ${sliderHtml('pitch2','Pitch',Math.round(g.pitch*10),5,20,'',v=>(v/10).toFixed(1))}
+     <div class="field-row" style="margin-top:10px;border-bottom:0"><div class="fl"><b>Voice</b><small>Choose the browser/system TTS voice.</small></div><select id="voice" style="max-width:190px"></select></div>
+    </div>
+   </section>
+   <section class="setgroup"><header><div><h4>Filters</h4><p>Limit which tossups can be selected.</p></div></header>
+    <div class="body" style="padding:12px 14px">
+     <div class="field-row" style="border-bottom:0"><div class="fl"><b>Power Marks Only</b><small>Only load tossups containing a (*) power mark.</small></div>${switchHtml('sw-poweronly',settings.powerOnly)}</div>
     </div>
    </section>
    <section class="setgroup"><header><div><h4>Timers</h4><p>How long you get after buzzing and after the question ends.</p></div></header>
     <div class="body" style="display:flex;flex-direction:column;gap:14px;padding:12px 14px">
      <div>
       <div class="slider-label"><span>Answer timer</span><small>Seconds to type your answer after you buzz</small></div>
-      ${sliderHtml('buzzSeconds','Answer timer',g.buzzSeconds,3,30,'s',v=>v+'s')}
+      ${sliderHtml('buzzSeconds','Answer timer',g.buzzSeconds,3,60,'s',v=>v+'s')}
      </div>
      <div>
       <div class="slider-label"><span>Dead-air timer</span><small>Seconds you can still buzz after the question finishes</small></div>
@@ -1465,7 +1488,7 @@ function renderDialog(){
   wireReadingStyle('sw-rs-tournament','tournament');
   wireSlider('wpm',80,400,v=>v+' WPM',null,v=>{prefs.game.wpm=v;savePrefs()});
   wireSlider('pitch2',5,20,v=>(v/10).toFixed(1),null,v=>{prefs.game.pitch=v/10;savePrefs()});
-  wireSlider('buzzSeconds',3,30,v=>v+'s',null,v=>{prefs.game.buzzSeconds=v;savePrefs()});
+  wireSlider('buzzSeconds',3,60,v=>v+'s',null,v=>{prefs.game.buzzSeconds=v;savePrefs()});
   wireSlider('deadSeconds',1,15,v=>v+'s',null,v=>{prefs.game.deadSeconds=v;savePrefs()});
   wireSlider('autoAdvance',0,15,v=>v===0?'OFF':v+'s',null,v=>{prefs.game.autoAdvance=v;savePrefs()});
   body.querySelectorAll('[data-preset]').forEach(b=>b.onclick=()=>{
@@ -1481,6 +1504,8 @@ function renderDialog(){
   });
   wireSwitch('sw-powers',v=>{prefs.game.powersEnabled=v;savePrefs();renderDialog()});
   wireSwitch('sw-negs',v=>{prefs.game.negsEnabled=v;savePrefs();renderDialog()});
+  wireSwitch('sw-poweronly',v=>{settings.powerOnly=v;renderFilters();renderDialog()});
+  voiceset();
  }else if(dlgTab==='visual'){
   const off=v.vfx===0;
   body.innerHTML=`
@@ -1598,10 +1623,13 @@ $('clearHistory').onclick=clearHistory;
   computeCatalogue();
   renderFilters();
   $('metaLine').textContent=allQuestions.length.toLocaleString()+' tossups loaded';
+  phase='idle';
+  render();
  }catch(e){
   $('metaLine').textContent='Data loading error: '+e.message;
+  phase='idle';
+  render();
  }
- nextTossup();
 })();
 </script>
 </body>
