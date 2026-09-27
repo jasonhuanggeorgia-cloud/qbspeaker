@@ -200,12 +200,31 @@ fieldset{border:0;padding:0;margin:0 0 20px}
 
 /* ---------- music popover ---------- */
 .popanchor{position:relative;display:inline-block}
-.popover-panel{position:absolute;z-index:120;top:calc(100% + 8px);left:0;width:280px;border:2px solid oklch(0.24 0.04 260/.85);border-radius:.7rem;background:var(--popover);box-shadow:4px 4px 0 0 var(--foreground);overflow:hidden}
+.popover-panel{position:fixed;z-index:120;top:0;left:0;width:320px;border:2px solid oklch(0.24 0.04 260/.85);border-radius:.7rem;background:var(--popover);box-shadow:4px 4px 0 0 var(--foreground);overflow:hidden}
 .popover-head{display:flex;align-items:center;justify-content:space-between;gap:8px;background:var(--foreground);color:var(--background);padding:10px 14px}
 .popover-head b{font-family:var(--font-display);font-size:15px;font-weight:400;display:block}
 .popover-head small{font-size:10.5px;color:oklch(0.955 0.008 250/.6)}
 .popover-head button{background:none;border:0;color:inherit;cursor:pointer;font-size:15px}
-.tracklist{list-style:none;margin:0;padding:6px;max-height:280px;overflow-y:auto}
+.music-player{display:flex;align-items:center;gap:12px;padding:12px 14px;border-bottom:2px dashed oklch(0.24 0.04 260/.15);background:var(--card)}
+.buzz-vis{flex-shrink:0;width:48px;height:48px;border-radius:50%;border:3px solid oklch(0.24 0.04 260/.85);background:var(--foreground);display:flex;align-items:center;justify-content:center;position:relative;box-shadow:inset 0 0 0 4px oklch(0.58 0.215 27/.25)}
+.buzz-vis .buzz-core{width:22px;height:22px;border-radius:50%;background:var(--primary);border:2px solid oklch(0.24 0.04 260/.5);box-shadow:0 0 0 3px oklch(0.58 0.215 27/.35)}
+.buzz-vis.spinning{animation:buzzspin 2.4s linear infinite}
+.buzz-vis.spinning .buzz-core{animation:buzzpulse .8s ease-in-out infinite}
+@keyframes buzzspin{to{transform:rotate(360deg)}}
+@keyframes buzzpulse{0%,100%{transform:scale(1);box-shadow:0 0 0 3px oklch(0.58 0.215 27/.35)}50%{transform:scale(1.12);box-shadow:0 0 8px 4px oklch(0.58 0.215 27/.55)}}
+.music-controls{flex:1;min-width:0;display:flex;flex-direction:column;gap:6px}
+.music-now{font-family:var(--font-serif);font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.music-now.idle{color:var(--muted-foreground);font-weight:500}
+.music-transport{display:flex;align-items:center;gap:6px}
+.music-transport button{width:30px;height:30px;border-radius:.4rem;border:2px solid oklch(0.24 0.04 260/.85);background:var(--background);cursor:pointer;font-size:12px;display:flex;align-items:center;justify-content:center;padding:0}
+.music-transport button:hover{background:var(--muted)}
+.music-transport button:disabled{opacity:.4;cursor:not-allowed}
+.music-search-wrap{padding:8px 10px 4px}
+.music-search{width:100%;border:2px solid oklch(0.24 0.04 260/.85);border-radius:.45rem;background:var(--background);padding:7px 10px;font-size:12.5px}
+.music-search:focus{outline:2px solid var(--ring);outline-offset:1px}
+.music-didyoumean{padding:4px 14px 0;font-size:11px;color:var(--muted-foreground)}
+.music-didyoumean button{background:none;border:0;color:var(--primary);font:inherit;cursor:pointer;text-decoration:underline;padding:0}
+.tracklist{list-style:none;margin:0;padding:6px;max-height:220px;overflow-y:auto}
 .trackrow{width:100%;display:flex;align-items:center;gap:10px;border:0;background:none;text-align:left;border-radius:.5rem;padding:8px 8px;cursor:pointer}
 .trackrow:hover{background:var(--muted)}
 .trackrow.playing{background:oklch(0.58 0.215 27/.1)}
@@ -221,6 +240,12 @@ fieldset{border:0;padding:0;margin:0 0 20px}
 @keyframes eqbar{0%,100%{height:4px}50%{height:14px}}
 .popover-foot{border-top:2px dashed oklch(0.24 0.04 260/.15);padding:10px 14px;display:flex;flex-direction:column;gap:6px}
 .popover-foot label{font-size:9.5px;letter-spacing:.1em;color:var(--muted-foreground);text-transform:uppercase}
+.slider-label{font-size:11px;font-weight:600;margin-bottom:4px;display:flex;justify-content:space-between;gap:8px}
+.slider-label small{font-weight:500;color:var(--muted-foreground)}
+.reading-highlight{background:oklch(0.58 0.215 27/.22);border-radius:2px;box-decoration-break:clone;-webkit-box-decoration-break:clone}
+.reading-ahead{color:var(--muted-foreground)}
+.toast-msg{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);z-index:300;background:var(--foreground);color:var(--background);padding:10px 16px;border-radius:.5rem;font-size:13px;font-weight:600;box-shadow:4px 4px 0 0 var(--primary);max-width:90vw;text-align:center;animation:toastin .25s ease-out}
+@keyframes toastin{from{opacity:0;transform:translateX(-50%) translateY(8px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
 
 /* ---------- vfx (real canvas confetti + stamp, ported from the v0 vfx layer) ---------- */
 .vfx-canvas{position:fixed;inset:0;pointer-events:none;z-index:150}
@@ -313,23 +338,6 @@ footer.bottom a{text-decoration:underline;text-underline-offset:2px}
     <select id="voice" style="max-width:150px"></select>
    </div>
    <p class="hint" id="metaLine"></p>
-   <div style="display:flex;gap:8px;margin-top:12px">
-    <span class="popanchor">
-     <button class="btn btn-outline btn-sm" id="musicBtn" type="button">🎵 <span id="musicBtnLabel">Music</span></button>
-     <div class="popover-panel hidden" id="musicPopover">
-      <div class="popover-head">
-       <div><b>Music library</b><small id="musicNowPlaying">Background tracks for practice</small></div>
-       <button id="musicStopBtn" class="hidden" aria-label="Stop music" type="button">⏹</button>
-      </div>
-      <ul class="tracklist" id="trackList"></ul>
-      <div class="popover-foot">
-       <label for="musicVolumeSlider">Music volume</label>
-       <div id="musicVolumeSlot"></div>
-      </div>
-     </div>
-    </span>
-    <button class="btn btn-outline btn-sm" id="settingsBtn" type="button">⚙ Settings</button>
-   </div>
   </section>
 
   <section>
@@ -348,7 +356,34 @@ footer.bottom a{text-decoration:underline;text-underline-offset:2px}
 </footer>
 </div>
 
-<!-- ================= Settings dialog ================= -->
+<!-- ================= Music + Settings dialog ================= -->
+
+<div class="popover-panel hidden" id="musicPopover">
+ <div class="popover-head">
+  <div><b>Music library</b><small id="musicNowPlaying">Background tracks for practice</small></div>
+  <button id="musicStopBtn" class="hidden" aria-label="Stop music" type="button">⏹</button>
+ </div>
+ <div class="music-player">
+  <div class="buzz-vis" id="buzzVis" aria-hidden="true"><span class="buzz-core"></span></div>
+  <div class="music-controls">
+   <div class="music-now idle" id="musicNowTitle">No track playing</div>
+   <div class="music-transport">
+    <button type="button" id="musicPrevBtn" aria-label="Previous track" title="Previous">|&lt;</button>
+    <button type="button" id="musicPlayPauseBtn" aria-label="Play or pause" title="Play/Pause">▶</button>
+    <button type="button" id="musicNextBtn" aria-label="Next track (random)" title="Next (random)">&gt;|</button>
+   </div>
+  </div>
+ </div>
+ <div class="music-search-wrap">
+  <input class="music-search" id="musicSearch" type="search" placeholder="Search songs…" autocomplete="off">
+ </div>
+ <div class="music-didyoumean hidden" id="musicDidYouMean"></div>
+ <ul class="tracklist" id="trackList"></ul>
+ <div class="popover-foot">
+  <label for="musicVolumeSlider">Music volume</label>
+  <div id="musicVolumeSlot"></div>
+ </div>
+</div>
 <div class="dlg-overlay hidden" id="dlgOverlay">
  <div class="dlg" role="dialog" aria-modal="true" aria-label="Settings" style="position:relative">
   <button class="dlg-close" id="dlgClose" aria-label="Close settings">×</button>
@@ -533,10 +568,18 @@ const Sound=(()=>{
   {id:'stacks-at-night',title:'Stacks at Night',mood:'Ambient focus',bpm:60,chords:[[48,55,59,62,64],[45,52,55,59,60],[41,48,52,55,57],[43,50,55,57,59]],pad:'sine',lead:'pluck',drums:'none',bass:false},
   {id:'nationals-warmup',title:'Nationals Warmup',mood:'Upbeat synth',bpm:112,chords:[[50,53,57],[46,50,53],[53,57,60],[48,52,55]],pad:'sawtooth',lead:'arp',drums:'four',bass:true},
   {id:'moderators-lounge',title:"Moderator's Lounge",mood:'Late-night jazz',bpm:92,chords:[[50,53,57,60,64],[43,53,57,59,64],[48,52,55,59,62],[45,49,55,58,61]],pad:'sine',lead:'none',drums:'brush',bass:true},
+  {id:'power-mark',title:'Power Mark',mood:'Bright focus',bpm:100,chords:[[55,59,62,67],[52,55,59,64],[50,53,57,62],[48,52,55,60]],pad:'triangle',lead:'arp',drums:'four',bass:true},
+  {id:'neg-five',title:'Neg Five',mood:'Moody downtempo',bpm:72,chords:[[45,48,52,55],[43,47,50,55],[41,45,48,53],[48,52,55,59]],pad:'sine',lead:'pluck',drums:'lofi',bass:true},
+  {id:'tossup-twenty',title:'Tossup Twenty',mood:'Energetic pulse',bpm:124,chords:[[57,60,64,67],[53,57,60,64],[50,53,57,60],[55,59,62,67]],pad:'sawtooth',lead:'chip',drums:'chip',bass:true},
+  {id:'packet-break',title:'Packet Break',mood:'Chill interlude',bpm:84,chords:[[48,52,55,59],[50,53,57,60],[45,48,52,55],[43,47,50,55]],pad:'triangle',lead:'none',drums:'brush',bass:false},
+  {id:'finals-room',title:'Finals Room',mood:'Tense ambient',bpm:66,chords:[[41,48,52,55,60],[38,45,50,53,57],[43,50,55,59,62],[40,47,52,55,59]],pad:'sine',lead:'pluck',drums:'none',bass:true},
+  {id:'quizbowl-cafe',title:'Quizbowl Cafe',mood:'Coffee shop jazz',bpm:96,chords:[[50,53,57,60],[48,52,55,59],[53,57,60,64],[45,49,52,57]],pad:'sine',lead:'pluck',drums:'brush',bass:true},
+  {id:'lockout-lane',title:'Lockout Lane',mood:'Arcade drive',bpm:140,chords:[[60,64,67],[57,60,64],[53,57,60],[55,59,62]],pad:null,lead:'chip',drums:'chip',bass:true},
  ];
  let musicState={trackId:null};
  const musicListeners=new Set();
  let scheduler=null,step=0,nextTime=0;
+ let playHistory=[];
  function setMusicState(next){musicState=next;musicListeners.forEach(l=>l())}
  function scheduleStep(track,s,t,stepDur){
   const dest=musicGain;
@@ -587,9 +630,11 @@ const Sound=(()=>{
  const music={
   subscribe(l){musicListeners.add(l);return()=>musicListeners.delete(l)},
   getSnapshot(){return musicState},
-  play(trackId){
+  getHistory(){return playHistory.slice()},
+  play(trackId,opts={}){
    const c=audio();const track=TRACKS.find(t=>t.id===trackId);
    if(!c||!track)return;
+   if(!opts.fromHistory&&musicState.trackId)playHistory.push(musicState.trackId);
    this.stop();
    step=0;nextTime=c.currentTime+.08;
    const stepDur=60/track.bpm/4;
@@ -599,6 +644,18 @@ const Sound=(()=>{
    setMusicState({trackId});
   },
   stop(){if(scheduler)clearInterval(scheduler);scheduler=null;if(musicState.trackId)setMusicState({trackId:null})},
+  nextRandom(){
+   const others=TRACKS.filter(t=>t.id!==musicState.trackId);
+   if(!others.length)return;
+   const pick=others[Math.floor(Math.random()*others.length)];
+   this.play(pick.id);
+  },
+  prev(){
+   if(!playHistory.length)return false;
+   const id=playHistory.pop();
+   this.play(id,{fromHistory:true});
+   return true;
+  },
  };
  return {sfx,music,TRACKS,setVolumes};
 })();
@@ -676,8 +733,8 @@ const initVfxLayer=(()=>{
 
 /* ================= preferences (persisted to localStorage) ================= */
 const DEFAULT_PREFS={
- game:{wpm:240,pitch:1,buzzSeconds:8,deadSeconds:5,autoAdvance:0,powersEnabled:true,negsEnabled:true,points:{...DEFAULT_POINTS}},
- visual:{vfx:70,buzzFlash:true,confetti:true,shake:true,hoverGrow:true,readingCursor:true,textSize:'md',tournament:false},
+ game:{wpm:240,pitch:1,buzzSeconds:8,deadSeconds:5,autoAdvance:0,powersEnabled:true,negsEnabled:true,points:{...DEFAULT_POINTS},readingStyle:'qbreader'},
+ visual:{vfx:70,buzzFlash:true,confetti:true,shake:true,hoverGrow:true,readingCursor:true,textSize:'md'},
  audio:{master:80,sfx:70,music:40,buzzSound:'lockout',clickSound:true,resultSounds:true,tickSound:false},
 };
 let prefs=loadPrefs();
@@ -686,11 +743,16 @@ function loadPrefs(){
   const raw=localStorage.getItem('qbspeaker-prefs');
   if(!raw)return structuredClone(DEFAULT_PREFS);
   const parsed=JSON.parse(raw);
-  return {
-   game:{...DEFAULT_PREFS.game,...parsed.game,points:{...DEFAULT_PREFS.game.points,...parsed.game?.points}},
-   visual:{...DEFAULT_PREFS.visual,...parsed.visual},
-   audio:{...DEFAULT_PREFS.audio,...parsed.audio},
-  };
+  const game={...DEFAULT_PREFS.game,...parsed.game,points:{...DEFAULT_PREFS.game.points,...parsed.game?.points}};
+  const visual={...DEFAULT_PREFS.visual,...parsed.visual};
+  // Migrate legacy tournament flag into readingStyle
+  if(!game.readingStyle){
+   if(visual.tournament)game.readingStyle='tournament';
+   else game.readingStyle='qbreader';
+  }
+  delete visual.tournament;
+  if(!['all','qbreader','tournament'].includes(game.readingStyle))game.readingStyle='qbreader';
+  return {game,visual,audio:{...DEFAULT_PREFS.audio,...parsed.audio}};
  }catch(e){return structuredClone(DEFAULT_PREFS)}
 }
 function applyVisualDom(){
@@ -932,17 +994,30 @@ function renderScoreboard(){
 function renderQuestionOnly(){
  const box=$('qtext');
  if(!box)return;
- if(prefs.visual.tournament&&phase!=='done'){box.parentElement.classList.add('tournament-hidden');return}
+ const style=prefs.game.readingStyle||'qbreader';
+ if(style==='tournament'&&phase!=='done'){box.parentElement.classList.add('tournament-hidden');return}
  box.parentElement.classList.remove('tournament-hidden');
- const visible=words.slice(0,revealed);
  let html='';
- visible.forEach((w,i)=>{
-  const afterBuzz=phase==='done'&&buzzWord!==null&&i>buzzWord;
-  if(w===POWER_MARK)html+=`<span class="power" title="Power mark: buzz before here for ${rules.points.power} points">(*)</span> `;
-  else html+=`<span${afterBuzz?' class="after"':''}>${esc(w)}</span> `;
-  if(buzzWord===i)html+=`<span class="buzzpill">Buzz</span> `;
- });
- if(phase==='reading'&&!paused&&prefs.visual.readingCursor)html+='<span class="cursor"></span>';
+ if(style==='all'&&phase!=='done'){
+  words.forEach((w,i)=>{
+   const read=i<revealed;
+   const isCurrent=phase==='reading'&&!paused&&i===revealed-1;
+   const cls=[read?'reading-highlight':'reading-ahead',isCurrent?'current':''].filter(Boolean).join(' ');
+   if(w===POWER_MARK)html+=`<span class="power ${cls}" title="Power mark: buzz before here for ${rules.points.power} points">(*)</span> `;
+   else html+=`<span class="${cls}">${esc(w)}</span> `;
+   if(buzzWord===i)html+=`<span class="buzzpill">Buzz</span> `;
+  });
+  if(phase==='reading'&&!paused&&prefs.visual.readingCursor)html+='<span class="cursor"></span>';
+ }else{
+  const visible=words.slice(0,revealed);
+  visible.forEach((w,i)=>{
+   const afterBuzz=phase==='done'&&buzzWord!==null&&i>buzzWord;
+   if(w===POWER_MARK)html+=`<span class="power" title="Power mark: buzz before here for ${rules.points.power} points">(*)</span> `;
+   else html+=`<span${afterBuzz?' class="after"':''}>${esc(w)}</span> `;
+   if(buzzWord===i)html+=`<span class="buzzpill">Buzz</span> `;
+  });
+  if(phase==='reading'&&!paused&&prefs.visual.readingCursor)html+='<span class="cursor"></span>';
+ }
  box.innerHTML=html;
 }
 function render(){
@@ -1018,11 +1093,13 @@ function renderActionCol(){
   host.innerHTML=`<div class="action-row">
    <button class="btn btn-primary" id="skipBtn" ${canAdvance?'':'disabled'}>${label} <kbd style="margin-left:6px">N</kbd></button>
    <button class="btn btn-outline" id="pauseBtn" ${phase!=='reading'?'disabled':''}>${paused?'▶ Resume':'Ⅱ Pause'} <kbd style="margin-left:6px">P</kbd></button>
-   <button class="btn btn-outline" id="settingsBtn2" type="button">⚙ Settings</button>
+   <button class="btn btn-outline" id="settingsBtn" type="button">⚙ Settings</button>
+   <button class="btn btn-outline" id="musicBtn" type="button">🎵 <span id="musicBtnLabel">Music</span></button>
   </div>`;
   $('skipBtn').onclick=nextTossup;
   $('pauseBtn').onclick=togglePause;
-  $('settingsBtn2').onclick=openSettings;
+  $('settingsBtn').onclick=openSettings;
+  wireMusicButton();
  }
 }
 function answerFormHtml(){
@@ -1110,51 +1187,156 @@ $('powerOnly').onclick=()=>{settings.powerOnly=!settings.powerOnly;renderFilters
 $('search').oninput=e=>{settings.search=e.target.value};
 
 /* ================= settings dialog ================= */
+function showToast(msg){
+ const old=document.querySelector('.toast-msg');if(old)old.remove();
+ const el=document.createElement('div');el.className='toast-msg';el.textContent=msg;
+ document.body.appendChild(el);
+ setTimeout(()=>el.remove(),2800);
+}
 function openSettings(){$('dlgOverlay').classList.remove('hidden');renderDialog()}
 function closeSettings(){$('dlgOverlay').classList.add('hidden')}
-$('settingsBtn').onclick=openSettings;
 $('dlgClose').onclick=closeSettings;
 $('dlgOverlay').onclick=e=>{if(e.target===$('dlgOverlay'))closeSettings()};
 let dlgTab='game';
 document.querySelectorAll('.dlg-tab').forEach(t=>t.onclick=()=>{dlgTab=t.dataset.tab;renderDialog()});
 
-/* ================= music library popover (ported from the v0 app's music-library.tsx) ================= */
+/* ================= music library popover ================= */
+let musicSearchQuery='';
+function levenshtein(a,b){
+ a=a.toLowerCase();b=b.toLowerCase();
+ const m=a.length,n=b.length;if(!m)return n;if(!n)return m;
+ const dp=Array.from({length:m+1},(_,i)=>Array(n+1).fill(0));
+ for(let i=0;i<=m;i++)dp[i][0]=i;for(let j=0;j<=n;j++)dp[0][j]=j;
+ for(let i=1;i<=m;i++)for(let j=1;j<=n;j++)dp[i][j]=Math.min(dp[i-1][j]+1,dp[i][j-1]+1,dp[i-1][j-1]+(a[i-1]===b[j-1]?0:1));
+ return dp[m][n];
+}
+function scoreTrackMatch(q,track){
+ if(!q)return 0;
+ const ql=q.toLowerCase().trim();
+ const title=track.title.toLowerCase();
+ const mood=(track.mood||'').toLowerCase();
+ if(title===ql)return 100;
+ if(title.startsWith(ql))return 90;
+ if(title.includes(ql))return 80;
+ if(mood.includes(ql))return 60;
+ const words=title.split(/\s+/);
+ let best=0;
+ words.forEach(w=>{const d=levenshtein(ql,w);const maxLen=Math.max(ql.length,w.length);const sim=1-d/maxLen;if(sim>best)best=sim});
+ const full=levenshtein(ql,title);const fullSim=1-full/Math.max(ql.length,title.length);
+ best=Math.max(best,fullSim);
+ return best>=0.55?Math.round(best*70):0;
+}
+function filterTracks(q){
+ if(!q.trim())return {matches:Sound.TRACKS.slice(),suggestion:null};
+ const scored=Sound.TRACKS.map(t=>({t,s:scoreTrackMatch(q,t)})).filter(x=>x.s>0).sort((a,b)=>b.s-a.s);
+ if(scored.length)return {matches:scored.map(x=>x.t),suggestion:null};
+ // No direct matches — fuzzy "did you mean"
+ let best=null,bestDist=Infinity;
+ Sound.TRACKS.forEach(t=>{
+  const d=Math.min(levenshtein(q,t.title),...t.title.split(/\s+/).map(w=>levenshtein(q,w)));
+  if(d<bestDist){bestDist=d;best=t}
+ });
+ if(best&&bestDist<=Math.max(3,Math.floor(q.length*0.45)))return {matches:[],suggestion:best};
+ return {matches:[],suggestion:null};
+}
 function renderMusicPopover(){
  $('musicVolumeSlot').innerHTML=sliderHtml('musicVolumeSlider','Music volume',prefs.audio.music,0,100,'%',val=>val===0?'OFF':val+'%');
  wireSlider('musicVolumeSlider',0,100,val=>val===0?'OFF':val+'%',null,val=>{prefs.audio.music=val;savePrefs()});
+ const search=$('musicSearch');
+ if(search){search.value=musicSearchQuery;search.oninput=e=>{musicSearchQuery=e.target.value;renderTrackList()}}
  renderTrackList();
 }
 function syncMusicVolumeUI(){updateSliderVisual('musicVolumeSlider',prefs.audio.music,0,100,val=>val===0?'OFF':val+'%',null)}
+function updateMusicChrome(){
+ const curId=Sound.music.getSnapshot().trackId;
+ const track=Sound.TRACKS.find(t=>t.id===curId);
+ const vis=$('buzzVis');
+ if(vis)vis.classList.toggle('spinning',!!track);
+ const titleEl=$('musicNowTitle');
+ if(titleEl){titleEl.textContent=track?track.title:'No track playing';titleEl.classList.toggle('idle',!track)}
+ const playBtn=$('musicPlayPauseBtn');
+ if(playBtn)playBtn.textContent=track?'⏸':'▶';
+ const prevBtn=$('musicPrevBtn');
+ if(prevBtn)prevBtn.disabled=!Sound.music.getHistory().length;
+ $('musicNowPlaying').textContent=track?`Now playing: ${track.title}`:'Search or pick a track';
+ $('musicStopBtn').classList.toggle('hidden',!track);
+ const label=$('musicBtnLabel');
+ if(label)label.textContent=track?track.title:'Music';
+}
+function positionMusicPopover(){
+ const btn=$('musicBtn'),pop=$('musicPopover');
+ if(!btn||!pop)return;
+ const r=btn.getBoundingClientRect();
+ const width=320;
+ const left=Math.min(Math.max(8,r.left),Math.max(8,window.innerWidth-width-8));
+ pop.style.top=(r.bottom+8)+'px';
+ pop.style.left=left+'px';
+}
+function wireMusicButton(){
+ const btn=$('musicBtn');
+ if(!btn)return;
+ btn.onclick=e=>{
+  e.stopPropagation();
+  const pop=$('musicPopover');
+  const willOpen=pop.classList.contains('hidden');
+  pop.classList.toggle('hidden');
+  if(willOpen){positionMusicPopover();renderMusicPopover()}
+ };
+ updateMusicChrome();
+}
 function renderTrackList(){
  const curId=Sound.music.getSnapshot().trackId;
- $('trackList').innerHTML=Sound.TRACKS.map((t,i)=>{
-  const playing=t.id===curId;
-  return `<li><button type="button" class="trackrow ${playing?'playing':''}" data-track="${t.id}">
-   <span class="ticon">${playing?'⏸':'▶'}</span>
-   <span class="tinfo"><span class="ttitle">${esc(t.title)}</span><span class="tmood">${esc(t.mood)} · ${t.bpm} bpm</span></span>
-   ${playing?'<span class="eqbars"><span></span><span></span><span></span></span>':`<span style="font-size:10.5px;color:var(--muted-foreground)">${String(i+1).padStart(2,'0')}</span>`}
-  </button></li>`;
- }).join('');
+ const {matches,suggestion}=filterTracks(musicSearchQuery);
+ const dym=$('musicDidYouMean');
+ if(suggestion&&!matches.length){
+  dym.classList.remove('hidden');
+  dym.innerHTML=`Did you mean <button type="button" data-suggest="${esc(suggestion.id)}">${esc(suggestion.title)}</button>?`;
+  dym.querySelector('[data-suggest]').onclick=()=>{
+   musicSearchQuery=suggestion.title;
+   const s=$('musicSearch');if(s)s.value=musicSearchQuery;
+   renderTrackList();
+  };
+ }else{
+  dym.classList.add('hidden');dym.innerHTML='';
+ }
+ if(!matches.length&&!suggestion){
+  $('trackList').innerHTML=`<li style="padding:12px;font-size:12px;color:var(--muted-foreground);text-align:center">No songs match “${esc(musicSearchQuery)}”</li>`;
+ }else{
+  const list=matches.length?matches:Sound.TRACKS;
+  $('trackList').innerHTML=list.map((t,i)=>{
+   const playing=t.id===curId;
+   return `<li><button type="button" class="trackrow ${playing?'playing':''}" data-track="${t.id}">
+    <span class="ticon">${playing?'⏸':'▶'}</span>
+    <span class="tinfo"><span class="ttitle">${esc(t.title)}</span><span class="tmood">${esc(t.mood)} · ${t.bpm} bpm</span></span>
+    ${playing?'<span class="eqbars"><span></span><span></span><span></span></span>':`<span style="font-size:10.5px;color:var(--muted-foreground)">${String(i+1).padStart(2,'0')}</span>`}
+   </button></li>`;
+  }).join('');
+ }
  $('trackList').querySelectorAll('[data-track]').forEach(btn=>btn.onclick=()=>{
   const id=btn.dataset.track;
   if(id===Sound.music.getSnapshot().trackId)Sound.music.stop();else Sound.music.play(id);
  });
- const track=Sound.TRACKS.find(t=>t.id===curId);
- $('musicNowPlaying').textContent=track?`Now playing: ${track.title}`:'Background tracks for practice';
- $('musicStopBtn').classList.toggle('hidden',!track);
- $('musicBtnLabel').textContent=track?track.title:'Music';
+ updateMusicChrome();
 }
-Sound.music.subscribe(renderTrackList);
-$('musicBtn').onclick=()=>{
- const pop=$('musicPopover');
- const willOpen=pop.classList.contains('hidden');
- pop.classList.toggle('hidden');
- if(willOpen)renderMusicPopover();
-};
+Sound.music.subscribe(()=>{renderTrackList();updateMusicChrome()});
 $('musicStopBtn').onclick=()=>Sound.music.stop();
+$('musicNextBtn').onclick=()=>Sound.music.nextRandom();
+$('musicPrevBtn').onclick=()=>{Sound.music.prev()};
+$('musicPlayPauseBtn').onclick=()=>{
+ const cur=Sound.music.getSnapshot().trackId;
+ if(cur)Sound.music.stop();
+ else{
+  const first=Sound.TRACKS[0];
+  if(first)Sound.music.play(first.id);
+ }
+};
+window.addEventListener('resize',()=>{
+ const pop=$('musicPopover');
+ if(pop&&!pop.classList.contains('hidden'))positionMusicPopover();
+});
 document.addEventListener('click',e=>{
  const pop=$('musicPopover');
- if(pop.classList.contains('hidden'))return;
+ if(!pop||pop.classList.contains('hidden'))return;
  if(e.target.closest('#musicPopover')||e.target.closest('#musicBtn'))return;
  pop.classList.add('hidden');
 });
@@ -1210,16 +1392,38 @@ function renderDialog(){
  const g=prefs.game,v=prefs.visual,a=prefs.audio;
  const body=$('dlgBody');
  if(dlgTab==='game'){
+  const rs=g.readingStyle||'qbreader';
   body.innerHTML=`
+   <section class="setgroup"><header><div><h4>Reading Styles</h4><p>How tossup text is shown while the speaker reads. Only one mode can be active.</p></div></header>
+    <div class="body" style="padding:12px 14px">
+     <div class="field-row"><div class="fl"><b>All text</b><small>Full tossup is visible; a highlight follows the word being read.</small></div>${switchHtml('sw-rs-all',rs==='all')}</div>
+     <div class="field-row"><div class="fl"><b>qbreader style</b><small>Words appear one-by-one as the speaker reads them.</small></div>${switchHtml('sw-rs-qbreader',rs==='qbreader')}</div>
+     <div class="field-row" style="border-bottom:0"><div class="fl"><b>Tournament mode</b><small>No text is shown — audio only, like a real tournament moderator.</small></div>${switchHtml('sw-rs-tournament',rs==='tournament')}</div>
+    </div>
+   </section>
    <section class="setgroup"><header><div><h4>Reading</h4><p>How the moderator reads each tossup.</p></div></header>
-    <div class="body" style="padding:12px 14px">${sliderHtml('wpm','Speaking speed',g.wpm,80,400,' WPM',v=>v+' WPM')}
-    <div style="height:12px"></div>${sliderHtml('pitch2','Pitch',Math.round(g.pitch*10),5,20,'',v=>(v/10).toFixed(1))}</div>
+    <div class="body" style="padding:12px 14px">
+     <div class="slider-label"><span>Speaking speed</span><small>Words per minute for the TTS voice</small></div>
+     ${sliderHtml('wpm','Speaking speed',g.wpm,80,400,' WPM',v=>v+' WPM')}
+     <div style="height:12px"></div>
+     <div class="slider-label"><span>Pitch</span><small>Higher = brighter voice; lower = deeper</small></div>
+     ${sliderHtml('pitch2','Pitch',Math.round(g.pitch*10),5,20,'',v=>(v/10).toFixed(1))}
+    </div>
    </section>
    <section class="setgroup"><header><div><h4>Timers</h4><p>How long you get after buzzing and after the question ends.</p></div></header>
     <div class="body" style="display:flex;flex-direction:column;gap:14px;padding:12px 14px">
-     ${sliderHtml('buzzSeconds','Answer timer',g.buzzSeconds,3,30,'s',v=>v+'s')}
-     ${sliderHtml('deadSeconds','Dead-air timer',g.deadSeconds,1,15,'s',v=>v+'s')}
-     ${sliderHtml('autoAdvance','Auto-advance',g.autoAdvance,0,15,'s',v=>v===0?'OFF':v+'s')}
+     <div>
+      <div class="slider-label"><span>Answer timer</span><small>Seconds to type your answer after you buzz</small></div>
+      ${sliderHtml('buzzSeconds','Answer timer',g.buzzSeconds,3,30,'s',v=>v+'s')}
+     </div>
+     <div>
+      <div class="slider-label"><span>Dead-air timer</span><small>Seconds you can still buzz after the question finishes</small></div>
+      ${sliderHtml('deadSeconds','Dead-air timer',g.deadSeconds,1,15,'s',v=>v+'s')}
+     </div>
+     <div>
+      <div class="slider-label"><span>Auto-advance</span><small>After grading, wait this long then load the next tossup (OFF = manual)</small></div>
+      ${sliderHtml('autoAdvance','Auto-advance',g.autoAdvance,0,15,'s',v=>v===0?'OFF':v+'s')}
+     </div>
     </div>
    </section>
    <section class="setgroup"><header><div><h4>Scoring</h4><p>Point values applied to the scoreboard and scoresheet.</p></div>${activePreset()?`<span style="background:var(--foreground);color:var(--background);border-radius:6px;padding:2px 8px;font-size:10.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase">${activePreset()}</span>`:''}</header>
@@ -1235,6 +1439,30 @@ function renderDialog(){
      <div class="field-row" style="border-bottom:0"><div class="fl"><b>Negs</b><small>Wrong answers while reading cost the neg value.</small></div>${switchHtml('sw-negs',g.negsEnabled)}</div>
     </div>
    </section>`;
+  function setReadingStyle(mode){
+   const cur=prefs.game.readingStyle||'qbreader';
+   if(mode===cur)return;
+   // Switches are exclusive — turning one on deactivates the others
+   prefs.game.readingStyle=mode;
+   savePrefs();
+   renderQuestionOnly();
+   renderDialog();
+  }
+  function wireReadingStyle(id,mode){
+   const el=$(id);if(!el)return;
+   el.onclick=()=>{
+    const isOn=el.classList.contains('on');
+    if(isOn){
+     // Trying to turn off the only active mode — keep it on
+     showToast('Only one reading mode can be activated at once.');
+     return;
+    }
+    setReadingStyle(mode);
+   };
+  }
+  wireReadingStyle('sw-rs-all','all');
+  wireReadingStyle('sw-rs-qbreader','qbreader');
+  wireReadingStyle('sw-rs-tournament','tournament');
   wireSlider('wpm',80,400,v=>v+' WPM',null,v=>{prefs.game.wpm=v;savePrefs()});
   wireSlider('pitch2',5,20,v=>(v/10).toFixed(1),null,v=>{prefs.game.pitch=v/10;savePrefs()});
   wireSlider('buzzSeconds',3,30,v=>v+'s',null,v=>{prefs.game.buzzSeconds=v;savePrefs()});
@@ -1264,8 +1492,8 @@ function renderDialog(){
     </div>
    </header>
     <div class="body" style="padding:12px 14px">
+     <div class="slider-label"><span>Visual effects intensity</span><small>0% turns every effect off</small></div>
      ${sliderHtml('vfxIntensity','Visual effects intensity',v.vfx,0,100,'%',val=>val===0?'OFF':val+'%')}
-     <p class="hint" style="margin-top:6px">Slide to 0% to turn every effect off.</p>
      <div class="field-row"><div class="fl"><b>Buzz flash</b><small>The screen lights up red when you lock in.</small></div>${switchHtml('sw-buzzflash',v.buzzFlash)}</div>
      <div class="field-row"><div class="fl"><b>Confetti</b><small>A burst for tens, a bigger one for powers.</small></div>${switchHtml('sw-confetti',v.confetti)}</div>
      <div class="field-row" style="border-bottom:0"><div class="fl"><b>Neg shake</b><small>The question card shakes when you neg.</small></div>${switchHtml('sw-shake',v.shake)}</div>
@@ -1275,8 +1503,7 @@ function renderDialog(){
     <div class="body" style="padding:12px 14px">
      <div class="field-row"><div class="fl"><b>Question text size</b></div>${segmentedHtml('seg-textsize',v.textSize,[{value:'sm',label:'S'},{value:'md',label:'M'},{value:'lg',label:'L'}])}</div>
      <div class="field-row"><div class="fl"><b>Hover grow</b><small>Buttons grow slightly when you hover over them.</small></div>${switchHtml('sw-hovergrow',v.hoverGrow)}</div>
-     <div class="field-row"><div class="fl"><b>Reading cursor</b><small>A blinking caret follows the last word read.</small></div>${switchHtml('sw-cursor',v.readingCursor)}</div>
-     <div class="field-row" style="border-bottom:0"><div class="fl"><b>Tournament mode</b><small>Hide the question text — audio only, like a real moderator read.</small></div>${switchHtml('sw-tournament',v.tournament)}</div>
+     <div class="field-row" style="border-bottom:0"><div class="fl"><b>Reading cursor</b><small>A blinking caret follows the last word read.</small></div>${switchHtml('sw-cursor',v.readingCursor)}</div>
     </div>
    </section>`;
   wireSlider('vfxIntensity',0,100,val=>val===0?'OFF':val+'%',null,val=>{prefs.visual.vfx=val;savePrefs();renderDialog()});
@@ -1285,7 +1512,6 @@ function renderDialog(){
   wireSwitch('sw-shake',val=>{prefs.visual.shake=val;savePrefs();renderDialog()});
   wireSwitch('sw-hovergrow',val=>{prefs.visual.hoverGrow=val;savePrefs()});
   wireSwitch('sw-cursor',val=>{prefs.visual.readingCursor=val;savePrefs()});
-  wireSwitch('sw-tournament',val=>{prefs.visual.tournament=val;savePrefs();renderQuestionOnly()});
   wireSegmented('seg-textsize',val=>{prefs.visual.textSize=val;savePrefs()});
   body.querySelectorAll('[data-vfxtest]').forEach(b=>b.onclick=()=>emitVfx(b.dataset.vfxtest));
  }else{
@@ -1294,9 +1520,18 @@ function renderDialog(){
   body.innerHTML=`
    <section class="setgroup"><header><div><h4>Mix</h4><p>Slide any channel to 0% to silence it.</p></div></header>
     <div class="body" style="padding:12px 14px;display:flex;flex-direction:column;gap:14px">
-     ${sliderHtml('volMaster','Master volume',a.master,0,100,'%',val=>val===0?'OFF':val+'%')}
-     <div>${sliderHtml('volSfx','Sound effects volume',a.sfx,0,100,'%',val=>val===0?'OFF':val+'%')}<p class="hint">Buzzer, clicks, and result sounds.${muted?' (master is off)':''}</p></div>
-     <div>${sliderHtml('volMusic','Music volume',a.music,0,100,'%',val=>val===0?'OFF':val+'%')}<p class="hint">Pick tracks from the Music button next to Settings.${muted?' (master is off)':''}</p></div>
+     <div>
+      <div class="slider-label"><span>Master volume</span><small>Overall loudness for everything</small></div>
+      ${sliderHtml('volMaster','Master volume',a.master,0,100,'%',val=>val===0?'OFF':val+'%')}
+     </div>
+     <div>
+      <div class="slider-label"><span>Sound effects</span><small>Buzzer, clicks, and result sounds${muted?' (master is off)':''}</small></div>
+      ${sliderHtml('volSfx','Sound effects volume',a.sfx,0,100,'%',val=>val===0?'OFF':val+'%')}
+     </div>
+     <div>
+      <div class="slider-label"><span>Music volume</span><small>Background tracks from the Music button${muted?' (master is off)':''}</small></div>
+      ${sliderHtml('volMusic','Music volume',a.music,0,100,'%',val=>val===0?'OFF':val+'%')}
+     </div>
     </div>
    </section>
    <section class="setgroup"><header><div><h4>Buzzer</h4><p>What you hear the moment you lock in.</p></div></header>
