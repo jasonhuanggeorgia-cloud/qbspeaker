@@ -55,7 +55,7 @@ aside h2{font-family:var(--font-serif);font-size:18px;font-weight:700;margin:0 0
 
 /* ---------- card ---------- */
 .card{background:var(--card);border:2px solid oklch(0.24 0.04 260/.85);border-radius:.9rem;box-shadow:4px 4px 0 0 var(--foreground);padding:20px}
-#qstage{min-height:280px;display:flex;flex-direction:column;gap:18px;position:relative;overflow:hidden}
+#qstage{min-height:280px;display:flex;flex-direction:column;gap:18px;position:relative;overflow:hidden;overflow-y:auto}
 .qmeta{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;font-size:12px;color:var(--muted-foreground)}
 .qmeta b{color:var(--foreground);text-transform:uppercase;letter-spacing:.08em;font-weight:600}
 .qtext{font-family:var(--font-serif);font-size:21px;line-height:1.7;color:var(--foreground)}
@@ -201,7 +201,7 @@ fieldset{border:0;padding:0;margin:0 0 20px}
 
 /* ---------- music popover ---------- */
 .popanchor{position:relative;display:inline-block}
-.popover-panel{position:fixed;max-width:calc(100vw - 16px);z-index:120;top:0;left:0;width:320px;border:2px solid oklch(0.24 0.04 260/.85);border-radius:.7rem;background:var(--popover);box-shadow:4px 4px 0 0 var(--foreground);overflow:hidden}
+.popover-panel{position:fixed;max-width:calc(100vw - 16px);max-height:calc(100dvh - 16px);z-index:120;top:0;left:0;width:min(320px,calc(100vw - 16px));border:2px solid oklch(0.24 0.04 260/.85);border-radius:.7rem;background:var(--popover);box-shadow:4px 4px 0 0 var(--foreground);overflow:hidden}
 .popover-head{display:flex;align-items:center;justify-content:space-between;gap:8px;background:var(--foreground);color:var(--background);padding:10px 14px}
 .popover-head b{font-family:var(--font-display);font-size:15px;font-weight:400;display:block}
 .popover-head small{font-size:10.5px;color:oklch(0.955 0.008 250/.6)}
@@ -302,8 +302,6 @@ footer.bottom a{text-decoration:underline;text-underline-offset:2px}
   </div>
   <div class="top-actions">
    <dl class="scoreboard" id="scoreboard"></dl>
-   <button class="btn btn-outline" id="settingsBtn" type="button">⚙ Settings</button>
-   <button class="btn btn-outline" id="musicBtn" type="button">🎵 <span id="musicBtnLabel">Music</span></button>
   </div>
  </div>
 </header>
@@ -1211,7 +1209,6 @@ function showToast(msg){
 }
 function openSettings(){$('dlgOverlay').classList.remove('hidden');renderDialog()}
 function closeSettings(){$('dlgOverlay').classList.add('hidden')}
-$('settingsBtn').onclick=openSettings;
 $('dlgClose').onclick=closeSettings;
 $('dlgOverlay').onclick=e=>{if(e.target===$('dlgOverlay'))closeSettings()};
 let dlgTab='game';
@@ -1284,9 +1281,15 @@ function positionMusicPopover(){
  const btn=$('musicBtn'),pop=$('musicPopover');
  if(!btn||!pop)return;
  const r=btn.getBoundingClientRect();
- const width=320;
- const left=Math.min(Math.max(8,r.left),Math.max(8,window.innerWidth-width-8));
- pop.style.top=(r.bottom+8)+'px';
+ const margin=8;
+ const width=Math.min(320,window.innerWidth-margin*2);
+ const height=Math.min(pop.offsetHeight||520,window.innerHeight-margin*2);
+ let left=Math.min(Math.max(margin,r.left),Math.max(margin,window.innerWidth-width-margin));
+ let top=r.bottom+margin;
+ if(top+height>window.innerHeight-margin)top=Math.max(margin,r.top-height-margin);
+ pop.style.width=width+'px';
+ pop.style.maxHeight=height+'px';
+ pop.style.top=Math.max(margin,top)+'px';
  pop.style.left=left+'px';
 }
 function wireMusicButton(){
