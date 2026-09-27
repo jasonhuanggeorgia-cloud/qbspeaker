@@ -302,12 +302,12 @@ footer.bottom a{text-decoration:underline;text-underline-offset:2px}
  </div>
 </div>
 
-<script type="module">
+<script>
 /* =========================================================================
    QBSpeaker — static single-file build
    - v0-styled UI, vanilla JS, no build step
    - Data: reads questions-1..4.json.gz from the same folder (client-side gzip)
-   - Speech: local Kokoro/HeadTTS in-browser speech with real word timestamps
+   - Speech: browser SpeechSynthesis only (system/Microsoft voices)
    ========================================================================= */
 const $=id=>document.getElementById(id);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -436,137 +436,98 @@ async function nextTossup(){
 }
 function renderError(msg){$('actionCol').insertAdjacentHTML('beforeend',`<p class="errline" role="alert">${esc(msg)}</p>`)}
 
-/* ---------------- local Kokoro speech + real word timing ---------------- */
-import { HeadTTS } from "https://cdn.jsdelivr.net/npm/@met4citizen/headtts@1.3/+esm";
-
-let headtts=null;
-let audioCtx=null;
-let sourceNode=null;
-let audioData=null;
-let trackFrame=null;
-let voices=['af_bella','af_heart','af_sky','af_nova'];
-let voiceReady=false;
-let speechGeneration=0;
-let ignoreAudioEnd=false;
-
-function setupKokoroVoices(){
- const el=$('voice');
- if(!el)return;
- el.innerHTML=voices.map(v=>`<option value="${esc(v)}">${esc(v)}</option>`).join('');
- const saved=localStorage.getItem('qbspeaker-kokoro-voice');
- if(saved&&voices.includes(saved))el.value=saved;
- el.onchange=()=>localStorage.setItem('qbspeaker-kokoro-voice',el.value);
+/* ---------------- speech synthesis (real word-boundary tracking) ---------------- */
+let voices=[],fallbackTimer=null,boundaryActive=false;
+function voiceset(){
+ voices=window.speechSynthesis?window.speechSynthesis.getVoices()||[]:[];
+ $('voice').innerHTML=voices.map((v,n)=>`<option value="${n}">${esc(v.name)} (${esc(v.lang)})</option>`).join('');
+ if(voices.length&&!$('voice').dataset.userSelected){
+  const score=v=>{const n=(v.name||'').toLowerCase();let s=0;if(/microsoft|google|natural|neural|enhanced|premium|online/.test(n))s+=5;if(/^en(-|_)/i.test(v.lang))s+=2;if(/us|gb|au/i.test(v.lang))s+=1;return s};
+  let best=0;voices.forEach((v,i)=>{if(score(v)>score(voices[best]))best=i});
+  $('voice').selectedIndex=best;
+ }
 }
-setupKokoroVoices();
-
-async function ensureKokoro(){
- if(headtts)return headtts;
- headtts=new HeadTTS({endpoints:['webgpu','wasm'],languages:['en-us'],voices});
- await headtts.connect();
- return headtts;
-}
+if('speechSynthesis' in window){voiceset();window.speechSynthesis.onvoiceschanged=voiceset}
+$('voice').onchange=()=>{$('voice').dataset.userSelected='1'};
 
 function stopSpeech(){
- speechGeneration++;
- ignoreAudioEnd=true;
- if(trackFrame)cancelAnimationFrame(trackFrame);
- trackFrame=null;
- if(sourceNode){try{sourceNode.stop()}catch(e){}try{sourceNode.disconnect()}catch(e){}sourceNode=null}
+ if(fallbackTimer){clearInterval(fallbackTimer);fallbackTimer=null}
+ if('speechSynthesis' in window)window.speechSynthesis.cancel();
 }
-
-function currentVoice(){return $('voice')?.value||'af_bella'}
-function kokoroSpeed(){return Math.max(.5,Math.min(2,Number(prefs.game.wpm||240)/240))}
-
-async function speakFrom(startWord){
- if(!tossup||phase!=='reading')return;
- const generation=++speechGeneration;
- ignoreAudioEnd=false;
+function speakFrom(startWord){
+ if(!tossup)return;
  const slice=words.slice(startWord);
  const text=slice.join(' ');
- if(!text){revealed=words.length;enterDeadWait();return}
-
- stopSpeech();
- boundaryActive=true;
- try{
-  const tts=await ensureKokoro();
-  if(generation!==speechGeneration||phase!=='reading'||paused)return;
-  tts.setup({
-   voice:currentVoice(),
-   language:'en-us',
-   speed:kokoroSpeed(),
-   audioEncoding:'wav'
-  });
-
-  const messages=await tts.synthesize({input:text});
-  if(generation!==speechGeneration||phase!=='reading'||paused)return;
-  const audioMessage=messages.find(m=>m.type==='audio');
-  if(!audioMessage||!audioMessage.data)throw new Error('Kokoro did not return audio data.');
-  audioData=audioMessage.data;
-  if(!audioData.audio||!audioData.wtimes||!audioData.wdurations||!audioData.words){
-   throw new Error('Kokoro returned audio without word timing data.');
-  }
-
-  audioCtx=audioCtx||new (window.AudioContext||window.webkitAudioContext)();
-  await audioCtx.resume();
-  sourceNode=audioCtx.createBufferSource();
-  sourceNode.buffer=audioData.audio;
-  sourceNode.connect(audioCtx.destination);
-
-  const startedAt=audioCtx.currentTime;
-  sourceNode.start(startedAt);
-  sourceNode.onended=()=>{
-   if(ignoreAudioEnd||generation!==speechGeneration||phase!=='reading')return;
-   revealed=words.length;
-   renderQuestionOnly();
-   enterDeadWait();
-  };
-
-  trackKokoro(startedAt,startWord);
- }catch(e){
-  console.error(e);
-  stopSpeech();
-  // Keep the app usable if local Kokoro cannot initialize.
-  // We do not silently switch to browser TTS because that would change timing behavior.
-  revealed=words.length;
+ if(!text)return;
+ const charStarts=[];let acc=0;slice.forEach(w=>{charStarts.push(acc);acc+=w.length+1});
+ const u=new SpeechSynthesisUtterance(text);
+ const v=voices[Number($('voice').value)];
+ if(v)u.voice=v;u.lang=v?v.lang:'en-US';
+ u.rate=Math.max(.5,Math.min(2,prefs.game.wpm/240));
+ u.pitch=Math.max(.5,Math.min(2,prefs.game.pitch));
+ u.volume=1;
+ boundaryActive=false;
+ u.onboundary=(e)=>{
+  if(phase!=='reading'||typeof e.charIndex!=='number')return;
+  if(e.name&&e.name!=='word')return;
+  let idx=0;for(let k=0;k<charStarts.length;k++){if(charStarts[k]<=e.charIndex)idx=k;else break}
+  const newRevealed=startWord+idx+1;
+  if(newRevealed<=revealed)return;
+  if(!boundaryActive){boundaryActive=true;if(fallbackTimer){clearInterval(fallbackTimer);fallbackTimer=null}}
+  revealed=newRevealed;
   renderQuestionOnly();
-  phase='dead-wait';
-  startDeadline(prefs.game.deadSeconds,()=>finish('dead',''));
-  render();
-  renderError('Local Kokoro could not generate this tossup: '+(e.message||e));
- }
+ };
+ u.onend=()=>{
+  if(phase!=='reading')return;
+  revealed=words.length;
+  enterDeadWait();
+ };
+ window.speechSynthesis.cancel();
+ window.speechSynthesis.speak(u);
+ startFallbackPacing(startWord);
 }
-
-function trackKokoro(startedAt,startWord){
- if(!audioCtx||!audioData)return;
- const now=audioCtx.currentTime;
- const elapsed=(now-startedAt)*1000;
- let localIndex=-1;
- for(let k=0;k<audioData.words.length;k++){
-  const a=audioData.wtimes[k],b=a+audioData.wdurations[k];
-  if(elapsed>=a&&elapsed<b){localIndex=k;break}
- }
- if(localIndex>=0){
-  const next=startWord+localIndex+1;
-  if(next>revealed){revealed=Math.min(words.length,next);renderQuestionOnly()}
- }
- if(phase==='reading')trackFrame=requestAnimationFrame(()=>trackKokoro(startedAt,startWord));
+function startFallbackPacing(startWord){
+ const ms=Math.max(80,60000/Math.max(80,Math.min(400,prefs.game.wpm)));
+ if(fallbackTimer)clearInterval(fallbackTimer);
+ fallbackTimer=setInterval(()=>{
+  if(phase!=='reading'||paused||boundaryActive)return;
+  if(revealed>=words.length){clearInterval(fallbackTimer);fallbackTimer=null;return}
+  revealed++;renderQuestionOnly();
+ },ms);
 }
-
 function beginSpeaking(){
- speakFrom(Math.max(0,revealed));
+ if(!('speechSynthesis' in window)){
+  // No speech available on this browser/OS — reveal instantly so the app is still usable.
+  revealed=words.length;enterDeadWait();return;
+ }
+ speakFrom(0);
 }
-
 function togglePause(){
  if(phase!=='reading')return;
  if(!paused){
-  paused=true;
-  stopSpeech();
+  paused=true;stopSpeech();
  }else{
-  paused=false;
-  speakFrom(Math.max(0,revealed));
+  paused=false;speakFrom(Math.max(0,revealed));
  }
  render();
 }
+function enterDeadWait(){
+ stopSpeech();
+ phase='dead-wait';
+ startDeadline(prefs.game.deadSeconds,()=>finish('dead',''));
+ render();
+}
+function startDeadline(seconds,onExpire){
+ clearDeadlineTimer();
+ deadline=Date.now()+seconds*1000;
+ countInterval=setInterval(()=>{
+  const remain=(deadline-Date.now())/1000;
+  if(remain<=0){clearDeadlineTimer();onExpire()}
+  else renderTimebar();
+ },100);
+ renderTimebar();
+}
+function clearDeadlineTimer(){if(countInterval){clearInterval(countInterval);countInterval=null}deadline=null}
 
 /* ---------------- buzz / reveal / grade ---------------- */
 function buzz(){
@@ -970,7 +931,7 @@ $('clearHistory').onclick=clearHistory;
   await loadData();
   computeCatalogue();
   renderFilters();
-  $('metaLine').textContent=allQuestions.length.toLocaleString()+' tossups loaded · local Kokoro speech ready';
+  $('metaLine').textContent=allQuestions.length.toLocaleString()+' tossups loaded';
  }catch(e){
   $('metaLine').textContent='Data loading error: '+e.message;
  }
