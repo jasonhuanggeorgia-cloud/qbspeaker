@@ -412,7 +412,7 @@ const POWER_MARK='(*)';
 function tokenize(question){return clean(question).trim().split(/\s+/).filter(Boolean)}
 
 /* ---------------- data loading (matches the repo's local file layout) ---------------- */
-let allQuestions=[],dataReady=null;
+let allQuestions=[],dataReady=null,dataLoaded=false;
 async function loadData(){
  if(dataReady)return dataReady;
  dataReady=(async()=>{
@@ -1105,15 +1105,16 @@ function renderActionCol(){
  }else{
   const canAdvance=phase==='reading'||phase==='done';
   const idle=phase==='idle';
-  const label=idle?'Start speaking':phase==='reading'?'Skip':'Next tossup';
+  const label=idle?(dataLoaded?'Start speaking':'Loading tossups…'):phase==='reading'?'Skip':'Next tossup';
+  const startReady=idle&&dataLoaded;
   host.innerHTML=`<div class="action-row">
-   <button class="btn btn-primary" id="skipBtn" ${idle||canAdvance?'':'disabled'}>${label} <kbd style="margin-left:6px">N</kbd></button>
+   <button class="btn btn-primary" id="skipBtn" ${startReady||canAdvance?'':'disabled'}>${label} <kbd style="margin-left:6px">N</kbd></button>
    <button class="btn btn-outline" id="pauseBtn" ${phase!=='reading'?'disabled':''}>${paused?'▶ Resume':'Ⅱ Pause'} <kbd style="margin-left:6px">P</kbd></button>
    <button class="btn btn-outline" id="settingsBtn" type="button">⚙ Settings</button>
    <button class="btn btn-outline" id="musicBtn" type="button">🎵 <span id="musicBtnLabel">Music</span></button>
 
   </div>`;
-  $('skipBtn').onclick=()=>{if(idle)nextTossup();else nextTossup()};
+  $('skipBtn').onclick=()=>{if(startReady||canAdvance)nextTossup()};
   $('pauseBtn').onclick=togglePause;
   $('settingsBtn').onclick=openSettings;
   wireMusicButton();
@@ -1626,10 +1627,12 @@ $('clearHistory').onclick=clearHistory;
   computeCatalogue();
   renderFilters();
   $('metaLine').textContent=allQuestions.length.toLocaleString()+' tossups loaded';
+  dataLoaded=true;
   phase='idle';
   render();
  }catch(e){
   $('metaLine').textContent='Data loading error: '+e.message;
+  dataLoaded=false;
   phase='idle';
   render();
  }
