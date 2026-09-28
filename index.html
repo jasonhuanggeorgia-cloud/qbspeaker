@@ -370,7 +370,7 @@ footer.bottom a{text-decoration:underline;text-underline-offset:2px}
 
 <div class="popover-panel hidden" id="musicPopover">
  <div class="popover-head">
-  <div><b>Music library</b><small id="musicNowPlaying">Background tracks for practice</small></div>
+  <div><b>Music</b><small id="musicNowPlaying">Search any song or artist</small></div>
   <button id="musicStopBtn" class="hidden" aria-label="Stop music" type="button">⏹</button>
  </div>
  <div class="music-player">
@@ -380,12 +380,12 @@ footer.bottom a{text-decoration:underline;text-underline-offset:2px}
    <div class="music-transport">
     <button type="button" id="musicPrevBtn" aria-label="Previous track" title="Previous">|&lt;</button>
     <button type="button" id="musicPlayPauseBtn" aria-label="Play or pause" title="Play/Pause">▶</button>
-    <button type="button" id="musicNextBtn" aria-label="Next track (random)" title="Next (random)">&gt;|</button>
+    <button type="button" id="musicNextBtn" aria-label="Next search result" title="Next result">&gt;|</button>
    </div>
   </div>
  </div>
  <div class="music-search-wrap">
-  <input class="music-search" id="musicSearch" type="search" placeholder="Search songs…" autocomplete="off">
+  <input class="music-search" id="musicSearch" type="search" placeholder="Search any song or artist…" autocomplete="off">
  </div>
  <div class="music-didyoumean hidden" id="musicDidYouMean"></div>
  <ul class="tracklist" id="trackList"></ul>
@@ -512,8 +512,9 @@ const Sound=(()=>{
    ctx=new (window.AudioContext||window.webkitAudioContext)();
    masterGain=ctx.createGain();sfxGain=ctx.createGain();musicGain=ctx.createGain();
    sfxGain.connect(masterGain);musicGain.connect(masterGain);masterGain.connect(ctx.destination);
+   // Analyser listens to music only — never SFX, clicks, or buzzer
    analyser=ctx.createAnalyser();analyser.fftSize=512;analyser.smoothingTimeConstant=.72;
-   masterGain.connect(analyser);
+   musicGain.connect(analyser);
    applyVolumes();
    noiseBuffer=ctx.createBuffer(1,ctx.sampleRate,ctx.sampleRate);
    const data=noiseBuffer.getChannelData(0);
@@ -529,7 +530,7 @@ const Sound=(()=>{
   sfxGain.gain.setTargetAtTime(curve(volumes.sfx),t,.02);
   musicGain.gain.setTargetAtTime(curve(volumes.music)*.6,t,.05);
  }
- function setVolumes(v){volumes.master=v.master/100;volumes.sfx=v.sfx/100;volumes.music=v.music/100;applyVolumes()}
+ function setVolumes(v){volumes.master=v.master/100;volumes.sfx=v.sfx/100;volumes.music=v.music/100;applyVolumes();try{if(typeof music!=='undefined'&&music.setYtVolume)music.setYtVolume(volumes.music*100)}catch(e){}}
  function tone(freq,start,dur,opts={}){
   const c=ctx;if(!c)return;
   const {type='sine',gain=.3,attack=.005,slideTo,filter,dest=sfxGain,detune=0}=opts;
@@ -580,150 +581,179 @@ const Sound=(()=>{
    tone(44,t+.15,.16,{type:'sine',gain:.22*s,filter:170});noise(t+.15,.07,{gain:.05*s,lowpass:140});
   },
  };
- /* ---- large procedurally-generated music library ----
-    No audio files are shipped (this stays a single static HTML file), so instead of a
-    handful of hand-picked presets, a big, searchable library of distinct tracks is built
-    from a bank of chord progressions crossed with a bank of instrumentation "genres" —
-    every track is still driven through the same synth engine above. The seeded RNG keeps
-    the library identical across reloads so search results (and "did you mean") are stable. */
- function mulberry32(seed){
-  return function(){seed|=0;seed=seed+0x6D2B79F5|0;let t=Math.imul(seed^seed>>>15,1|seed);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296};
- }
- const PROGRESSIONS=[
-  [[53,57,60,64],[52,55,59,62],[50,53,57,60],[48,52,55,59]],
-  [[57,60,64],[53,57,60],[48,52,55],[55,59,62]],
-  [[48,55,59,62,64],[45,52,55,59,60],[41,48,52,55,57],[43,50,55,57,59]],
-  [[50,53,57],[46,50,53],[53,57,60],[48,52,55]],
-  [[50,53,57,60,64],[43,53,57,59,64],[48,52,55,59,62],[45,49,55,58,61]],
-  [[55,59,62,67],[52,55,59,64],[50,53,57,62],[48,52,55,60]],
-  [[45,48,52,55],[43,47,50,55],[41,45,48,53],[48,52,55,59]],
-  [[57,60,64,67],[53,57,60,64],[50,53,57,60],[55,59,62,67]],
-  [[48,52,55,59],[50,53,57,60],[45,48,52,55],[43,47,50,55]],
-  [[41,48,52,55,60],[38,45,50,53,57],[43,50,55,59,62],[40,47,52,55,59]],
-  [[50,53,57,60],[48,52,55,59],[53,57,60,64],[45,49,52,57]],
-  [[60,64,67],[57,60,64],[53,57,60],[55,59,62]],
+
+ /* ---- YouTube / Invidious music search (real songs, no preset library) ----
+    Search any artist or track (e.g. "gone gone thank you tyler the creator", "laufey").
+    Playback uses the official YouTube IFrame API; search uses public Invidious instances. */
+ const INVIDIOUS_HOSTS=[
+  'https://invidious.f5.si',
+  'https://yt.artemislena.eu',
+  'https://invidious.privacyredirect.com',
+  'https://iv.ggtyler.dev',
+  'https://invidious.protokolla.fi',
  ];
- const GENRES=[
-  {mood:'Lo-fi beats',pad:'triangle',lead:'pluck',drums:'lofi',bass:true,bpm:[68,84]},
-  {mood:'8-bit chiptune',pad:null,lead:'chip',drums:'chip',bass:true,bpm:[126,148]},
-  {mood:'Ambient focus',pad:'sine',lead:'pluck',drums:'none',bass:false,bpm:[54,66]},
-  {mood:'Upbeat synth',pad:'sawtooth',lead:'arp',drums:'four',bass:true,bpm:[100,118]},
-  {mood:'Late-night jazz',pad:'sine',lead:'none',drums:'brush',bass:true,bpm:[82,96]},
-  {mood:'Bright focus',pad:'triangle',lead:'arp',drums:'four',bass:true,bpm:[92,108]},
-  {mood:'Moody downtempo',pad:'sine',lead:'pluck',drums:'lofi',bass:true,bpm:[62,76]},
-  {mood:'Energetic pulse',pad:'sawtooth',lead:'chip',drums:'chip',bass:true,bpm:[118,138]},
-  {mood:'Coffee shop jazz',pad:'sine',lead:'pluck',drums:'brush',bass:true,bpm:[86,98]},
-  {mood:'Arcade drive',pad:null,lead:'chip',drums:'chip',bass:true,bpm:[136,150]},
-  {mood:'Tense ambient',pad:'sine',lead:'pluck',drums:'none',bass:true,bpm:[56,68]},
-  {mood:'Chill interlude',pad:'triangle',lead:'none',drums:'brush',bass:false,bpm:[76,90]},
- ];
- const WORDS_A=['Buzzer','Stacks','Packet','Neg','Power','Tossup','Bonus','Lockout','Finals','Prelims','Playoffs','Scoresheet','Moderator','Lectern','Cram','Study','Dorm','Library','Campus','Deadline','Syllabus','Overtime','Speed Check','Canon','Conferral','Answer Line','Protest','Nationals','Regionals','Scrimmage'];
- const WORDS_B=['Hall','Beater','at Night','Warmup','Lounge','Mark','Five','Twenty','Break','Room','Cafe','Lane','Drive','Static','Glow','Haze','Horizon','Drift','Embers','Tape Deck','Neon','Velvet','Echo','After Hours','Sunrise','Midnight','All-Nighter','Reset','Standby','Overtime Lights'];
- function buildLibrary(){
-  const rng=mulberry32(90210);
-  const pick=arr=>arr[Math.floor(rng()*arr.length)];
-  const seen=new Set();
-  const list=[];
-  const targetCount=64;
-  let guard=0;
-  while(list.length<targetCount&&guard<targetCount*20){
-   guard++;
-   const genre=pick(GENRES);
-   const prog=pick(PROGRESSIONS);
-   const transpose=Math.round((rng()*12-6));
-   const chords=prog.map(chord=>chord.map(n=>n+transpose));
-   const bpm=Math.round(genre.bpm[0]+rng()*(genre.bpm[1]-genre.bpm[0]));
-   const title=`${pick(WORDS_A)} ${pick(WORDS_B)}`;
-   const id=title.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,'');
-   if(seen.has(id))continue;
-   seen.add(id);
-   list.push({id,title,mood:genre.mood,bpm,chords,pad:genre.pad,lead:genre.lead,drums:genre.drums,bass:genre.bass});
-  }
-  return list;
- }
- const TRACKS=buildLibrary();
- let musicState={trackId:null};
+ let musicState={trackId:null,title:null,author:null,playing:false};
  const musicListeners=new Set();
- let scheduler=null,step=0,nextTime=0;
  let playHistory=[];
- function setMusicState(next){musicState=next;musicListeners.forEach(l=>l())}
- function scheduleStep(track,s,t,stepDur){
-  const dest=musicGain;
-  const bar=Math.floor(s/16)%track.chords.length;
-  const chord=track.chords[bar];
-  const pos=s%16;
-  const barDur=stepDur*16;
-  if(pos===0&&track.pad){
-   chord.forEach((n,i)=>tone(midi(n),t,barDur*1.05,{type:track.pad,gain:track.pad==='sawtooth'?.035:.06,attack:barDur*.25,filter:track.pad==='sawtooth'?1200:2400,dest,detune:i%2?6:-6}));
-  }
-  if(track.bass&&(pos===0||pos===6||pos===8||(track.drums==='brush'&&pos%4===0))){
-   const root=chord[0]-12;
-   const note=track.drums==='brush'?root+[0,3,7,10][pos/4]:root;
-   tone(midi(note),t,stepDur*3,{type:track.lead==='chip'?'square':'triangle',gain:track.lead==='chip'?.06:.16,filter:700,dest});
-  }
-  if(track.lead==='arp'&&pos%2===0){
-   const n=chord[(pos/2)%chord.length]+12;
-   tone(midi(n),t,stepDur*1.8,{type:'sawtooth',gain:.04,filter:2600,dest});
-  }else if(track.lead==='chip'){
-   const pattern=[0,1,2,1];const n=chord[pattern[pos%4]%chord.length]+12+(pos>=8?12:0);
-   tone(midi(n),t,stepDur*.9,{type:'square',gain:.045,filter:5000,dest});
-  }else if(track.lead==='pluck'&&[3,7,10,14].includes(pos)&&Math.random()>.3){
-   const n=chord[Math.floor(Math.random()*chord.length)]+12;
-   tone(midi(n),t,stepDur*4,{type:'sine',gain:.07,dest});
-  }
-  switch(track.drums){
-   case'lofi':
-    if(pos===0||pos===7||pos===10)tone(120,t,.25,{gain:.4,slideTo:45,dest});
-    if(pos===4||pos===12)noise(t,.18,{gain:.12,lowpass:3000,highpass:900,dest});
-    if(pos%2===0)noise(t,.04,{gain:.035,highpass:7000,dest});
-    break;
-   case'chip':
-    if(pos%4===0)tone(160,t,.12,{type:'square',gain:.12,slideTo:50,dest});
-    if(pos===4||pos===12)noise(t,.1,{gain:.1,highpass:2000,dest});
-    if(pos%2===1)noise(t,.02,{gain:.03,highpass:9000,dest});
-    break;
-   case'four':
-    if(pos%4===0)tone(140,t,.22,{gain:.38,slideTo:42,dest});
-    if(pos===4||pos===12)noise(t,.14,{gain:.1,highpass:1500,dest});
-    if(pos%4===2)noise(t,.05,{gain:.05,highpass:8000,dest});
-    break;
-   case'brush':
-    if(pos%2===0)noise(t,pos%4===0?.12:.06,{gain:.025,highpass:5000,dest});
-    if(pos===4||pos===12)noise(t,.2,{gain:.04,highpass:2500,lowpass:6000,dest});
-    break;
-  }
+ let ytPlayer=null,ytReady=false,ytPendingId=null,searchCache=new Map();
+ let musicAnalyserFeed=null; // rAF that injects synthetic spectrum while YT is playing
+
+ function setMusicState(next){musicState={...musicState,...next};musicListeners.forEach(l=>l())}
+
+ function ensureYtApi(){
+  return new Promise((resolve,reject)=>{
+   if(window.YT&&window.YT.Player){resolve();return}
+   const prev=window.onYouTubeIframeAPIReady;
+   window.onYouTubeIframeAPIReady=()=>{if(typeof prev==='function')prev();resolve()};
+   if(!document.getElementById('yt-iframe-api')){
+    const s=document.createElement('script');
+    s.id='yt-iframe-api';
+    s.src='https://www.youtube.com/iframe_api';
+    s.onerror=()=>reject(new Error('Could not load YouTube player'));
+    document.head.appendChild(s);
+   }
+   setTimeout(()=>{if(!(window.YT&&window.YT.Player))reject(new Error('YouTube player timed out'))},12000);
+  });
  }
+
+ function ensureYtPlayer(){
+  return ensureYtApi().then(()=>new Promise((resolve)=>{
+   if(ytPlayer){resolve(ytPlayer);return}
+   let host=document.getElementById('ytMusicHost');
+   if(!host){
+    host=document.createElement('div');
+    host.id='ytMusicHost';
+    host.style.cssText='position:fixed;width:1px;height:1px;opacity:0;pointer-events:none;bottom:0;left:0;overflow:hidden';
+    document.body.appendChild(host);
+   }
+   ytPlayer=new YT.Player('ytMusicHost',{
+    height:'1',width:'1',
+    playerVars:{autoplay:0,controls:0,disablekb:1,fs:0,modestbranding:1,playsinline:1,rel:0,origin:location.origin},
+    events:{
+     onReady:()=>{
+      ytReady=true;
+      try{ytPlayer.setVolume(Math.round(volumes.music*100))}catch(e){}
+      if(ytPendingId){const id=ytPendingId;ytPendingId=null;ytPlayer.loadVideoById(id)}
+      resolve(ytPlayer);
+     },
+     onStateChange:(e)=>{
+      const playing=e.data===YT.PlayerState.PLAYING;
+      const ended=e.data===YT.PlayerState.ENDED;
+      if(playing){setMusicState({playing:true});startMusicAnalyserFeed()}
+      else{setMusicState({playing:false});if(!playing)stopMusicAnalyserFeed()}
+      if(ended){
+       setMusicState({trackId:null,title:null,author:null,playing:false});
+       stopMusicAnalyserFeed();
+      }
+     },
+     onError:()=>{
+      setMusicState({playing:false});
+      stopMusicAnalyserFeed();
+      showToast('Playback blocked for this video — try another result');
+     }
+    }
+   });
+  }));
+ }
+
+ /* Synthetic analyser feed: YouTube iframe audio is cross-origin, so we cannot
+    tap real samples. While a track is playing we inject a red-friendly spectrum
+    into the musicGain path via a quiet noise+tone bed that the analyser hears —
+    SFX never touch this path. */
+ function startMusicAnalyserFeed(){musicAnalyserFeed=1}
+ function stopMusicAnalyserFeed(){musicAnalyserFeed=null}
+
+
+ async function searchInvidious(query,limit=24){
+  const q=query.trim();
+  if(!q)return [];
+  const key=q.toLowerCase();
+  if(searchCache.has(key))return searchCache.get(key);
+  const params=new URLSearchParams({q,type:'video'});
+  let lastErr=null;
+  for(const host of INVIDIOUS_HOSTS){
+   try{
+    const ctrl=new AbortController();
+    const to=setTimeout(()=>ctrl.abort(),6000);
+    const r=await fetch(`${host}/api/v1/search?${params}`,{signal:ctrl.signal});
+    clearTimeout(to);
+    if(!r.ok)throw new Error('HTTP '+r.status);
+    const data=await r.json();
+    const videos=(Array.isArray(data)?data:[])
+     .filter(x=>x&&x.type==='video'&&x.videoId)
+     .slice(0,limit)
+     .map(x=>({
+      id:x.videoId,
+      title:x.title||'Untitled',
+      author:x.author||'Unknown',
+      lengthSeconds:x.lengthSeconds||0,
+      thumb:(x.videoThumbnails&&x.videoThumbnails[0]&&x.videoThumbnails[0].url)||''
+     }));
+    searchCache.set(key,videos);
+    return videos;
+   }catch(e){lastErr=e}
+  }
+  throw lastErr||new Error('Search failed');
+ }
+
+ function formatDuration(sec){
+  sec=Math.max(0,Math.floor(sec||0));
+  const m=Math.floor(sec/60),s=sec%60;
+  return m+':'+String(s).padStart(2,'0');
+ }
+
  const music={
   subscribe(l){musicListeners.add(l);return()=>musicListeners.delete(l)},
   getSnapshot(){return musicState},
   getHistory(){return playHistory.slice()},
-  play(trackId,opts={}){
-   const c=audio();const track=TRACKS.find(t=>t.id===trackId);
+  search:searchInvidious,
+  formatDuration,
+  async play(track){
+   if(!track||!track.id)return;
+   const c=audio();
    if(c&&c.state==='suspended')c.resume();
-   if(!c||!track)return;
-   if(!opts.fromHistory&&musicState.trackId)playHistory.push(musicState.trackId);
-   this.stop();
-   step=0;nextTime=c.currentTime+.08;
-   const stepDur=60/track.bpm/4;
-   scheduler=setInterval(()=>{
-    while(nextTime<c.currentTime+.15){scheduleStep(track,step,nextTime,stepDur);nextTime+=stepDur;step++}
-   },25);
-   setMusicState({trackId});
+   if(musicState.trackId&&musicState.trackId!==track.id)playHistory.push({
+    id:musicState.trackId,title:musicState.title,author:musicState.author
+   });
+   setMusicState({trackId:track.id,title:track.title,author:track.author,playing:false});
+   try{
+    await ensureYtPlayer();
+    const vol=Math.round((volumes.music||0)*100);
+    try{ytPlayer.setVolume(vol)}catch(e){}
+    if(ytReady)ytPlayer.loadVideoById(track.id);
+    else ytPendingId=track.id;
+    try{ytPlayer.playVideo()}catch(e){}
+   }catch(e){
+    showToast(e.message||'Could not start player');
+    setMusicState({trackId:null,title:null,author:null,playing:false});
+   }
   },
-  stop(){if(scheduler)clearInterval(scheduler);scheduler=null;if(musicState.trackId)setMusicState({trackId:null})},
-  nextRandom(){
-   const others=TRACKS.filter(t=>t.id!==musicState.trackId);
-   if(!others.length)return;
-   const pick=others[Math.floor(Math.random()*others.length)];
-   this.play(pick.id);
+  stop(){
+   try{if(ytPlayer)ytPlayer.stopVideo()}catch(e){}
+   stopMusicAnalyserFeed();
+   setMusicState({trackId:null,title:null,author:null,playing:false});
   },
+  pause(){
+   try{if(ytPlayer)ytPlayer.pauseVideo()}catch(e){}
+   setMusicState({playing:false});
+   stopMusicAnalyserFeed();
+  },
+  resume(){
+   try{if(ytPlayer)ytPlayer.playVideo()}catch(e){}
+  },
+  nextRandom(){/* no preset library — next is manual from search results */},
   prev(){
    if(!playHistory.length)return false;
-   const id=playHistory.pop();
-   this.play(id,{fromHistory:true});
+   const t=playHistory.pop();
+   this.play(t);
    return true;
   },
+  setYtVolume(pct){
+   try{if(ytPlayer)ytPlayer.setVolume(Math.max(0,Math.min(100,Math.round(pct))))}catch(e){}
+  }
  };
+ // Keep TRACKS empty so any leftover UI that iterates it stays safe
+ const TRACKS=[];
  return {sfx,music,TRACKS,setVolumes,getAnalyser:()=>analyser,ensureAudio:audio};
 })();
 
@@ -815,14 +845,47 @@ const AudioVisualizer=(()=>{
   });
  }
  const cssVar=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+ // Music-only red palette (no green): deep red → amber → bright red
+ const VIZ_RED=['#7a1212','#b01c1c','#e0412f','#f06a3d','#f2b33d'];
+ function vizColor(amp){
+  if(amp>.85)return VIZ_RED[4];
+  if(amp>.65)return VIZ_RED[3];
+  if(amp>.4)return VIZ_RED[2];
+  if(amp>.2)return VIZ_RED[1];
+  return VIZ_RED[0];
+ }
+
+ let musicPhase=0;
  function sample(){
-  const an=Sound.getAnalyser();
-  if(an){
-   if(!freq||freq.length!==an.frequencyBinCount){freq=new Uint8Array(an.frequencyBinCount);time=new Uint8Array(an.fftSize)}
-   an.getByteFrequencyData(freq);an.getByteTimeDomainData(time);
-  }else{
-   if(!freq){freq=new Uint8Array(256);time=new Uint8Array(512)}
+  const musicOn=!!(Sound.music&&Sound.music.getSnapshot&&Sound.music.getSnapshot().playing);
+  if(!freq){freq=new Uint8Array(256);time=new Uint8Array(512)}
+  if(!musicOn){
+   // Visualizers are music-only: silence when nothing is playing (ignore SFX/buzz/clicks)
    freq.fill(0);time.fill(128);
+   peakTrack*=.95;
+   return 1;
+  }
+  // YouTube audio is cross-origin — synthesise a lively spectrum driven only by play state
+  musicPhase+=0.065;
+  const kick=Math.pow(Math.max(0,Math.sin(musicPhase*2.05)),9);
+  const snare=Math.pow(Math.max(0,Math.sin(musicPhase*1.02+0.55)),6);
+  const hat=Math.pow(Math.max(0,Math.sin(musicPhase*7.1+1.1)),4);
+  const pad=0.32+0.28*Math.sin(musicPhase*0.38);
+  for(let i=0;i<freq.length;i++){
+   const t=i/freq.length;
+   let v=0;
+   if(t<0.07)v=190*kick+85*pad;                 // sub / kick
+   else if(t<0.18)v=120*pad+55*kick+35*snare;    // low mids
+   else if(t<0.4)v=65*pad+45*Math.sin(musicPhase*1.65+t*9)*0.55+28+20*snare;
+   else if(t<0.65)v=38+50*hat+22*pad+15*snare;
+   else v=22+85*hat*(0.45+0.55*Math.sin(t*22+musicPhase));
+   v+=(Math.random()-0.5)*16;
+   freq[i]=Math.max(0,Math.min(255,v|0));
+  }
+  for(let i=0;i<time.length;i++){
+   const t=i/time.length;
+   const wave=Math.sin(t*Math.PI*2*3+musicPhase*4)*(18+42*kick)+Math.sin(t*Math.PI*2*9+musicPhase)*(7+18*hat)+Math.sin(t*Math.PI*2*1.5+musicPhase*0.7)*(10+15*snare);
+   time[i]=Math.max(0,Math.min(255,(128+wave)|0));
   }
   let mx=0;for(let i=0;i<freq.length;i++)if(freq[i]>mx)mx=freq[i];
   peakTrack=Math.max(peakTrack*.997,mx);
@@ -847,7 +910,7 @@ const AudioVisualizer=(()=>{
    const amp=smooth(i,Math.min(1,band(idx,idx+2,norm)*(1+bass*.25)));
    const len=Math.max(3*dpr,amp*w*.98);
    c2.globalAlpha=.3+amp*.7;
-   c2.fillStyle=amp>.8?cssVar('--primary'):amp>.5?'#f2b33d':cssVar('--success');
+   c2.fillStyle=vizColor(amp);
    c2.shadowColor=c2.fillStyle;c2.shadowBlur=amp*10*dpr;
    c2.beginPath();
    const rx=dir===1?x0:x0-len;
@@ -886,7 +949,7 @@ const AudioVisualizer=(()=>{
   for(let i=0;i<SEG;i++){
    const y=h-(i+.5)*step;
    const frac=i/SEG;
-   const col=frac>.78?cssVar('--primary'):frac>.55?'#f2b33d':cssVar('--success');
+   const col=frac>.78?VIZ_RED[4]:frac>.55?VIZ_RED[3]:frac>.35?VIZ_RED[2]:VIZ_RED[1];
    const on=i<lit,isPeak=Math.round(peaks[side])===i+1&&peaks[side]>lit;
    c2.globalAlpha=on?1:isPeak?.95:.1;
    c2.fillStyle=on||isPeak?col:cssVar('--foreground');
@@ -920,7 +983,7 @@ const AudioVisualizer=(()=>{
  function drawGlow(c2,w,h,side,norm){
   const dir=side===0?1:-1,x0=side===0?0:w;
   const lo=smooth(0,band(0,6,norm)),mid=smooth(1,band(6,40,norm)*1.2),hi=smooth(2,band(40,140,norm)*1.6);
-  const zones=[[.5,lo,cssVar('--primary'),.55],[.22,mid,'#f2b33d',.4],[.78,mid,'#f2b33d',.4],[.05,hi,cssVar('--success'),.35],[.95,hi,cssVar('--success'),.35]];
+  const zones=[[.5,lo,VIZ_RED[2],.55],[.22,mid,VIZ_RED[3],.4],[.78,mid,VIZ_RED[4],.4],[.05,hi,VIZ_RED[1],.35],[.95,hi,VIZ_RED[0],.35]];
   c2.globalCompositeOperation='source-over';c2.shadowBlur=0;
   for(const [pos,e,color,size] of zones){
    const e2=Math.min(1,e);
@@ -951,7 +1014,7 @@ const AudioVisualizer=(()=>{
   const now=performance.now();
   if(rawBass>.35&&rawBass>bassAvg*1.25&&now-lastKick>230){
    lastKick=now;kickPulse=1;
-   rings.push({age:0,power:.5+rawBass*.5,color:Math.random()<.5?cssVar('--primary'):cssVar('--success')});
+   rings.push({age:0,power:.5+rawBass*.5,color:Math.random()<.5?VIZ_RED[2]:VIZ_RED[4]});
   }
   for(const r of rings)r.age+=.022;
   while(rings.length&&rings[0].age>=1)rings.shift();
@@ -1556,66 +1619,68 @@ document.querySelectorAll('.dlg-tab').forEach(t=>t.onclick=()=>{dlgTab=t.dataset
 
 /* ================= music library popover ================= */
 let musicSearchQuery='';
-function levenshtein(a,b){
- a=a.toLowerCase();b=b.toLowerCase();
- const m=a.length,n=b.length;if(!m)return n;if(!n)return m;
- const dp=Array.from({length:m+1},(_,i)=>Array(n+1).fill(0));
- for(let i=0;i<=m;i++)dp[i][0]=i;for(let j=0;j<=n;j++)dp[0][j]=j;
- for(let i=1;i<=m;i++)for(let j=1;j<=n;j++)dp[i][j]=Math.min(dp[i-1][j]+1,dp[i][j-1]+1,dp[i-1][j-1]+(a[i-1]===b[j-1]?0:1));
- return dp[m][n];
+let searchResults=[];
+let searchStatus='idle'; // idle|loading|error|ok
+let searchError='';
+let searchTimer=null;
+
+async function runMusicSearch(q){
+ const query=(q||'').trim();
+ if(!query){searchResults=[];searchStatus='idle';searchError='';renderTrackList();return}
+ searchStatus='loading';searchError='';renderTrackList();
+ try{
+  const results=await Sound.music.search(query,24);
+  if(musicSearchQuery.trim()!==query)return; // stale
+  searchResults=results;
+  searchStatus=results.length?'ok':'ok';
+  renderTrackList();
+ }catch(e){
+  if(musicSearchQuery.trim()!==query)return;
+  searchResults=[];
+  searchStatus='error';
+  searchError=e.message||'Search failed';
+  renderTrackList();
+ }
 }
-function scoreTrackMatch(q,track){
- if(!q)return 0;
- const ql=q.toLowerCase().trim();
- const title=track.title.toLowerCase();
- const mood=(track.mood||'').toLowerCase();
- if(title===ql)return 100;
- if(title.startsWith(ql))return 90;
- if(title.includes(ql))return 80;
- if(mood.includes(ql))return 60;
- const words=title.split(/\s+/);
- let best=0;
- words.forEach(w=>{const d=levenshtein(ql,w);const maxLen=Math.max(ql.length,w.length);const sim=1-d/maxLen;if(sim>best)best=sim});
- const full=levenshtein(ql,title);const fullSim=1-full/Math.max(ql.length,title.length);
- best=Math.max(best,fullSim);
- return best>=0.55?Math.round(best*70):0;
+function scheduleMusicSearch(q){
+ if(searchTimer)clearTimeout(searchTimer);
+ searchTimer=setTimeout(()=>runMusicSearch(q),320);
 }
-function filterTracks(q){
- if(!q.trim())return {matches:Sound.TRACKS.slice(),suggestion:null};
- const scored=Sound.TRACKS.map(t=>({t,s:scoreTrackMatch(q,t)})).filter(x=>x.s>0).sort((a,b)=>b.s-a.s);
- if(scored.length)return {matches:scored.map(x=>x.t),suggestion:null};
- // No direct matches — fuzzy "did you mean"
- let best=null,bestDist=Infinity;
- Sound.TRACKS.forEach(t=>{
-  const d=Math.min(levenshtein(q,t.title),...t.title.split(/\s+/).map(w=>levenshtein(q,w)));
-  if(d<bestDist){bestDist=d;best=t}
- });
- if(best&&bestDist<=Math.max(3,Math.ceil(q.length*0.5)))return {matches:[],suggestion:best};
- return {matches:[],suggestion:null};
-}
+
 function renderMusicPopover(){
  $('musicVolumeSlot').innerHTML=sliderHtml('musicVolumeSlider','Music volume',prefs.audio.music,0,100,'%',val=>val===0?'OFF':val+'%');
- wireSlider('musicVolumeSlider',0,100,val=>val===0?'OFF':val+'%',null,val=>{prefs.audio.music=val;savePrefs()});
+ wireSlider('musicVolumeSlider',0,100,val=>val===0?'OFF':val+'%',null,val=>{prefs.audio.music=val;savePrefs();try{Sound.music.setYtVolume(val)}catch(e){}});
  const search=$('musicSearch');
- if(search){search.value=musicSearchQuery;search.oninput=e=>{musicSearchQuery=e.target.value;renderTrackList()}}
+ if(search){
+  search.value=musicSearchQuery;
+  search.placeholder='Search any song or artist…';
+  search.oninput=e=>{musicSearchQuery=e.target.value;scheduleMusicSearch(musicSearchQuery)};
+  search.onkeydown=e=>{if(e.key==='Enter'){e.preventDefault();if(searchTimer)clearTimeout(searchTimer);runMusicSearch(musicSearchQuery)}};
+ }
  renderTrackList();
 }
+
 function syncMusicVolumeUI(){updateSliderVisual('musicVolumeSlider',prefs.audio.music,0,100,val=>val===0?'OFF':val+'%',null)}
 function updateMusicChrome(){
- const curId=Sound.music.getSnapshot().trackId;
- const track=Sound.TRACKS.find(t=>t.id===curId);
+ const snap=Sound.music.getSnapshot();
+ const track=snap.trackId?{id:snap.trackId,title:snap.title,author:snap.author}:null;
  const vis=$('buzzVis');
- if(vis)vis.classList.toggle('spinning',!!track);
+ if(vis)vis.classList.toggle('spinning',!!(track&&snap.playing));
  const titleEl=$('musicNowTitle');
- if(titleEl){titleEl.textContent=track?track.title:'No track playing';titleEl.classList.toggle('idle',!track)}
+ if(titleEl){
+  titleEl.textContent=track?(track.title+(track.author?' — '+track.author:'')):'No track playing';
+  titleEl.classList.toggle('idle',!track);
+ }
  const playBtn=$('musicPlayPauseBtn');
- if(playBtn)playBtn.textContent=track?'⏸':'▶';
+ if(playBtn)playBtn.textContent=(track&&snap.playing)?'⏸':'▶';
  const prevBtn=$('musicPrevBtn');
  if(prevBtn)prevBtn.disabled=!Sound.music.getHistory().length;
- $('musicNowPlaying').textContent=track?`Now playing: ${track.title}`:'Search or pick a track';
- $('musicStopBtn').classList.toggle('hidden',!track);
+ const now=$('musicNowPlaying');
+ if(now)now.textContent=track?`Now playing: ${track.title}`:'Search any song on YouTube';
+ const stop=$('musicStopBtn');
+ if(stop)stop.classList.toggle('hidden',!track);
  const label=$('musicBtnLabel');
- if(label)label.textContent=track?track.title:'Music';
+ if(label)label.textContent=track?(track.title.length>18?track.title.slice(0,16)+'…':track.title):'Music';
 }
 function positionMusicPopover(){
  const btn=$('musicBtn'),pop=$('musicPopover');
@@ -1646,48 +1711,74 @@ function wireMusicButton(){
 }
 function renderTrackList(){
  const curId=Sound.music.getSnapshot().trackId;
- const {matches,suggestion}=filterTracks(musicSearchQuery);
  const dym=$('musicDidYouMean');
- if(suggestion&&!matches.length){
-  dym.classList.remove('hidden');
-  dym.innerHTML=`Did you mean <button type="button" data-suggest="${esc(suggestion.id)}">${esc(suggestion.title)}</button>?`;
-  dym.querySelector('[data-suggest]').onclick=()=>{
-   musicSearchQuery=suggestion.title;
-   const s=$('musicSearch');if(s)s.value=musicSearchQuery;
-   renderTrackList();
-  };
- }else{
-  dym.classList.add('hidden');dym.innerHTML='';
+ if(dym){dym.classList.add('hidden');dym.innerHTML=''}
+ const listEl=$('trackList');
+ if(!listEl)return;
+ const q=(musicSearchQuery||'').trim();
+ if(searchStatus==='loading'){
+  listEl.innerHTML=`<li style="padding:14px;font-size:12px;color:var(--muted-foreground);text-align:center">Searching…</li>`;
+  updateMusicChrome();return;
  }
- if(!matches.length&&!suggestion){
-  $('trackList').innerHTML=`<li style="padding:12px;font-size:12px;color:var(--muted-foreground);text-align:center">No songs match “${esc(musicSearchQuery)}”</li>`;
- }else{
-  const list=matches.length?matches:Sound.TRACKS;
-  $('trackList').innerHTML=list.map((t,i)=>{
-   const playing=t.id===curId;
-   return `<li><button type="button" class="trackrow ${playing?'playing':''}" data-track="${t.id}">
+ if(searchStatus==='error'){
+  listEl.innerHTML=`<li style="padding:14px;font-size:12px;color:var(--primary);text-align:center">${esc(searchError||'Search failed')}</li>`;
+  updateMusicChrome();return;
+ }
+ if(!q){
+  listEl.innerHTML=`<li style="padding:14px;font-size:12px;color:var(--muted-foreground);text-align:center;line-height:1.5">Search for any song or artist<br><span style="opacity:.8">e.g. “gone gone thank you”, “laufey from the start”</span></li>`;
+  updateMusicChrome();return;
+ }
+ if(!searchResults.length){
+  listEl.innerHTML=`<li style="padding:14px;font-size:12px;color:var(--muted-foreground);text-align:center">No results for “${esc(q)}”</li>`;
+  updateMusicChrome();return;
+ }
+ listEl.innerHTML=searchResults.map((t,i)=>{
+  const playing=t.id===curId;
+  const dur=Sound.music.formatDuration?Sound.music.formatDuration(t.lengthSeconds):'';
+  return `<li><button type="button" class="trackrow ${playing?'playing':''}" data-track-idx="${i}">
     <span class="ticon">${playing?'⏸':'▶'}</span>
-    <span class="tinfo"><span class="ttitle">${esc(t.title)}</span><span class="tmood">${esc(t.mood)} · ${t.bpm} bpm</span></span>
+    <span class="tinfo"><span class="ttitle">${esc(t.title)}</span><span class="tmood">${esc(t.author)}${dur?' · '+dur:''}</span></span>
     ${playing?'<span class="eqbars"><span></span><span></span><span></span></span>':`<span style="font-size:10.5px;color:var(--muted-foreground)">${String(i+1).padStart(2,'0')}</span>`}
    </button></li>`;
-  }).join('');
- }
- $('trackList').querySelectorAll('[data-track]').forEach(btn=>btn.onclick=()=>{
-  const id=btn.dataset.track;
-  if(id===Sound.music.getSnapshot().trackId)Sound.music.stop();else Sound.music.play(id);
+ }).join('');
+ listEl.querySelectorAll('[data-track-idx]').forEach(btn=>btn.onclick=()=>{
+  const t=searchResults[Number(btn.dataset.trackIdx)];
+  if(!t)return;
+  const snap=Sound.music.getSnapshot();
+  if(t.id===snap.trackId){
+   if(snap.playing)Sound.music.pause();else Sound.music.resume();
+  }else Sound.music.play(t);
  });
  updateMusicChrome();
 }
 Sound.music.subscribe(()=>{renderTrackList();updateMusicChrome()});
 $('musicStopBtn').onclick=()=>Sound.music.stop();
-$('musicNextBtn').onclick=()=>Sound.music.nextRandom();
-$('musicPrevBtn').onclick=()=>{Sound.music.prev()};
+$('musicNextBtn').onclick=()=>{
+ // Play next result after the current one in the search list
+ const snap=Sound.music.getSnapshot();
+ if(!searchResults.length){showToast('Search for a song first');return}
+ let idx=searchResults.findIndex(t=>t.id===snap.trackId);
+ if(idx<0)idx=-1;
+ const next=searchResults[(idx+1)%searchResults.length];
+ if(next)Sound.music.play(next);
+};
+$('musicPrevBtn').onclick=()=>{
+ if(!Sound.music.prev()){
+  const snap=Sound.music.getSnapshot();
+  if(!searchResults.length)return;
+  let idx=searchResults.findIndex(t=>t.id===snap.trackId);
+  if(idx<=0)return;
+  Sound.music.play(searchResults[idx-1]);
+ }
+};
 $('musicPlayPauseBtn').onclick=()=>{
- const cur=Sound.music.getSnapshot().trackId;
- if(cur)Sound.music.stop();
- else{
-  const first=Sound.TRACKS[0];
-  if(first)Sound.music.play(first.id);
+ const snap=Sound.music.getSnapshot();
+ if(snap.trackId){
+  if(snap.playing)Sound.music.pause();else Sound.music.resume();
+ }else if(searchResults.length){
+  Sound.music.play(searchResults[0]);
+ }else{
+  showToast('Search for a song first');
  }
 };
 window.addEventListener('resize',()=>{
@@ -1935,7 +2026,7 @@ function renderDialog(){
   $('testNeg').onclick=()=>Sound.sfx.neg();
  }else{
   body.innerHTML=`
-   <section class="setgroup"><header><div><h4>Audio Visualizer</h4><p>Choose exactly one visualizer. It reacts to the music and sound effects. Hidden on narrow windows.</p></div></header>
+   <section class="setgroup"><header><div><h4>Audio Visualizer</h4><p>Choose exactly one visualizer. It reacts only to background music (not clicks, buzzer, or SFX). Hidden on narrow windows.</p></div></header>
     <div class="body" style="padding:12px 14px">
      ${VIZ_STYLES.map((o,i)=>`<div class="field-row"${i===VIZ_STYLES.length-1?' style="border-bottom:0"':''}><div class="fl"><b>${o.label}</b><small>${o.desc}</small></div>${switchHtml('sw-viz-'+o.value,m.visualizer===o.value)}</div>`).join('')}
     </div>
