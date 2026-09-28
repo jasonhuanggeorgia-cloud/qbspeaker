@@ -254,11 +254,11 @@ fieldset{border:0;padding:0;margin:0 0 20px}
 @media(min-width:768px){.vfx-stamp{font-size:58px}}
 
 /* ---------- audio visualizer (side waveform bars) ---------- */
-.viz-side{position:fixed;top:0;bottom:0;width:132px;pointer-events:none;z-index:2;opacity:.9;transition:opacity .3s}
+.viz-side{position:fixed;top:0;height:100vh;height:100dvh;width:clamp(0px,calc((100vw - 1216px)/2),132px);pointer-events:none;z-index:2;transition:opacity .3s}
 .viz-side.off{opacity:0}
 .viz-left{left:0}
 .viz-right{right:0}
-@media(max-width:1360px){.viz-side{display:none}}
+@media(max-width:1250px){.viz-side{display:none}}
 
 /* ---------- suspense mode ---------- */
 #suspenseVignette{position:fixed;inset:0;pointer-events:none;z-index:6;opacity:0;box-shadow:inset 0 0 0 0 transparent;transition:opacity .16s ease-out}
@@ -504,7 +504,7 @@ const OUTCOME_LABELS={power:'Power',ten:'Correct',neg:'Neg',zero:'Incorrect',dea
    and every sound respects the master / sfx / music volume sliders. */
 const Sound=(()=>{
  let ctx=null,masterGain=null,sfxGain=null,musicGain=null,noiseBuffer=null,analyser=null;
- const volumes={master:.8,sfx:.7,music:.4};
+ const volumes={master:.8,sfx:.7,music:1};
  const curve=v=>v*v;
  function audio(){
   if(typeof window==='undefined')return null;
@@ -512,7 +512,7 @@ const Sound=(()=>{
    ctx=new (window.AudioContext||window.webkitAudioContext)();
    masterGain=ctx.createGain();sfxGain=ctx.createGain();musicGain=ctx.createGain();
    sfxGain.connect(masterGain);musicGain.connect(masterGain);masterGain.connect(ctx.destination);
-   analyser=ctx.createAnalyser();analyser.fftSize=256;analyser.smoothingTimeConstant=.82;
+   analyser=ctx.createAnalyser();analyser.fftSize=512;analyser.smoothingTimeConstant=.72;
    masterGain.connect(analyser);
    applyVolumes();
    noiseBuffer=ctx.createBuffer(1,ctx.sampleRate,ctx.sampleRate);
@@ -798,11 +798,13 @@ const initVfxLayer=(()=>{
  };
 })();
 
-/* ================= audio visualizer (side waveform bars) ================= */
+/* ================= audio visualizer (side visualizers, one style at a time) ================= */
 const AudioVisualizer=(()=>{
- let raf=null,running=false,dpr=1;
- let heights=null;
- const BARS=28;
+ let raf=null,running=false,dpr=1,lastStyle=null;
+ let peakTrack=0,bass=0,bassAvg=0,lastKick=0,kickPulse=0;
+ const sm=new Float32Array(96),peaks=new Float32Array(96);
+ const rings=[];
+ let freq=null,time=null;
  function canvases(){return[$('vizLeft'),$('vizRight')].filter(Boolean)}
  function resize(){
   dpr=window.devicePixelRatio||1;
@@ -812,68 +814,177 @@ const AudioVisualizer=(()=>{
    cv.height=Math.max(1,Math.round(r.height*dpr));
   });
  }
- function accentColor(){
-  return getComputedStyle(document.documentElement).getPropertyValue('--primary')||'oklch(0.58 0.215 27)';
- }
- function draw(){
+ const cssVar=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+ function sample(){
   const an=Sound.getAnalyser();
-  const cvs=canvases();
-  if(!cvs.length)return;
-  const color=accentColor();
-  if(!heights)heights=new Array(BARS).fill(0);
-  let bins=null;
   if(an){
-   bins=new Uint8Array(an.frequencyBinCount);
-   an.getByteFrequencyData(bins);
+   if(!freq||freq.length!==an.frequencyBinCount){freq=new Uint8Array(an.frequencyBinCount);time=new Uint8Array(an.fftSize)}
+   an.getByteFrequencyData(freq);an.getByteTimeDomainData(time);
+  }else{
+   if(!freq){freq=new Uint8Array(256);time=new Uint8Array(512)}
+   freq.fill(0);time.fill(128);
   }
-  const groupSize=bins?Math.max(1,Math.floor((bins.length*.75)/BARS)):1;
-  for(let i=0;i<BARS;i++){
-   let target=0;
-   if(bins){
-    let sum=0,n=0;
-    for(let k=i*groupSize;k<Math.min(bins.length,(i+1)*groupSize);k++){sum+=bins[k];n++}
-    target=n?sum/n/255:0;
-   }else{
-    target=0.06+0.03*Math.sin(Date.now()/900+i);
+  let mx=0;for(let i=0;i<freq.length;i++)if(freq[i]>mx)mx=freq[i];
+  peakTrack=Math.max(peakTrack*.997,mx);
+  return Math.max(1,Math.min(3.5,210/Math.max(peakTrack,50)));
+ }
+ // average of normalised bins lo..hi (inclusive-exclusive)
+ function band(lo,hi,norm){
+  let sum=0,n=0;lo=Math.floor(lo);hi=Math.max(lo+1,Math.floor(hi));
+  for(let k=lo;k<Math.min(freq.length,hi);k++){sum+=freq[k];n++}
+  return n?Math.min(1,sum/n/255*norm):0;
+ }
+ function smooth(i,target,up=.55,down=.14){
+  sm[i]+=(target-sm[i])*(target>sm[i]?up:down);return sm[i];
+ }
+ function drawWaveform(c2,w,h,side,norm){
+  const N=72,dir=side===0?1:-1,x0=side===0?0:w;
+  const step=h/N,th=step*.62;
+  for(let i=0;i<N;i++){
+   const yc=(i+.5)*step;
+   const d=Math.abs(yc-h/2)/(h/2);
+   const idx=Math.pow(d,1.5)*150;
+   const amp=smooth(i,Math.min(1,band(idx,idx+2,norm)*(1+bass*.25)));
+   const len=Math.max(3*dpr,amp*w*.98);
+   c2.globalAlpha=.3+amp*.7;
+   c2.fillStyle=amp>.8?cssVar('--primary'):amp>.5?'#f2b33d':cssVar('--success');
+   c2.shadowColor=c2.fillStyle;c2.shadowBlur=amp*10*dpr;
+   c2.beginPath();
+   const rx=dir===1?x0:x0-len;
+   if(c2.roundRect)c2.roundRect(rx,yc-th/2,len,th,th/2);else c2.rect(rx,yc-th/2,len,th);
+   c2.fill();
+  }
+ }
+ function drawScope(c2,w,h,side,norm){
+  const dir=side===0?1:-1,x0=side===0?0:w;
+  const N=128,gain=(1+bass*1.6)*Math.min(2,norm);
+  c2.lineJoin='round';c2.lineCap='round';
+  [[.16,10],[1,2.2]].forEach(([alpha,lw])=>{
+   c2.globalAlpha=alpha;c2.lineWidth=lw*dpr*(alpha<1?2:1);
+   c2.strokeStyle=cssVar('--primary');c2.shadowColor=cssVar('--primary');c2.shadowBlur=alpha<1?0:14*dpr;
+   c2.beginPath();
+   for(let i=0;i<=N;i++){
+    const t=i/N;
+    const si=Math.floor(t*(time.length-1));
+    const v=(time[si]-128)/128;
+    const x=Math.max(0,Math.min(w,x0+dir*(w*.5+v*w*.48*gain)));
+    const y=t*h;
+    i?c2.lineTo(x,y):c2.moveTo(x,y);
    }
-   heights[i]+=(target-heights[i])*0.35;
+   c2.stroke();
+  });
+ }
+ function drawLed(c2,w,h,side,norm){
+  const dir=side===0?1:-1,x0=side===0?0:w;
+  const SEG=34,step=h/SEG,th=step*.68,segW=w*.62;
+  const lvl=side===0?band(0,14,norm):band(30,140,norm)*1.35;
+  const level=smooth(side,Math.min(1,lvl),.6,.1);
+  const lit=Math.round(level*SEG);
+  const pk=peaks[side];
+  peaks[side]=lit>=pk?lit:Math.max(0,pk-.18);
+  const gx=x0+dir*w*.12;
+  for(let i=0;i<SEG;i++){
+   const y=h-(i+.5)*step;
+   const frac=i/SEG;
+   const col=frac>.78?cssVar('--primary'):frac>.55?'#f2b33d':cssVar('--success');
+   const on=i<lit,isPeak=Math.round(peaks[side])===i+1&&peaks[side]>lit;
+   c2.globalAlpha=on?1:isPeak?.95:.1;
+   c2.fillStyle=on||isPeak?col:cssVar('--foreground');
+   c2.shadowColor=col;c2.shadowBlur=on||isPeak?8*dpr:0;
+   const rx=dir===1?gx:gx-segW;
+   c2.beginPath();
+   if(c2.roundRect)c2.roundRect(rx,y-th/2,segW,th,3*dpr);else c2.rect(rx,y-th/2,segW,th);
+   c2.fill();
   }
+ }
+ function drawRings(c2,w,h,side){
+  const dir=side===0?1:-1,x0=side===0?0:w;
+  for(const r of rings){
+   const t=r.age;
+   const rad=t*h*.62;
+   c2.globalAlpha=Math.max(0,(1-t))*.85*r.power;
+   c2.lineWidth=(6-4*t)*dpr;
+   c2.strokeStyle=r.color;c2.shadowColor=r.color;c2.shadowBlur=12*dpr;
+   c2.beginPath();
+   c2.arc(x0,h/2,rad,dir===1?-Math.PI/2:Math.PI/2,dir===1?Math.PI/2:Math.PI*1.5);
+   c2.stroke();
+  }
+  // resting core that swells with the beat
+  const core=(.05+bass*.1+kickPulse*.08)*h;
+  c2.globalAlpha=.35+kickPulse*.5;
+  const g=c2.createRadialGradient(x0,h/2,0,x0,h/2,core);
+  g.addColorStop(0,cssVar('--primary'));g.addColorStop(1,`color-mix(in srgb, ${cssVar('--primary')} 0%, transparent)`);
+  c2.fillStyle=g;c2.shadowBlur=0;
+  c2.beginPath();c2.arc(x0,h/2,core,0,Math.PI*2);c2.fill();
+ }
+ function drawGlow(c2,w,h,side,norm){
+  const dir=side===0?1:-1,x0=side===0?0:w;
+  const lo=smooth(0,band(0,6,norm)),mid=smooth(1,band(6,40,norm)*1.2),hi=smooth(2,band(40,140,norm)*1.6);
+  const zones=[[.5,lo,cssVar('--primary'),.55],[.22,mid,'#f2b33d',.4],[.78,mid,'#f2b33d',.4],[.05,hi,cssVar('--success'),.35],[.95,hi,cssVar('--success'),.35]];
+  c2.globalCompositeOperation='source-over';c2.shadowBlur=0;
+  for(const [pos,e,color,size] of zones){
+   const e2=Math.min(1,e);
+   const r=h*size*(.35+e2*.65);
+   const cy=h*pos;
+   c2.save();
+   c2.translate(x0,cy);c2.scale(dir*w*(.5+e2*.48)/(r||1),1);
+   const g=c2.createRadialGradient(0,0,0,0,0,r);
+   g.addColorStop(0,color);g.addColorStop(1,`color-mix(in srgb, ${color} 0%, transparent)`);
+   c2.globalAlpha=.12+e2*.6;
+   c2.fillStyle=g;
+   c2.beginPath();c2.arc(0,0,r,0,Math.PI*2);c2.fill();
+   c2.restore();
+  }
+ }
+ function frame(){
+  raf=requestAnimationFrame(frame);
+  const style=prefs.misc.visualizer;
+  if(style==='off')return;
+  const cvs=canvases();if(!cvs.length)return;
+  if(style!==lastStyle){sm.fill(0);peaks.fill(0);rings.length=0;lastStyle=style}
+  const norm=sample();
+  // bass envelope + kick detection (drives waveform boost, rings, and the resting core)
+  const rawBass=band(0,4,norm);
+  bass+=(rawBass-bass)*(rawBass>bass?.7:.18);
+  bassAvg+=(rawBass-bassAvg)*.05;
+  kickPulse*=.88;
+  const now=performance.now();
+  if(rawBass>.35&&rawBass>bassAvg*1.25&&now-lastKick>230){
+   lastKick=now;kickPulse=1;
+   rings.push({age:0,power:.5+rawBass*.5,color:Math.random()<.5?cssVar('--primary'):cssVar('--success')});
+  }
+  for(const r of rings)r.age+=.022;
+  while(rings.length&&rings[0].age>=1)rings.shift();
   cvs.forEach((cv,side)=>{
    const c2=cv.getContext('2d');
    const w=cv.width,h=cv.height;
+   c2.setTransform(1,0,0,1,0,0);
    c2.clearRect(0,0,w,h);
-   const barW=w*.42;
-   const gap=h/BARS;
-   const x=side===0?w-barW-w*.14:w*.14;
-   for(let i=0;i<BARS;i++){
-    const amp=Math.max(0.04,heights[i]);
-    const barH=amp*gap*3.4;
-    const cy=h-(i+0.5)*gap;
-    c2.globalAlpha=Math.min(1,0.25+amp*0.65);
-    c2.fillStyle=color.trim()||'#e0412f';
-    c2.beginPath();
-    if(c2.roundRect)c2.roundRect(x,cy-barH/2,barW,barH,barW/2);else c2.rect(x,cy-barH/2,barW,barH);
-    c2.fill();
-    c2.globalAlpha=1;
-   }
+   c2.shadowBlur=0;c2.globalAlpha=1;
+   if(w<4)return;
+   if(style==='waveform')drawWaveform(c2,w,h,side,norm);
+   else if(style==='scope')drawScope(c2,w,h,side,norm);
+   else if(style==='led')drawLed(c2,w,h,side,norm);
+   else if(style==='rings')drawRings(c2,w,h,side);
+   else if(style==='glow')drawGlow(c2,w,h,side,norm);
+   c2.globalAlpha=1;c2.shadowBlur=0;
   });
-  raf=requestAnimationFrame(draw);
  }
  function start(){
   if(running)return;running=true;
   canvases().forEach(cv=>cv.classList.remove('off'));
   resize();
   if(raf)cancelAnimationFrame(raf);
-  draw();
+  frame();
  }
  function stop(){
   running=false;
   if(raf)cancelAnimationFrame(raf);raf=null;
   canvases().forEach(cv=>{cv.classList.add('off');const c2=cv.getContext('2d');c2&&c2.clearRect(0,0,cv.width,cv.height)});
  }
- function setEnabled(on){on?start():stop()}
+ function setStyle(style){if(style==='off')stop();else start()}
  window.addEventListener('resize',()=>{if(running)resize()});
- return {setEnabled};
+ return {setStyle};
 })();
 
 /* ================= suspense mode (heartbeat + vignette near the end of a tossup) ================= */
@@ -913,11 +1024,19 @@ const Suspense=(()=>{
 })();
 
 /* ================= preferences (persisted to localStorage) ================= */
+const VIZ_STYLES=[
+ {value:'off',label:'Off',desc:'No visualizer.'},
+ {value:'waveform',label:'Waveform',desc:'Two tall columns of discrete bars covering each side of the screen, bass in the middle.'},
+ {value:'scope',label:'Oscilloscope',desc:'A glowing live wave line running down each side of the screen.'},
+ {value:'led',label:'LED Meter',desc:'Segmented level meters: lows on the left, highs on the right, with falling peak markers.'},
+ {value:'rings',label:'Pulse Rings',desc:'Rings ripple out from the middle of each edge on every kick.'},
+ {value:'glow',label:'Edge Glow',desc:'Soft colored light along the edges that swells with bass, mids and highs.'},
+];
 const DEFAULT_PREFS={
  game:{wpm:240,pitch:1,buzzSeconds:10,deadSeconds:5,autoAdvance:0,powersEnabled:true,negsEnabled:true,points:{...DEFAULT_POINTS},readingStyle:'qbreader'},
  visual:{vfx:70,buzzFlash:true,confetti:true,shake:true,hoverGrow:true,readingCursor:true,textSize:'md'},
- audio:{master:80,sfx:70,music:40,buzzSound:'lockout',clickSound:true,resultSounds:true,tickSound:false,voiceURI:null},
- misc:{visualizer:true,suspense:true},
+ audio:{master:80,sfx:70,music:100,buzzSound:'lockout',clickSound:true,resultSounds:true,tickSound:false,voiceURI:null},
+ misc:{v:2,visualizer:'off',suspense:false},
 };
 let prefs=loadPrefs();
 function loadPrefs(){
@@ -934,7 +1053,14 @@ function loadPrefs(){
   }
   delete visual.tournament;
   if(!['all','qbreader','tournament'].includes(game.readingStyle))game.readingStyle='qbreader';
-  return {game,visual,audio:{...DEFAULT_PREFS.audio,...parsed.audio},misc:{...DEFAULT_PREFS.misc,...parsed.misc}};
+  // v2 misc: visualizer became a single-select style string and both extras default to off,
+  // music volume defaults to 100. Older saves only ever held the old defaults, so reset them once.
+  const audio={...DEFAULT_PREFS.audio,...parsed.audio};
+  let misc;
+  if(parsed.misc&&parsed.misc.v===2){misc={...DEFAULT_PREFS.misc,...parsed.misc}}
+  else{misc={...DEFAULT_PREFS.misc};audio.music=100}
+  if(!VIZ_STYLES.some(x=>x.value===misc.visualizer))misc.visualizer='off';
+  return {game,visual,audio,misc};
  }catch(e){return structuredClone(DEFAULT_PREFS)}
 }
 function applyVisualDom(){
@@ -1809,9 +1935,9 @@ function renderDialog(){
   $('testNeg').onclick=()=>Sound.sfx.neg();
  }else{
   body.innerHTML=`
-   <section class="setgroup"><header><div><h4>Audio Visualizer</h4><p>Waveform bars along the edges of the screen react to whatever's playing.</p></div></header>
+   <section class="setgroup"><header><div><h4>Audio Visualizer</h4><p>Choose exactly one visualizer. It reacts to the music and sound effects. Hidden on narrow windows.</p></div></header>
     <div class="body" style="padding:12px 14px">
-     <div class="field-row" style="border-bottom:0"><div class="fl"><b>Show visualizer</b><small>Bars on the left and right edges pulse in time with the music and sound effects. Hidden on narrow windows.</small></div>${switchHtml('sw-visualizer',m.visualizer)}</div>
+     ${VIZ_STYLES.map((o,i)=>`<div class="field-row"${i===VIZ_STYLES.length-1?' style="border-bottom:0"':''}><div class="fl"><b>${o.label}</b><small>${o.desc}</small></div>${switchHtml('sw-viz-'+o.value,m.visualizer===o.value)}</div>`).join('')}
     </div>
    </section>
    <section class="setgroup"><header><div><h4>Suspense</h4><p>Tension builds as a tossup gets closer to being fully read.</p></div>
@@ -1823,7 +1949,13 @@ function renderDialog(){
      <div class="field-row" style="border-bottom:0"><div class="fl"><b>Suspense mode</b><small>A heartbeat thump and a red pulse around the screen speed up through the last stretch of a question.</small></div>${switchHtml('sw-suspense',m.suspense)}</div>
     </div>
    </section>`;
-  wireSwitch('sw-visualizer',val=>{prefs.misc.visualizer=val;savePrefs();AudioVisualizer.setEnabled(val)});
+  VIZ_STYLES.forEach(o=>{
+   const el=$('sw-viz-'+o.value);if(!el)return;
+   el.onclick=()=>{
+    if(el.classList.contains('on')){showToast('Only one visualizer can be selected at once.');return}
+    prefs.misc.visualizer=o.value;savePrefs();AudioVisualizer.setStyle(o.value);renderDialog();
+   };
+  });
   wireSwitch('sw-suspense',val=>{prefs.misc.suspense=val;savePrefs()});
   $('testSuspense').onclick=()=>Suspense.preview();
  }
@@ -1858,7 +1990,7 @@ $('clearHistory').onclick=clearHistory;
 (async function init(){
  renderScoringLine();
  initVfxLayer('qstage');
- AudioVisualizer.setEnabled(prefs.misc.visualizer);
+ AudioVisualizer.setStyle(prefs.misc.visualizer);
  Suspense.start();
  render();
  try{
