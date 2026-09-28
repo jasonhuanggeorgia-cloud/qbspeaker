@@ -1325,7 +1325,7 @@ function speakFrom(startWord){
  };
  window.speechSynthesis.cancel();
  window.speechSynthesis.speak(u);
- startFallbackPacing();
+ startStallWatchdog();
  startKeepAlive();
 }
 function startKeepAlive(){
@@ -1338,21 +1338,22 @@ function startKeepAlive(){
   if(ss.speaking&&!ss.paused){ss.pause();ss.resume()}
  },9000);
 }
-function startFallbackPacing(){
- const ms=Math.max(80,60000/Math.max(80,Math.min(400,prefs.game.wpm)));
+function startStallWatchdog(){
+ // Word reveal is driven entirely by real onboundary events now — this timer does
+ // not advance `revealed` on its own (that was causing text to race ahead of the
+ // actual audio). Its only job is to catch the rare case where the speech engine
+ // dies silently without ever firing onboundary/onend/onerror, so the app doesn't
+ // hang forever waiting for an event that isn't coming.
  if(fallbackTimer)clearInterval(fallbackTimer);
  fallbackTimer=setInterval(()=>{
-  if(phase!=='reading'||paused)return;
+  if(phase!=='reading'||paused){return}
   if(revealed>=words.length){clearInterval(fallbackTimer);fallbackTimer=null;return}
   const ss=window.speechSynthesis;
-  if(performance.now()-speechStartedAt>1200&&!ss.speaking&&!ss.pending){
+  if(performance.now()-speechStartedAt>1500&&!ss.speaking&&!ss.pending){
    // The speech engine stopped without firing onend/onerror — recover rather than stall.
-   revealed=words.length;enterDeadWait();return;
+   revealed=words.length;enterDeadWait();
   }
-  // Real boundary events are still keeping pace — let them drive, don't double up.
-  if(performance.now()-lastBoundaryAt<350)return;
-  revealed++;renderQuestionOnly();
- },ms);
+ },400);
 }
 function beginSpeaking(){
  if(!('speechSynthesis' in window)){
@@ -1364,13 +1365,8 @@ function beginSpeaking(){
 function togglePause(){
  if(phase!=='reading')return;
  if(!paused){
-  // Word-boundary events lag slightly behind the actual audio, and cancel() below cuts the
-  // utterance off immediately — so estimate how many extra words were already heard since the
-  // last boundary fired, and reveal them before stopping, so resuming picks up in the right spot.
-  const elapsedSec=Math.max(0,performance.now()-lastBoundaryAt)/1000;
-  const wordsPerSec=Math.max(80,Math.min(400,prefs.game.wpm))/60;
-  const estCatchUp=Math.round(elapsedSec*wordsPerSec);
-  if(estCatchUp>0){revealed=Math.min(words.length,revealed+estCatchUp);renderQuestionOnly()}
+  // revealed is only ever moved by real onboundary events, so it already reflects
+  // exactly what's been heard — no need to guess extra words here.
   paused=true;stopSpeech();
  }else{
   paused=false;speakFrom(Math.max(0,revealed));
