@@ -253,6 +253,18 @@ fieldset{border:0;padding:0;margin:0 0 20px}
 .vfx-stamp{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);pointer-events:none;z-index:151;border:4px solid currentColor;border-radius:.85rem;padding:6px 26px;font-family:var(--font-display);font-size:38px;opacity:0;white-space:nowrap}
 @media(min-width:768px){.vfx-stamp{font-size:58px}}
 
+/* ---------- audio visualizer (side waveform bars) ---------- */
+.viz-side{position:fixed;top:0;bottom:0;width:132px;pointer-events:none;z-index:2;opacity:.9;transition:opacity .3s}
+.viz-side.off{opacity:0}
+.viz-left{left:0}
+.viz-right{right:0}
+@media(max-width:1360px){.viz-side{display:none}}
+
+/* ---------- suspense mode ---------- */
+#suspenseVignette{position:fixed;inset:0;pointer-events:none;z-index:6;opacity:0;box-shadow:inset 0 0 0 0 transparent;transition:opacity .16s ease-out}
+@keyframes heartthump{0%{transform:scale(1)}30%{transform:scale(1.012)}60%{transform:scale(0.998)}100%{transform:scale(1)}}
+.suspense-thump{animation:heartthump .32s ease-out}
+
 /* ---------- settings dialog ---------- */
 .dlg-overlay{position:fixed;inset:0;background:rgb(0 0 0/.15);backdrop-filter:blur(2px);z-index:100;display:flex;align-items:center;justify-content:center;padding:20px}
 .dlg{width:min(760px,100%);max-height:min(680px,90dvh);display:flex;border:2px solid oklch(0.24 0.04 260/.85);border-radius:.9rem;overflow:hidden;box-shadow:6px 6px 0 0 var(--foreground);background:var(--popover)}
@@ -292,6 +304,9 @@ footer.bottom a{text-decoration:underline;text-underline-offset:2px}
 <div class="flash-overlay" id="flashOverlay"></div>
 <canvas class="vfx-canvas" id="vfxCanvas"></canvas>
 <div class="vfx-stamp" id="vfxStamp"></div>
+<canvas class="viz-side viz-left" id="vizLeft" aria-hidden="true"></canvas>
+<canvas class="viz-side viz-right" id="vizRight" aria-hidden="true"></canvas>
+<div id="suspenseVignette" aria-hidden="true"></div>
 <div class="wrap">
 
 <header class="top">
@@ -387,6 +402,7 @@ footer.bottom a{text-decoration:underline;text-underline-offset:2px}
    <button class="dlg-tab active" data-tab="game"><b>Configuration</b><small>Scoring, timers, speed</small></button>
    <button class="dlg-tab" data-tab="visual"><b>Visual</b><small>Effects &amp; display</small></button>
    <button class="dlg-tab" data-tab="audio"><b>Audio</b><small>Buzzer, SFX, music</small></button>
+   <button class="dlg-tab" data-tab="misc"><b>Misc</b><small>Visualizer, suspense</small></button>
   </nav>
   <div class="dlg-body" id="dlgBody"></div>
  </div>
@@ -487,7 +503,7 @@ const OUTCOME_LABELS={power:'Power',ten:'Correct',neg:'Neg',zero:'Incorrect',dea
    Everything is synthesized with the Web Audio API — no audio assets to load,
    and every sound respects the master / sfx / music volume sliders. */
 const Sound=(()=>{
- let ctx=null,masterGain=null,sfxGain=null,musicGain=null,noiseBuffer=null;
+ let ctx=null,masterGain=null,sfxGain=null,musicGain=null,noiseBuffer=null,analyser=null;
  const volumes={master:.8,sfx:.7,music:.4};
  const curve=v=>v*v;
  function audio(){
@@ -496,6 +512,8 @@ const Sound=(()=>{
    ctx=new (window.AudioContext||window.webkitAudioContext)();
    masterGain=ctx.createGain();sfxGain=ctx.createGain();musicGain=ctx.createGain();
    sfxGain.connect(masterGain);musicGain.connect(masterGain);masterGain.connect(ctx.destination);
+   analyser=ctx.createAnalyser();analyser.fftSize=256;analyser.smoothingTimeConstant=.82;
+   masterGain.connect(analyser);
    applyVolumes();
    noiseBuffer=ctx.createBuffer(1,ctx.sampleRate,ctx.sampleRate);
    const data=noiseBuffer.getChannelData(0);
@@ -556,21 +574,74 @@ const Sound=(()=>{
   neg(){const c=audio();if(!c)return;const t=c.currentTime;tone(311,t,.18,{type:'sawtooth',gain:.18,filter:1400});tone(233,t+.18,.45,{type:'sawtooth',gain:.18,filter:1200,slideTo:150})},
   zero(){const c=audio();if(!c)return;const t=c.currentTime;tone(392,t,.16,{type:'triangle',gain:.16});tone(330,t+.14,.28,{type:'triangle',gain:.16})},
   dead(){const c=audio();if(!c)return;const t=c.currentTime;tone(262,t,.5,{type:'sine',gain:.14});tone(196,t+.2,.7,{type:'sine',gain:.12})},
+  heartbeat(strength=1){
+   const c=audio();if(!c)return;const t=c.currentTime;const s=Math.max(.15,Math.min(1,strength));
+   tone(52,t,.13,{type:'sine',gain:.3*s,filter:200});noise(t,.06,{gain:.07*s,lowpass:160});
+   tone(44,t+.15,.16,{type:'sine',gain:.22*s,filter:170});noise(t+.15,.07,{gain:.05*s,lowpass:140});
+  },
  };
- const TRACKS=[
-  {id:'study-hall',title:'Study Hall',mood:'Lo-fi beats',bpm:78,chords:[[53,57,60,64],[52,55,59,62],[50,53,57,60],[48,52,55,59]],pad:'triangle',lead:'pluck',drums:'lofi',bass:true},
-  {id:'buzzer-beater',title:'Buzzer Beater',mood:'8-bit chiptune',bpm:136,chords:[[57,60,64],[53,57,60],[48,52,55],[55,59,62]],pad:null,lead:'chip',drums:'chip',bass:true},
-  {id:'stacks-at-night',title:'Stacks at Night',mood:'Ambient focus',bpm:60,chords:[[48,55,59,62,64],[45,52,55,59,60],[41,48,52,55,57],[43,50,55,57,59]],pad:'sine',lead:'pluck',drums:'none',bass:false},
-  {id:'nationals-warmup',title:'Nationals Warmup',mood:'Upbeat synth',bpm:112,chords:[[50,53,57],[46,50,53],[53,57,60],[48,52,55]],pad:'sawtooth',lead:'arp',drums:'four',bass:true},
-  {id:'moderators-lounge',title:"Moderator's Lounge",mood:'Late-night jazz',bpm:92,chords:[[50,53,57,60,64],[43,53,57,59,64],[48,52,55,59,62],[45,49,55,58,61]],pad:'sine',lead:'none',drums:'brush',bass:true},
-  {id:'power-mark',title:'Power Mark',mood:'Bright focus',bpm:100,chords:[[55,59,62,67],[52,55,59,64],[50,53,57,62],[48,52,55,60]],pad:'triangle',lead:'arp',drums:'four',bass:true},
-  {id:'neg-five',title:'Neg Five',mood:'Moody downtempo',bpm:72,chords:[[45,48,52,55],[43,47,50,55],[41,45,48,53],[48,52,55,59]],pad:'sine',lead:'pluck',drums:'lofi',bass:true},
-  {id:'tossup-twenty',title:'Tossup Twenty',mood:'Energetic pulse',bpm:124,chords:[[57,60,64,67],[53,57,60,64],[50,53,57,60],[55,59,62,67]],pad:'sawtooth',lead:'chip',drums:'chip',bass:true},
-  {id:'packet-break',title:'Packet Break',mood:'Chill interlude',bpm:84,chords:[[48,52,55,59],[50,53,57,60],[45,48,52,55],[43,47,50,55]],pad:'triangle',lead:'none',drums:'brush',bass:false},
-  {id:'finals-room',title:'Finals Room',mood:'Tense ambient',bpm:66,chords:[[41,48,52,55,60],[38,45,50,53,57],[43,50,55,59,62],[40,47,52,55,59]],pad:'sine',lead:'pluck',drums:'none',bass:true},
-  {id:'quizbowl-cafe',title:'Quizbowl Cafe',mood:'Coffee shop jazz',bpm:96,chords:[[50,53,57,60],[48,52,55,59],[53,57,60,64],[45,49,52,57]],pad:'sine',lead:'pluck',drums:'brush',bass:true},
-  {id:'lockout-lane',title:'Lockout Lane',mood:'Arcade drive',bpm:140,chords:[[60,64,67],[57,60,64],[53,57,60],[55,59,62]],pad:null,lead:'chip',drums:'chip',bass:true},
+ /* ---- large procedurally-generated music library ----
+    No audio files are shipped (this stays a single static HTML file), so instead of a
+    handful of hand-picked presets, a big, searchable library of distinct tracks is built
+    from a bank of chord progressions crossed with a bank of instrumentation "genres" —
+    every track is still driven through the same synth engine above. The seeded RNG keeps
+    the library identical across reloads so search results (and "did you mean") are stable. */
+ function mulberry32(seed){
+  return function(){seed|=0;seed=seed+0x6D2B79F5|0;let t=Math.imul(seed^seed>>>15,1|seed);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296};
+ }
+ const PROGRESSIONS=[
+  [[53,57,60,64],[52,55,59,62],[50,53,57,60],[48,52,55,59]],
+  [[57,60,64],[53,57,60],[48,52,55],[55,59,62]],
+  [[48,55,59,62,64],[45,52,55,59,60],[41,48,52,55,57],[43,50,55,57,59]],
+  [[50,53,57],[46,50,53],[53,57,60],[48,52,55]],
+  [[50,53,57,60,64],[43,53,57,59,64],[48,52,55,59,62],[45,49,55,58,61]],
+  [[55,59,62,67],[52,55,59,64],[50,53,57,62],[48,52,55,60]],
+  [[45,48,52,55],[43,47,50,55],[41,45,48,53],[48,52,55,59]],
+  [[57,60,64,67],[53,57,60,64],[50,53,57,60],[55,59,62,67]],
+  [[48,52,55,59],[50,53,57,60],[45,48,52,55],[43,47,50,55]],
+  [[41,48,52,55,60],[38,45,50,53,57],[43,50,55,59,62],[40,47,52,55,59]],
+  [[50,53,57,60],[48,52,55,59],[53,57,60,64],[45,49,52,57]],
+  [[60,64,67],[57,60,64],[53,57,60],[55,59,62]],
  ];
+ const GENRES=[
+  {mood:'Lo-fi beats',pad:'triangle',lead:'pluck',drums:'lofi',bass:true,bpm:[68,84]},
+  {mood:'8-bit chiptune',pad:null,lead:'chip',drums:'chip',bass:true,bpm:[126,148]},
+  {mood:'Ambient focus',pad:'sine',lead:'pluck',drums:'none',bass:false,bpm:[54,66]},
+  {mood:'Upbeat synth',pad:'sawtooth',lead:'arp',drums:'four',bass:true,bpm:[100,118]},
+  {mood:'Late-night jazz',pad:'sine',lead:'none',drums:'brush',bass:true,bpm:[82,96]},
+  {mood:'Bright focus',pad:'triangle',lead:'arp',drums:'four',bass:true,bpm:[92,108]},
+  {mood:'Moody downtempo',pad:'sine',lead:'pluck',drums:'lofi',bass:true,bpm:[62,76]},
+  {mood:'Energetic pulse',pad:'sawtooth',lead:'chip',drums:'chip',bass:true,bpm:[118,138]},
+  {mood:'Coffee shop jazz',pad:'sine',lead:'pluck',drums:'brush',bass:true,bpm:[86,98]},
+  {mood:'Arcade drive',pad:null,lead:'chip',drums:'chip',bass:true,bpm:[136,150]},
+  {mood:'Tense ambient',pad:'sine',lead:'pluck',drums:'none',bass:true,bpm:[56,68]},
+  {mood:'Chill interlude',pad:'triangle',lead:'none',drums:'brush',bass:false,bpm:[76,90]},
+ ];
+ const WORDS_A=['Buzzer','Stacks','Packet','Neg','Power','Tossup','Bonus','Lockout','Finals','Prelims','Playoffs','Scoresheet','Moderator','Lectern','Cram','Study','Dorm','Library','Campus','Deadline','Syllabus','Overtime','Speed Check','Canon','Conferral','Answer Line','Protest','Nationals','Regionals','Scrimmage'];
+ const WORDS_B=['Hall','Beater','at Night','Warmup','Lounge','Mark','Five','Twenty','Break','Room','Cafe','Lane','Drive','Static','Glow','Haze','Horizon','Drift','Embers','Tape Deck','Neon','Velvet','Echo','After Hours','Sunrise','Midnight','All-Nighter','Reset','Standby','Overtime Lights'];
+ function buildLibrary(){
+  const rng=mulberry32(90210);
+  const pick=arr=>arr[Math.floor(rng()*arr.length)];
+  const seen=new Set();
+  const list=[];
+  const targetCount=64;
+  let guard=0;
+  while(list.length<targetCount&&guard<targetCount*20){
+   guard++;
+   const genre=pick(GENRES);
+   const prog=pick(PROGRESSIONS);
+   const transpose=Math.round((rng()*12-6));
+   const chords=prog.map(chord=>chord.map(n=>n+transpose));
+   const bpm=Math.round(genre.bpm[0]+rng()*(genre.bpm[1]-genre.bpm[0]));
+   const title=`${pick(WORDS_A)} ${pick(WORDS_B)}`;
+   const id=title.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,'');
+   if(seen.has(id))continue;
+   seen.add(id);
+   list.push({id,title,mood:genre.mood,bpm,chords,pad:genre.pad,lead:genre.lead,drums:genre.drums,bass:genre.bass});
+  }
+  return list;
+ }
+ const TRACKS=buildLibrary();
  let musicState={trackId:null};
  const musicListeners=new Set();
  let scheduler=null,step=0,nextTime=0;
@@ -653,7 +724,7 @@ const Sound=(()=>{
    return true;
   },
  };
- return {sfx,music,TRACKS,setVolumes};
+ return {sfx,music,TRACKS,setVolumes,getAnalyser:()=>analyser,ensureAudio:audio};
 })();
 
 /* ================= vfx layer (ported from the v0 app's lib/vfx.ts + vfx-layer.tsx) ================= */
@@ -727,11 +798,126 @@ const initVfxLayer=(()=>{
  };
 })();
 
+/* ================= audio visualizer (side waveform bars) ================= */
+const AudioVisualizer=(()=>{
+ let raf=null,running=false,dpr=1;
+ let heights=null;
+ const BARS=28;
+ function canvases(){return[$('vizLeft'),$('vizRight')].filter(Boolean)}
+ function resize(){
+  dpr=window.devicePixelRatio||1;
+  canvases().forEach(cv=>{
+   const r=cv.getBoundingClientRect();
+   cv.width=Math.max(1,Math.round(r.width*dpr));
+   cv.height=Math.max(1,Math.round(r.height*dpr));
+  });
+ }
+ function accentColor(){
+  return getComputedStyle(document.documentElement).getPropertyValue('--primary')||'oklch(0.58 0.215 27)';
+ }
+ function draw(){
+  const an=Sound.getAnalyser();
+  const cvs=canvases();
+  if(!cvs.length)return;
+  const color=accentColor();
+  if(!heights)heights=new Array(BARS).fill(0);
+  let bins=null;
+  if(an){
+   bins=new Uint8Array(an.frequencyBinCount);
+   an.getByteFrequencyData(bins);
+  }
+  const groupSize=bins?Math.max(1,Math.floor((bins.length*.75)/BARS)):1;
+  for(let i=0;i<BARS;i++){
+   let target=0;
+   if(bins){
+    let sum=0,n=0;
+    for(let k=i*groupSize;k<Math.min(bins.length,(i+1)*groupSize);k++){sum+=bins[k];n++}
+    target=n?sum/n/255:0;
+   }else{
+    target=0.06+0.03*Math.sin(Date.now()/900+i);
+   }
+   heights[i]+=(target-heights[i])*0.35;
+  }
+  cvs.forEach((cv,side)=>{
+   const c2=cv.getContext('2d');
+   const w=cv.width,h=cv.height;
+   c2.clearRect(0,0,w,h);
+   const barW=w*.42;
+   const gap=h/BARS;
+   const x=side===0?w-barW-w*.14:w*.14;
+   for(let i=0;i<BARS;i++){
+    const amp=Math.max(0.04,heights[i]);
+    const barH=amp*gap*3.4;
+    const cy=h-(i+0.5)*gap;
+    c2.globalAlpha=Math.min(1,0.25+amp*0.65);
+    c2.fillStyle=color.trim()||'#e0412f';
+    c2.beginPath();
+    if(c2.roundRect)c2.roundRect(x,cy-barH/2,barW,barH,barW/2);else c2.rect(x,cy-barH/2,barW,barH);
+    c2.fill();
+    c2.globalAlpha=1;
+   }
+  });
+  raf=requestAnimationFrame(draw);
+ }
+ function start(){
+  if(running)return;running=true;
+  canvases().forEach(cv=>cv.classList.remove('off'));
+  resize();
+  if(raf)cancelAnimationFrame(raf);
+  draw();
+ }
+ function stop(){
+  running=false;
+  if(raf)cancelAnimationFrame(raf);raf=null;
+  canvases().forEach(cv=>{cv.classList.add('off');const c2=cv.getContext('2d');c2&&c2.clearRect(0,0,cv.width,cv.height)});
+ }
+ function setEnabled(on){on?start():stop()}
+ window.addEventListener('resize',()=>{if(running)resize()});
+ return {setEnabled};
+})();
+
+/* ================= suspense mode (heartbeat + vignette near the end of a tossup) ================= */
+const Suspense=(()=>{
+ let raf=null,lastBeatAt=0;
+ function vignette(strength){
+  const el=$('suspenseVignette');if(!el)return;
+  const blur=Math.round(70+150*strength),spread=Math.round(8+28*strength);
+  el.style.boxShadow=`inset 0 0 ${blur}px ${spread}px oklch(0.58 0.215 27 / ${(0.22+0.33*strength).toFixed(2)})`;
+  el.style.opacity='1';
+  clearTimeout(el._fadeT);
+  el._fadeT=setTimeout(()=>{el.style.opacity='0'},240);
+  const stage=$('qstage');
+  if(stage){stage.classList.remove('suspense-thump');void stage.offsetWidth;stage.classList.add('suspense-thump')}
+ }
+ function tick(){
+  raf=requestAnimationFrame(tick);
+  if(!prefs.misc||!prefs.misc.suspense)return;
+  if(typeof phase==='undefined'||phase!=='reading'||typeof paused!=='undefined'&&paused)return;
+  if(typeof words==='undefined'||!words.length||typeof revealed==='undefined')return;
+  const progress=revealed/words.length;
+  if(progress<0.55)return;
+  const t=Math.min(1,(progress-0.55)/0.45);
+  const bpmBeat=58+t*102;
+  const interval=60000/bpmBeat;
+  const now=performance.now();
+  if(now-lastBeatAt>=interval){
+   lastBeatAt=now;
+   const strength=0.3+t*0.7;
+   Sound.sfx.heartbeat(strength);
+   vignette(strength);
+  }
+ }
+ function start(){if(!raf)raf=requestAnimationFrame(tick)}
+ function preview(){Sound.sfx.heartbeat(1);vignette(1)}
+ return {start,preview};
+})();
+
 /* ================= preferences (persisted to localStorage) ================= */
 const DEFAULT_PREFS={
  game:{wpm:240,pitch:1,buzzSeconds:10,deadSeconds:5,autoAdvance:0,powersEnabled:true,negsEnabled:true,points:{...DEFAULT_POINTS},readingStyle:'qbreader'},
  visual:{vfx:70,buzzFlash:true,confetti:true,shake:true,hoverGrow:true,readingCursor:true,textSize:'md'},
  audio:{master:80,sfx:70,music:40,buzzSound:'lockout',clickSound:true,resultSounds:true,tickSound:false,voiceURI:null},
+ misc:{visualizer:true,suspense:true},
 };
 let prefs=loadPrefs();
 function loadPrefs(){
@@ -748,7 +934,7 @@ function loadPrefs(){
   }
   delete visual.tournament;
   if(!['all','qbreader','tournament'].includes(game.readingStyle))game.readingStyle='qbreader';
-  return {game,visual,audio:{...DEFAULT_PREFS.audio,...parsed.audio}};
+  return {game,visual,audio:{...DEFAULT_PREFS.audio,...parsed.audio},misc:{...DEFAULT_PREFS.misc,...parsed.misc}};
  }catch(e){return structuredClone(DEFAULT_PREFS)}
 }
 function applyVisualDom(){
@@ -1437,7 +1623,7 @@ function wireSegmented(id,onChange){
 }
 function renderDialog(){
  document.querySelectorAll('.dlg-tab').forEach(t=>t.classList.toggle('active',t.dataset.tab===dlgTab));
- const g=prefs.game,v=prefs.visual,a=prefs.audio;
+ const g=prefs.game,v=prefs.visual,a=prefs.audio,m=prefs.misc;
  const body=$('dlgBody');
  if(dlgTab==='game'){
   const rs=g.readingStyle||'qbreader';
@@ -1569,7 +1755,7 @@ function renderDialog(){
   wireSwitch('sw-cursor',val=>{prefs.visual.readingCursor=val;savePrefs()});
   wireSegmented('seg-textsize',val=>{prefs.visual.textSize=val;savePrefs()});
   body.querySelectorAll('[data-vfxtest]').forEach(b=>b.onclick=()=>emitVfx(b.dataset.vfxtest));
- }else{
+ }else if(dlgTab==='audio'){
   const muted=a.master===0;
   const BUZZ_OPTIONS=[{value:'lockout',label:'Lockout'},{value:'classic',label:'Beep'},{value:'chime',label:'Chime'},{value:'off',label:'Off'}];
   body.innerHTML=`
@@ -1621,6 +1807,25 @@ function renderDialog(){
   $('testPower').onclick=()=>Sound.sfx.power();
   $('testTen').onclick=()=>Sound.sfx.ten();
   $('testNeg').onclick=()=>Sound.sfx.neg();
+ }else{
+  body.innerHTML=`
+   <section class="setgroup"><header><div><h4>Audio Visualizer</h4><p>Waveform bars along the edges of the screen react to whatever's playing.</p></div></header>
+    <div class="body" style="padding:12px 14px">
+     <div class="field-row" style="border-bottom:0"><div class="fl"><b>Show visualizer</b><small>Bars on the left and right edges pulse in time with the music and sound effects. Hidden on narrow windows.</small></div>${switchHtml('sw-visualizer',m.visualizer)}</div>
+    </div>
+   </section>
+   <section class="setgroup"><header><div><h4>Suspense</h4><p>Tension builds as a tossup gets closer to being fully read.</p></div>
+    <div style="display:flex;gap:4px" data-no-click-sound>
+     <button type="button" class="btn btn-outline btn-sm" id="testSuspense">Preview</button>
+    </div>
+   </header>
+    <div class="body" style="padding:12px 14px">
+     <div class="field-row" style="border-bottom:0"><div class="fl"><b>Suspense mode</b><small>A heartbeat thump and a red pulse around the screen speed up through the last stretch of a question.</small></div>${switchHtml('sw-suspense',m.suspense)}</div>
+    </div>
+   </section>`;
+  wireSwitch('sw-visualizer',val=>{prefs.misc.visualizer=val;savePrefs();AudioVisualizer.setEnabled(val)});
+  wireSwitch('sw-suspense',val=>{prefs.misc.suspense=val;savePrefs()});
+  $('testSuspense').onclick=()=>Suspense.preview();
  }
 }
 function wireSlider(id,min,max,format,unit,onChange){
@@ -1653,6 +1858,8 @@ $('clearHistory').onclick=clearHistory;
 (async function init(){
  renderScoringLine();
  initVfxLayer('qstage');
+ AudioVisualizer.setEnabled(prefs.misc.visualizer);
+ Suspense.start();
  render();
  try{
   await loadData();
