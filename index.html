@@ -245,6 +245,7 @@ fieldset{border:0;padding:0;margin:0 0 20px}
 .eqbars{display:inline-flex;align-items:flex-end;gap:2px;height:14px}
 .eqbars span{width:3px;border-radius:1px;background:currentColor;height:4px;animation:eqbar .9s ease-in-out infinite}
 .eqbars span:nth-child(2){animation-delay:.18s}.eqbars span:nth-child(3){animation-delay:.36s}
+.eqbars.paused span{animation-play-state:paused;height:4px}
 @keyframes eqbar{0%,100%{height:4px}50%{height:14px}}
 .popover-foot{flex-shrink:0;border-top:2px dashed oklch(0.24 0.04 260/.15);padding:10px 14px;display:flex;flex-direction:column;gap:6px}
 .popover-foot label{font-size:9.5px;letter-spacing:.1em;color:var(--muted-foreground);text-transform:uppercase}
@@ -1154,7 +1155,7 @@ const VIZ_STYLES=[
  {value:'glow',label:'Edge Glow',desc:'Soft colored light along the edges that swells with bass, mids and highs.'},
 ];
 const DEFAULT_PREFS={
- game:{wpm:240,pitch:1,buzzSeconds:10,deadSeconds:5,autoAdvance:0,powersEnabled:true,negsEnabled:true,points:{...DEFAULT_POINTS},readingStyle:'qbreader'},
+ game:{wpm:240,pitch:1,speechVolume:100,buzzSeconds:10,deadSeconds:5,autoAdvance:0,powersEnabled:true,negsEnabled:true,points:{...DEFAULT_POINTS},readingStyle:'qbreader'},
  visual:{vfx:70,buzzFlash:true,confetti:true,shake:true,hoverGrow:true,readingCursor:true,textSize:'md'},
  audio:{master:80,sfx:70,music:100,buzzSound:'lockout',clickSound:true,resultSounds:true,tickSound:false,voiceURI:null},
  misc:{v:2,visualizer:'off',suspense:false},
@@ -1289,7 +1290,7 @@ function speakFrom(startWord){
  if(v)u.voice=v;u.lang=v?v.lang:'en-US';
  u.rate=Math.max(.5,Math.min(2,prefs.game.wpm/240));
  u.pitch=Math.max(.5,Math.min(2,prefs.game.pitch));
- u.volume=1;
+ u.volume=Math.max(0,Math.min(1,(prefs.game.speechVolume??100)/100));
  const startedAt=performance.now();
  lastBoundaryAt=startedAt;speechStartedAt=startedAt;
  u.onstart=()=>{
@@ -1764,7 +1765,7 @@ function updateNowIsland(track,playing){
  if(a)a.textContent=track.author||'';
  if(pp)pp.textContent=playing?'⏸':'▶';
  const eq=el.querySelector('.eqbars');
- if(eq)eq.style.animationPlayState=playing?'running':'paused';
+ if(eq)eq.classList.toggle('paused',!playing);
 }
 function wireNowIsland(){
  const el=$('nowIsland');if(!el)return;
@@ -1865,14 +1866,15 @@ function wireMusicButton(){
  updateMusicChrome();
 }
 function trackRowHtml(t,i,curId,idxAttr){
- const playing=t.id===curId;
+ const isCurrent=t.id===curId;
+ const isPlaying=isCurrent&&Sound.music.getSnapshot().playing;
  const dur=Sound.music.formatDuration&&t.lengthSeconds?Sound.music.formatDuration(t.lengthSeconds):'';
  const saved=Sound.music.isSaved(t.id);
- return `<li><div class="trackrow ${playing?'playing':''}">
+ return `<li><div class="trackrow ${isCurrent?'playing':''}">
    <button type="button" class="trackrow-play" data-${idxAttr}="${i}">
-    <span class="ticon">${playing?'⏸':'▶'}</span>
+    <span class="ticon">${isPlaying?'⏸':'▶'}</span>
     <span class="tinfo"><span class="ttitle">${esc(t.title)}</span><span class="tmood">${esc(t.author)}${dur?' · '+dur:''}</span></span>
-    ${playing?'<span class="eqbars"><span></span><span></span><span></span></span>':''}
+    ${isPlaying?'<span class="eqbars"><span></span><span></span><span></span></span>':''}
    </button>
    <button type="button" class="tstar ${saved?'saved':''}" data-star="${esc(t.id)}" title="${saved?'Remove from saved':'Save to your library'}" aria-label="${saved?'Remove from saved':'Save to your library'}">${saved?'★':'☆'}</button>
   </div></li>`;
@@ -2055,6 +2057,10 @@ function renderDialog(){
      <div style="height:12px"></div>
      <div class="slider-label"><span>Pitch</span><small>Higher = brighter voice; lower = deeper</small></div>
      ${sliderHtml('pitch2','Pitch',Math.round(g.pitch*10),5,20,'',v=>(v/10).toFixed(1))}
+     <div style="height:12px"></div>
+     <div class="slider-label"><span>Speech volume</span><small>Boosts the voice above your other volumes</small></div>
+     ${sliderHtml('speechVol','Speech volume',g.speechVolume??100,0,250,'%',v=>v+'%')}
+     <p style="font-size:10.5px;color:var(--muted-foreground);margin:6px 0 0">Browsers cap synthesized speech at 100% loudness — above that this just asks for the loudest the browser allows, it won't get louder than your device volume. Use it mainly to make the voice louder relative to music/SFX, or turn it down below 100%.</p>
     </div>
    </section>
    <section class="setgroup"><header><div><h4>Filters</h4><p>Limit which tossups can be selected.</p></div></header>
@@ -2117,6 +2123,7 @@ function renderDialog(){
   wireReadingStyle('sw-rs-tournament','tournament');
   wireSlider('wpm',80,400,v=>v+' WPM',null,v=>{prefs.game.wpm=v;savePrefs()});
   wireSlider('pitch2',5,20,v=>(v/10).toFixed(1),null,v=>{prefs.game.pitch=v/10;savePrefs()});
+ wireSlider('speechVol',0,250,v=>v+'%',null,v=>{prefs.game.speechVolume=v;savePrefs()});
   wireSlider('buzzSeconds',3,60,v=>v+'s',null,v=>{prefs.game.buzzSeconds=v;savePrefs()});
   wireSlider('deadSeconds',1,15,v=>v+'s',null,v=>{prefs.game.deadSeconds=v;savePrefs()});
   wireSlider('autoAdvance',0,15,v=>v===0?'OFF':v+'s',null,v=>{prefs.game.autoAdvance=v;savePrefs()});
