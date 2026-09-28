@@ -731,7 +731,7 @@ const initVfxLayer=(()=>{
 const DEFAULT_PREFS={
  game:{wpm:240,pitch:1,buzzSeconds:10,deadSeconds:5,autoAdvance:0,powersEnabled:true,negsEnabled:true,points:{...DEFAULT_POINTS},readingStyle:'qbreader'},
  visual:{vfx:70,buzzFlash:true,confetti:true,shake:true,hoverGrow:true,readingCursor:true,textSize:'md'},
- audio:{master:80,sfx:70,music:40,buzzSound:'lockout',clickSound:true,resultSounds:true,tickSound:false},
+ audio:{master:80,sfx:70,music:40,buzzSound:'lockout',clickSound:true,resultSounds:true,tickSound:false,voiceURI:null},
 };
 let prefs=loadPrefs();
 function loadPrefs(){
@@ -802,19 +802,38 @@ function renderError(msg){$('actionCol').insertAdjacentHTML('beforeend',`<p clas
 
 /* ---------------- speech synthesis (real word-boundary tracking) ---------------- */
 let voices=[],fallbackTimer=null,keepAliveTimer=null,lastBoundaryAt=0,speechStartedAt=0,intentionalStop=false;
+function bestVoiceIndex(){
+ if(!voices.length)return -1;
+ const score=v=>{const n=(v.name||'').toLowerCase();let s=0;if(/microsoft|google|natural|neural|enhanced|premium|online/.test(n))s+=5;if(/^en(-|_)/i.test(v.lang))s+=2;if(/us|gb|au/i.test(v.lang))s+=1;return s};
+ let best=0;voices.forEach((v,i)=>{if(score(v)>score(voices[best]))best=i});
+ return best;
+}
+function selectedVoiceIndex(){
+ // The saved voiceURI is resolved against the live voice list rather than a DOM element,
+ // so playback picks the right voice even if the Audio settings tab was never opened.
+ if(!voices.length)return -1;
+ if(prefs.audio.voiceURI){
+  const i=voices.findIndex(v=>v.voiceURI===prefs.audio.voiceURI);
+  if(i>=0)return i;
+ }
+ return bestVoiceIndex();
+}
 function voiceset(){
  voices=window.speechSynthesis?window.speechSynthesis.getVoices()||[]:[];
  const voiceSelect=$('voice');
  if(!voiceSelect)return;
+ const idx=selectedVoiceIndex();
  voiceSelect.innerHTML=voices.map((v,n)=>`<option value="${n}">${esc(v.name)} (${esc(v.lang)})</option>`).join('');
- if(voices.length&&!voiceSelect.dataset.userSelected){
-  const score=v=>{const n=(v.name||'').toLowerCase();let s=0;if(/microsoft|google|natural|neural|enhanced|premium|online/.test(n))s+=5;if(/^en(-|_)/i.test(v.lang))s+=2;if(/us|gb|au/i.test(v.lang))s+=1;return s};
-  let best=0;voices.forEach((v,i)=>{if(score(v)>score(voices[best]))best=i});
-  voiceSelect.selectedIndex=best;
- }
+ if(idx>=0)voiceSelect.selectedIndex=idx;
 }
 if('speechSynthesis' in window){voiceset();window.speechSynthesis.onvoiceschanged=voiceset}
-document.addEventListener('change',e=>{if(e.target&&e.target.id==='voice')e.target.dataset.userSelected='1'});
+document.addEventListener('change',e=>{
+ if(e.target&&e.target.id==='voice'){
+  const v=voices[Number(e.target.value)];
+  prefs.audio.voiceURI=v?v.voiceURI:null;
+  savePrefs();
+ }
+});
 
 function stopSpeech(){
  if(fallbackTimer){clearInterval(fallbackTimer);fallbackTimer=null}
@@ -832,7 +851,8 @@ function speakFrom(startWord){
  if(!text)return;
  const charStarts=[];let acc=0;slice.forEach(w=>{charStarts.push(acc);acc+=w.length+1});
  const u=new SpeechSynthesisUtterance(text);
- const v=voices[Number($('voice').value)];
+ const vIdx=selectedVoiceIndex();
+ const v=vIdx>=0?voices[vIdx]:null;
  if(v)u.voice=v;u.lang=v?v.lang:'en-US';
  u.rate=Math.max(.5,Math.min(2,prefs.game.wpm/240));
  u.pitch=Math.max(.5,Math.min(2,prefs.game.pitch));
@@ -903,6 +923,13 @@ function beginSpeaking(){
 function togglePause(){
  if(phase!=='reading')return;
  if(!paused){
+  // Word-boundary events lag slightly behind the actual audio, and cancel() below cuts the
+  // utterance off immediately — so estimate how many extra words were already heard since the
+  // last boundary fired, and reveal them before stopping, so resuming picks up in the right spot.
+  const elapsedSec=Math.max(0,performance.now()-lastBoundaryAt)/1000;
+  const wordsPerSec=Math.max(80,Math.min(400,prefs.game.wpm))/60;
+  const estCatchUp=Math.round(elapsedSec*wordsPerSec);
+  if(estCatchUp>0){revealed=Math.min(words.length,revealed+estCatchUp);renderQuestionOnly()}
   paused=true;stopSpeech();
  }else{
   paused=false;speakFrom(Math.max(0,revealed));
@@ -1429,7 +1456,6 @@ function renderDialog(){
      <div style="height:12px"></div>
      <div class="slider-label"><span>Pitch</span><small>Higher = brighter voice; lower = deeper</small></div>
      ${sliderHtml('pitch2','Pitch',Math.round(g.pitch*10),5,20,'',v=>(v/10).toFixed(1))}
-     <div class="field-row" style="margin-top:10px;border-bottom:0"><div class="fl"><b>Voice</b><small>Choose the browser/system TTS voice.</small></div><select id="voice" style="max-width:190px"></select></div>
     </div>
    </section>
    <section class="setgroup"><header><div><h4>Filters</h4><p>Limit which tossups can be selected.</p></div></header>
@@ -1547,6 +1573,11 @@ function renderDialog(){
   const muted=a.master===0;
   const BUZZ_OPTIONS=[{value:'lockout',label:'Lockout'},{value:'classic',label:'Beep'},{value:'chime',label:'Chime'},{value:'off',label:'Off'}];
   body.innerHTML=`
+   <section class="setgroup"><header><div><h4>Voice</h4><p>Which browser/system voice reads the tossups aloud.</p></div></header>
+    <div class="body" style="padding:12px 14px">
+     <div class="field-row" style="border-bottom:0"><div class="fl"><b>TTS Voice</b><small>Available voices depend on your browser and OS.</small></div><select id="voice" style="max-width:190px"></select></div>
+    </div>
+   </section>
    <section class="setgroup"><header><div><h4>Mix</h4><p>Slide any channel to 0% to silence it.</p></div></header>
     <div class="body" style="padding:12px 14px;display:flex;flex-direction:column;gap:14px">
      <div>
@@ -1579,6 +1610,7 @@ function renderDialog(){
      <div class="field-row" style="border-bottom:0"><div class="fl"><b>Countdown ticks</b><small>Ticks every second while your answer timer runs.</small></div>${switchHtml('sw-ticksound',a.tickSound)}</div>
     </div>
    </section>`;
+  voiceset();
   wireSlider('volMaster',0,100,val=>val===0?'OFF':val+'%',null,val=>{prefs.audio.master=val;savePrefs()});
   wireSlider('volSfx',0,100,val=>val===0?'OFF':val+'%',null,val=>{prefs.audio.sfx=val;savePrefs()});
   wireSlider('volMusic',0,100,val=>val===0?'OFF':val+'%',null,val=>{prefs.audio.music=val;savePrefs();syncMusicVolumeUI()});
