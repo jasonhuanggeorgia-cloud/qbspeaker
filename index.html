@@ -447,7 +447,7 @@ footer.bottom a{text-decoration:underline;text-underline-offset:2px}
 /* =========================================================================
    QBSpeaker — static single-file build
    - v0-styled UI, vanilla JS, no build step
-   - Data: reads questions-1..4.json.gz from the same folder (client-side gzip)
+   - Data: reads questions-1..4.json.gz and bonuses-1..3.json.gz from the same folder (client-side gzip)
    - Speech: browser SpeechSynthesis only (system/Microsoft voices)
    ========================================================================= */
 const $=id=>document.getElementById(id);
@@ -1228,7 +1228,7 @@ applyVisualDom();
 Sound.setVolumes(prefs.audio);
 
 /* ================= settings (packet filters — not persisted) ================= */
-let settings={categories:[],difficulties:[],search:'',powerOnly:false};
+let settings={categories:[],difficulties:[],search:'',powerOnly:false,mode:'tossups'};
 
 /* ================= reader state machine ================= */
 let phase='idle'; // idle|loading|reading|dead-wait|buzzed|revealed|done
@@ -1652,6 +1652,7 @@ function renderHistory(){
  const list=$('historyList');
  $('emptyHist').classList.toggle('hidden',history.length>0);
  list.innerHTML=history.map((h,i)=>{
+  if(h.bonus)return bonusHistoryHtml(h);
   const points=pointsFor(h.outcome);
   const tone=points>0?'good':points<0?'bad':'neutral';
   const buzzPct=h.buzzWord!==null&&h.totalWords>0?((h.buzzWord+1)/h.totalWords)*100:null;
@@ -2090,8 +2091,9 @@ function renderDialog(){
      <p style="font-size:10.5px;color:var(--muted-foreground);margin:6px 0 0">Browsers cap synthesized speech at 100% loudness — above that this just asks for the loudest the browser allows, it won't get louder than your device volume. Use it mainly to make the voice louder relative to music/SFX, or turn it down below 100%.</p>
     </div>
    </section>
-   <section class="setgroup"><header><div><h4>Filters</h4><p>Limit which tossups can be selected.</p></div></header>
+   <section class="setgroup"><header><div><h4>Filters</h4><p>Choose what you practice and limit which questions can be selected.</p></div></header>
     <div class="body" style="padding:12px 14px">
+     ${BONUS_MODES.map(([m,l,d])=>`<div class="field-row"><div class="fl"><b>${l}</b><small>${d}</small></div>${switchHtml('sw-mode-'+m,settings.mode===m)}</div>`).join('')}
      <div class="field-row" style="border-bottom:0"><div class="fl"><b>Power Marks Only</b><small>Only load tossups containing a (*) power mark.</small></div>${switchHtml('sw-poweronly',settings.powerOnly)}</div>
     </div>
    </section>
@@ -2167,6 +2169,7 @@ function renderDialog(){
   });
   wireSwitch('sw-powers',v=>{prefs.game.powersEnabled=v;savePrefs();renderDialog()});
   wireSwitch('sw-negs',v=>{prefs.game.negsEnabled=v;savePrefs();renderDialog()});
+  BONUS_MODES.forEach(([m])=>wireSwitch('sw-mode-'+m,()=>{settings.mode=m;pendingBonusFrom=null;renderDialog()}));
   wireSwitch('sw-poweronly',v=>{settings.powerOnly=v;renderFilters();renderDialog()});
   voiceset();
  }else if(dlgTab==='visual'){
@@ -2301,11 +2304,223 @@ document.addEventListener('keydown',e=>{
  if(t&&(t.tagName==='INPUT'||t.tagName==='TEXTAREA'||t.isContentEditable))return;
  if(e.metaKey||e.ctrlKey||e.altKey)return;
  if(e.code==='Space'&&(phase==='reading'||phase==='dead-wait')){e.preventDefault();buzz()}
- else if(e.key==='n'&&(phase==='reading'||phase==='done')){nextTossup()}
+ else if(e.key==='n'&&(phase==='reading'||phase==='done'||phase.startsWith('bonus'))){nextTossup()}
  else if(e.key==='p'){togglePause()}
 });
 $('buzzer').onclick=buzz;
 $('clearHistory').onclick=clearHistory;
+
+/* ================= BONUSES (files: bonuses-1..3.json.gz) =================
+   Modes (Settings > Filters > Question Mode):
+   tossups | bonuses | tb-respective (tossup + its own bonus, category ignored)
+   | tb-category (its own bonus, but if that bonus isn't in a selected category, use a bonus of the tossup's category)
+   In the tossup+bonus modes the bonus follows a correct (power/10) tossup, like qbreader. */
+let allBonuses=[],bonusReady=null,bonusIndex=new Map();
+let bonus=null,bonusIdx=0,bonusGrades=[],bonusDraft='',bonusLogged=false,bonusSpeechToken=0,pendingBonusFrom=null;
+const BONUS_MODES=[
+ ['tossups','Tossups only','Classic tossup practice.'],
+ ['bonuses','Bonuses only','Random bonuses that match your category and difficulty filters.'],
+ ['tb-respective','Tossups + their bonus','After a correct tossup, play the bonus from the same packet and number. Categories are ignored for the bonus.'],
+ ['tb-category','Tossups + bonus (category-matched)','Same as above, but if that bonus is outside your selected categories, a bonus in the tossup\u2019s category is used instead.']
+];
+function toBonus(r){
+ const n=Math.min((r.parts||[]).length,(r.answers||[]).length);
+ return {
+  id:String(scalarValue(r._id?.$oid)||Math.random()),
+  leadin:String(r.leadin||''),
+  parts:(r.parts||[]).slice(0,n).map(String),
+  answers:(r.answers||[]).slice(0,n).map(String),
+  values:Array.from({length:n},(_,i)=>Number(scalarValue(r.values?.[i]))||10),
+  category:String(r.category||'Unknown'),subcategory:String(r.subcategory||''),
+  difficulty:Number(scalarValue(r.difficulty))||0,
+  setName:String(scalarValue(r.set?.name)||'Unknown'),
+  year:Number(scalarValue(r.set?.year))||null,
+  packet:String(scalarValue(r.packet?.name)||scalarValue(r.packet?.number)||''),
+  number:Number(scalarValue(r.number))||null
+ };
+}
+const bonusKey=x=>x.setName+'|'+x.packet+'|'+x.number;
+function loadBonuses(){
+ if(bonusReady)return bonusReady;
+ bonusReady=(async()=>{
+  const names=['bonuses-1.json.gz','bonuses-2.json.gz','bonuses-3.json.gz'];
+  const parts=await Promise.all(names.map(async name=>{
+   const r=await fetch(name);
+   if(!r.ok)throw Error('Could not load '+name);
+   const buf=await r.arrayBuffer();
+   const text=await new Response(new Blob([buf]).stream().pipeThrough(new DecompressionStream('gzip'))).text();
+   return JSON.parse(text).map(toBonus);
+  }));
+  allBonuses=parts.flat();
+  bonusIndex=new Map();
+  allBonuses.forEach(b=>{const k=bonusKey(b);if(!bonusIndex.has(k))bonusIndex.set(k,b)});
+  $('metaLine').textContent+=' \u00b7 '+allBonuses.length.toLocaleString()+' bonuses loaded';
+ })();
+ bonusReady.catch(()=>{bonusReady=null});
+ return bonusReady;
+}
+function pick(a){return a[Math.floor(Math.random()*a.length)]}
+function diffOk(b){return !settings.difficulties.length||settings.difficulties.includes(b.difficulty)}
+function queryBonus(){
+ let rows=allBonuses;
+ if(settings.categories.length)rows=rows.filter(b=>settings.categories.includes(b.category));
+ if(settings.difficulties.length)rows=rows.filter(diffOk);
+ const s=(settings.search||'').trim().toLowerCase();
+ if(s)rows=rows.filter(b=>(b.leadin+' '+b.parts.join(' ')+' '+b.answers.join(' ')).toLowerCase().includes(s));
+ return rows.length?pick(rows):null;
+}
+function bonusFor(t){
+ const own=bonusIndex.get(bonusKey(t))||null;
+ if(settings.mode==='tb-respective'&&own)return own;                      // category ignored
+ if(own&&(!settings.categories.length||settings.categories.includes(own.category)))return own;
+ // own bonus missing or outside the selected categories -> find one in the tossup's category
+ let c=allBonuses.filter(b=>b.category===t.category&&diffOk(b));
+ if(!c.length)c=allBonuses.filter(b=>b.category===t.category);
+ const sameSet=c.filter(b=>b.setName===t.setName);
+ return c.length?pick(sameSet.length?sameSet:c):own;
+}
+/* ---- flow ---- */
+const _nextTossupCore=nextTossup;
+nextTossup=async function(){
+ if(loadingNext)return;
+ if(bonus&&phase!=='bonus-done')logBonus();
+ bonus=null;bonusSpeechToken++;
+ const pend=pendingBonusFrom;pendingBonusFrom=null;
+ const m=settings.mode;
+ if(m==='bonuses'||(pend&&m!=='tossups')){
+  if(tossup&&phase==='reading')logSkipped();
+  return startBonusFlow(m==='bonuses'?null:pend);
+ }
+ return _nextTossupCore();
+};
+async function startBonusFlow(t){
+ loadingNext=true;stopSpeech();clearDeadlineTimer();
+ tossup=null;words=[];phase='loading';render();
+ try{
+  await loadBonuses();
+  if(!availableCategories.length)computeCatalogue();
+  const b=t?bonusFor(t):queryBonus();
+  if(!b){phase='done';render();renderError('No bonuses match the selected filters.');loadingNext=false;return}
+  bonus=b;bonusIdx=0;bonusGrades=[];bonusDraft='';bonusLogged=false;phase='bonus-ans';
+  render();loadingNext=false;focusBonusInput();speakBonusPart();
+ }catch(e){loadingNext=false;phase='done';render();renderError(e.message||'Failed to load bonus')}
+}
+function focusBonusInput(){setTimeout(()=>{const a=$('answerInput');if(a&&!a.disabled)a.focus()},0)}
+function speakBonusPart(){
+ const tok=++bonusSpeechToken;stopSpeech();
+ if(!('speechSynthesis' in window)||!bonus)return;
+ const texts=[];if(bonusIdx===0)texts.push(clean(bonus.leadin));texts.push(clean(bonus.parts[bonusIdx]));
+ setTimeout(()=>{
+  if(tok!==bonusSpeechToken||!phase.startsWith('bonus'))return;
+  const vIdx=selectedVoiceIndex(),v=vIdx>=0?voices[vIdx]:null;
+  window.speechSynthesis.cancel();
+  texts.forEach(txt=>{
+   const u=new SpeechSynthesisUtterance(txt);
+   if(v)u.voice=v;u.lang=v?v.lang:'en-US';
+   u.rate=Math.max(.5,Math.min(2,prefs.game.wpm/240));
+   u.pitch=Math.max(.5,Math.min(2,prefs.game.pitch));
+   u.volume=Math.max(0,Math.min(1,(prefs.game.speechVolume??100)/100));
+   window.speechSynthesis.speak(u);
+  });
+ },140);
+}
+function bonusReveal(){if(phase!=='bonus-ans')return;bonusSpeechToken++;stopSpeech();phase='bonus-rev';render()}
+function bonusGrade(ok){
+ if(phase!=='bonus-rev')return;
+ bonusGrades.push({ok,given:bonusDraft,pts:ok?bonus.values[bonusIdx]:0});bonusDraft='';
+ if(bonusIdx+1<bonus.parts.length){bonusIdx++;phase='bonus-ans';render();focusBonusInput();speakBonusPart()}
+ else finishBonus();
+}
+function bonusTotal(){return bonusGrades.reduce((s,g)=>s+g.pts,0)}
+function logBonus(){
+ if(!bonus||bonusLogged)return;bonusLogged=true;
+ history=[{bonus,grades:[...bonusGrades],points:bonusTotal(),outcome:'bonus',buzzWord:null,totalWords:0,powerIndex:-1},...history];
+}
+function finishBonus(){
+ bonusSpeechToken++;stopSpeech();phase='bonus-done';logBonus();
+ const o=bonusTotal()>0?'ten':'zero';
+ if(prefs.audio.resultSounds&&Sound.sfx[o])Sound.sfx[o]();
+ emitVfx(o);render();
+ if(prefs.game.autoAdvance>0)setTimeout(()=>{if(phase==='bonus-done')nextTossup()},prefs.game.autoAdvance*1000);
+}
+/* queue a bonus after correct tossups (tossup+bonus modes) */
+const _finish=finish;
+finish=function(o,g){_finish(o,g);if(settings.mode.startsWith('tb-')&&isCorrectOutcome(o))pendingBonusFrom=tossup;render()};
+const _overrideHistory=overrideHistory;
+overrideHistory=function(i){_overrideHistory(i);if(i===0&&settings.mode.startsWith('tb-')&&history[0]&&!history[0].bonus){pendingBonusFrom=isCorrectOutcome(history[0].outcome)?history[0].tossup:null;render()}};
+/* ---- rendering ---- */
+function bonusMeta(b,showSet){
+ const dl=DIFFICULTY_LABELS[b.difficulty]||'';
+ return `<div class="qmeta"><b>${esc(b.category)}</b>${b.subcategory?`<span>/</span><span>${esc(b.subcategory)}</span>`:''}${dl?`<span>/</span><span>${esc(dl)}</span>`:''}<span>/</span><span>Bonus</span>${showSet?`<span>/</span><span>${esc(b.setName)}${b.year?' ('+b.year+')':''}</span>`:''}</div>`;
+}
+const _renderStage=renderStage;
+renderStage=function(){
+ if(!bonus){
+  if(!tossup&&phase==='loading'&&settings.mode!=='tossups'){$('qstage').innerHTML=`<p style="font-size:13px;color:var(--muted-foreground)" role="status">Loading bonuses (first time only, this can take a few seconds)\u2026</p>`;return}
+  return _renderStage();
+ }
+ const b=bonus,done=phase==='bonus-done',tour=(prefs.game.readingStyle==='tournament');
+ let html=bonusMeta(b,done);
+ const shown=done?b.parts.length:bonusIdx+1;
+ html+=`<p class="qtext" id="qtext">${(tour&&!done&&bonusIdx===0&&!bonusGrades.length)?'<span style="color:var(--muted-foreground)">Listening\u2026</span>':esc(clean(b.leadin))}</p>`;
+ for(let i=0;i<shown;i++){
+  const g=bonusGrades[i],cur=(i===bonusIdx&&!done);
+  html+=`<p class="qtext" style="margin-top:12px"><b style="font-family:var(--font-mono);font-size:13px;color:var(--primary)">[${b.values[i]}]</b> ${cur&&tour&&phase==='bonus-ans'?'<span style="color:var(--muted-foreground)">Listening\u2026</span>':esc(clean(b.parts[i]))}</p>`;
+  if(g)html+=`<p class="hq" style="margin:2px 0 0"><span class="tag ${g.ok?'good':'bad'}">${g.ok?'+'+g.pts:'0'}</span> <span style="font-family:var(--font-mono);font-size:11px;font-weight:600;letter-spacing:.08em;color:var(--muted-foreground);text-transform:uppercase">Answer </span>${sanitizeAnswerHtml(b.answers[i])}${g.given?` <span style="color:var(--muted-foreground)">\u2014 you said: ${esc(g.given)}</span>`:''}</p>`;
+ }
+ if(done){
+  const tot=bonusTotal(),max=b.values.reduce((s,v)=>s+v,0);
+  html+=`<div class="result"><div class="result-row"><span class="tag ${tot>0?'good':'neutral'}">Bonus ${tot}/${max}</span></div><p class="meta2">${esc(b.setName)}${b.packet?' / Packet '+esc(b.packet):''}${b.number?' / #'+b.number:''}</p></div>`;
+ }
+ $('qstage').innerHTML=html;
+}
+const _renderActionCol=renderActionCol;
+renderActionCol=function(){
+ if(!bonus||phase==='bonus-done'){
+  _renderActionCol();
+  const sb=$('skipBtn');
+  if(sb&&pendingBonusFrom&&phase==='done'&&sb.firstChild)sb.firstChild.nodeValue='Play bonus ';
+  return;
+ }
+ const rev=phase==='bonus-rev',b=bonus;
+ $('actionCol').innerHTML=`<div class="answerform">
+  <p style="margin:0;font-size:12px;color:var(--muted-foreground)">Part ${bonusIdx+1} of ${b.parts.length} \u00b7 ${b.values[bonusIdx]} pts</p>
+  <div class="answerrow2"><input id="answerInput" autocomplete="off" spellcheck="false" placeholder="Type your answer" ${rev?'disabled':''}><button type="button" class="btn btn-primary" id="bonusRevealBtn" ${rev?'disabled':''}>${rev?'Revealed':'Reveal'}</button></div>
+  ${rev?`<div style="display:flex;flex-direction:column;gap:10px"><p class="ans" style="font-size:15px"><span style="font-family:var(--font-mono);font-size:11px;font-weight:600;letter-spacing:.08em;color:var(--muted-foreground);text-transform:uppercase">Official answer </span>${sanitizeAnswerHtml(b.answers[bonusIdx])}</p>
+   <div class="action-row"><button type="button" class="btn btn-outline" id="bonusOk" style="border-color:var(--success);color:var(--success)">Correct <kbd style="margin-left:6px">C</kbd></button><button type="button" class="btn btn-outline" id="bonusNo" style="border-color:var(--primary);color:var(--primary)">Incorrect <kbd style="margin-left:6px">X</kbd></button></div></div>`:''}
+  <div class="action-row"><button type="button" class="btn btn-outline btn-sm" id="bonusSkip">Skip bonus <kbd style="margin-left:6px">N</kbd></button></div>
+ </div>`;
+ const inp=$('answerInput');
+ inp.value=bonusDraft;inp.oninput=e=>{bonusDraft=e.target.value};
+ inp.onkeydown=e=>{if(e.key==='Enter'){e.preventDefault();bonusReveal()}};
+ $('bonusRevealBtn').onclick=bonusReveal;
+ $('bonusSkip').onclick=()=>nextTossup();
+ if(rev){$('bonusOk').onclick=()=>bonusGrade(true);$('bonusNo').onclick=()=>bonusGrade(false)}
+};
+renderScoreboard=function(){
+ const tu=history.filter(h=>!h.bonus),bs=history.filter(h=>h.bonus&&h.grades.length);
+ const count=o=>tu.filter(h=>h.outcome===o).length;
+ const tp=tu.reduce((s,h)=>s+pointsFor(h.outcome),0),bp=bs.reduce((s,h)=>s+h.points,0);
+ const stats=[['Points',tp+bp],['P/10/N',`${count('power')}/${count('ten')}/${count('neg')}`],['TUH',tu.length],['PPTUH',tu.length?(tp/tu.length).toFixed(2):'0.00']];
+ if(bs.length)stats.push(['Bonuses',bs.length],['PPB',(bp/bs.length).toFixed(2)]);
+ $('scoreboard').innerHTML=stats.map(([l,v])=>`<div><dt>${l}</dt><dd>${v}</dd></div>`).join('');
+};
+function bonusHistoryHtml(h){
+ const b=h.bonus,skipped=!h.grades.length;
+ const lead=esc(clean(b.answers[0]||'').split('[')[0].trim());
+ const tone=h.points>0?'good':'neutral';
+ const body=b.parts.map((p,i)=>{const g=h.grades[i];return `<p class="hq">${g?(g.ok?'\u2713 ':'\u2717 '):'\u2013 '}${esc(clean(p))}</p><p class="hq"><span style="font-family:var(--font-mono);font-size:10.5px;font-weight:600;letter-spacing:.08em;color:var(--muted-foreground);text-transform:uppercase">Answer </span>${sanitizeAnswerHtml(b.answers[i])}</p>${g&&g.given?`<p class="hgiven">You said: <span style="color:var(--foreground)">${esc(g.given)}</span></p>`:''}`}).join('');
+ return `<li class="hitem"><details><summary>
+  <div class="hrow"><span class="hans">Bonus: ${lead}</span><span class="hpts ${tone}">${skipped?'SKIP':fmtSigned(h.points)}</span></div>
+  <div class="hbottom"><div class="hbar"></div><span class="hcat">${esc(b.category)}</span></div></summary>
+  <div class="hbody"><p class="hq">${esc(clean(b.leadin))}</p>${body}<p class="hgiven">${esc(b.setName)}${b.year?' ('+b.year+')':''}${b.packet?' / Packet '+esc(b.packet):''}${b.number?' / #'+b.number:''}</p></div></details></li>`;
+}
+document.addEventListener('keydown',e=>{
+ const t=e.target;
+ if(t&&(t.tagName==='INPUT'||t.tagName==='TEXTAREA'||t.isContentEditable))return;
+ if(e.metaKey||e.ctrlKey||e.altKey)return;
+ if(phase==='bonus-rev'){if(e.key==='c')bonusGrade(true);else if(e.key==='x')bonusGrade(false)}
+});
 
 /* ================= boot ================= */
 (async function init(){
