@@ -699,6 +699,38 @@ const Sound=(()=>{
  function stopMusicAnalyserFeed(){musicAnalyserFeed=null}
 
 
+ /* ---- CORS fallback ----
+    Public Invidious instances vary in whether they send Access-Control-Allow-Origin
+    for arbitrary origins — some do, some only allow their own frontend. When the app
+    is downloaded and hosted elsewhere (e.g. embedded in a Weebly site), the direct
+    request can get blocked by the browser's CORS check even though the exact same
+    request works fine from other origins. If the direct fetch fails, retry the same
+    URL through a couple of free public CORS relays that add the missing header for us. */
+ const CORS_PROXIES=[
+  u=>`https://corsproxy.io/?url=${encodeURIComponent(u)}`,
+  u=>`https://api.allorigins.win/raw?url=${encodeURIComponent(u)}`,
+  u=>`https://thingproxy.freeboard.io/fetch/${u}`,
+ ];
+ async function fetchJsonWithCorsFallback(url,ms=6000){
+  try{
+   const ctrl=new AbortController();const to=setTimeout(()=>ctrl.abort(),ms);
+   const r=await fetch(url,{signal:ctrl.signal});
+   clearTimeout(to);
+   if(r.ok)return await r.json();
+  }catch(e){/* likely a CORS block — fall through to proxies below */}
+  let lastErr=null;
+  for(const makeUrl of CORS_PROXIES){
+   try{
+    const ctrl=new AbortController();const to=setTimeout(()=>ctrl.abort(),ms);
+    const r=await fetch(makeUrl(url),{signal:ctrl.signal});
+    clearTimeout(to);
+    if(!r.ok)throw new Error('HTTP '+r.status);
+    return await r.json();
+   }catch(e){lastErr=e}
+  }
+  throw lastErr||new Error('Network request failed');
+ }
+
  async function searchInvidious(query,limit=24){
   const q=query.trim();
   if(!q)return [];
@@ -708,12 +740,7 @@ const Sound=(()=>{
   let lastErr=null;
   for(const host of INVIDIOUS_HOSTS){
    try{
-    const ctrl=new AbortController();
-    const to=setTimeout(()=>ctrl.abort(),6000);
-    const r=await fetch(`${host}/api/v1/search?${params}`,{signal:ctrl.signal});
-    clearTimeout(to);
-    if(!r.ok)throw new Error('HTTP '+r.status);
-    const data=await r.json();
+    const data=await fetchJsonWithCorsFallback(`${host}/api/v1/search?${params}`);
     const videos=(Array.isArray(data)?data:[])
      .filter(x=>x&&x.type==='video'&&x.videoId)
      .slice(0,limit)
