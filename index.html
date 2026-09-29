@@ -1652,7 +1652,7 @@ function renderHistory(){
  const list=$('historyList');
  $('emptyHist').classList.toggle('hidden',history.length>0);
  list.innerHTML=history.map((h,i)=>{
-  if(h.bonus)return bonusHistoryHtml(h);
+  if(h.bonus)return bonusHistoryHtml(h,i);
   const points=pointsFor(h.outcome);
   const tone=points>0?'good':points<0?'bad':'neutral';
   const buzzPct=h.buzzWord!==null&&h.totalWords>0?((h.buzzWord+1)/h.totalWords)*100:null;
@@ -2317,6 +2317,9 @@ $('clearHistory').onclick=clearHistory;
    In the tossup+bonus modes the bonus follows a correct (power/10) tossup, like qbreader. */
 let allBonuses=[],bonusReady=null,bonusIndex=new Map();
 let bonus=null,bonusIdx=0,bonusGrades=[],bonusDraft='',bonusLogged=false,bonusSpeechToken=0,pendingBonusFrom=null;
+let bw=[],bwLead=0,bwRev=0,bwLast=0,bwTimer=null;
+const bonusPts=g=>g.reduce((s,x)=>s+x.pts,0);
+function killBonusSpeech(){bonusSpeechToken++;if(bwTimer){clearInterval(bwTimer);bwTimer=null}stopSpeech()}
 const BONUS_MODES=[
  ['tossups','Tossups only','Classic tossup practice.'],
  ['bonuses','Bonuses only','Random bonuses that match your category and difficulty filters.'],
@@ -2384,7 +2387,7 @@ const _nextTossupCore=nextTossup;
 nextTossup=async function(){
  if(loadingNext)return;
  if(bonus&&phase!=='bonus-done')logBonus();
- bonus=null;bonusSpeechToken++;
+ bonus=null;killBonusSpeech();
  const pend=pendingBonusFrom;pendingBonusFrom=null;
  const m=settings.mode;
  if(m==='bonuses'||(pend&&m!=='tossups')){
@@ -2406,38 +2409,69 @@ async function startBonusFlow(t){
  }catch(e){loadingNext=false;phase='done';render();renderError(e.message||'Failed to load bonus')}
 }
 function focusBonusInput(){setTimeout(()=>{const a=$('answerInput');if(a&&!a.disabled)a.focus()},0)}
+function bonusWordsHtml(words,count,all,live){
+ let h='';
+ if(all){words.forEach((w,i)=>{const read=i<count,cur=live&&i===count-1;h+=`<span class="${read?'reading-highlight':'reading-ahead'}${cur?' current':''}">${esc(w)}</span> `})}
+ else words.slice(0,count).forEach(w=>{h+=`<span>${esc(w)}</span> `});
+ if(live&&prefs.visual.readingCursor)h+='<span class="cursor"></span>';
+ return h;
+}
+function renderBonusText(){
+ if(phase!=='bonus-ans'||!bonus||prefs.game.readingStyle==='tournament')return;
+ const all=prefs.game.readingStyle==='all',fin=bwRev>=bw.length;
+ const lead=bw.slice(0,bwLead),part=bw.slice(bwLead);
+ const lc=Math.min(bwRev,bwLead),pc=Math.max(0,bwRev-bwLead);
+ const le=$('qtext'),pe=$('bpart');
+ if(le&&bonusIdx===0)le.innerHTML=bonusWordsHtml(lead,lc,all,!fin&&bwRev<=bwLead);
+ if(pe)pe.innerHTML=bonusWordsHtml(part,pc,all,!fin&&bwRev>bwLead||(!fin&&bwLead===0));
+}
 function speakBonusPart(){
- const tok=++bonusSpeechToken;stopSpeech();
- if(!('speechSynthesis' in window)||!bonus)return;
- const texts=[];if(bonusIdx===0)texts.push(clean(bonus.leadin));texts.push(clean(bonus.parts[bonusIdx]));
+ killBonusSpeech();const tok=bonusSpeechToken;
+ const lead=bonusIdx===0?tokenize(bonus.leadin):[];
+ bw=[...lead,...tokenize(bonus.parts[bonusIdx])];bwLead=lead.length;bwRev=0;bwLast=performance.now();
+ renderBonusText();
+ if(!('speechSynthesis' in window)){bwRev=bw.length;renderBonusText();return}
+ const cs=[];let acc=0;bw.forEach(w=>{cs.push(acc);acc+=w.length+1});
  setTimeout(()=>{
-  if(tok!==bonusSpeechToken||!phase.startsWith('bonus'))return;
+  if(tok!==bonusSpeechToken||phase!=='bonus-ans')return;
   const vIdx=selectedVoiceIndex(),v=vIdx>=0?voices[vIdx]:null;
-  window.speechSynthesis.cancel();
-  texts.forEach(txt=>{
-   const u=new SpeechSynthesisUtterance(txt);
-   if(v)u.voice=v;u.lang=v?v.lang:'en-US';
-   u.rate=Math.max(.5,Math.min(2,prefs.game.wpm/240));
-   u.pitch=Math.max(.5,Math.min(2,prefs.game.pitch));
-   u.volume=Math.max(0,Math.min(1,(prefs.game.speechVolume??100)/100));
-   window.speechSynthesis.speak(u);
-  });
+  const u=new SpeechSynthesisUtterance(bw.join(' '));
+  if(v)u.voice=v;u.lang=v?v.lang:'en-US';
+  u.rate=Math.max(.5,Math.min(2,prefs.game.wpm/240));
+  u.pitch=Math.max(.5,Math.min(2,prefs.game.pitch));
+  u.volume=Math.max(0,Math.min(1,(prefs.game.speechVolume??100)/100));
+  u.onstart=()=>{bwLast=performance.now()};
+  u.onboundary=e=>{
+   if(tok!==bonusSpeechToken||typeof e.charIndex!=='number'||(e.name&&e.name!=='word'))return;
+   bwLast=performance.now();let idx=0;for(let k=0;k<cs.length;k++){if(cs[k]<=e.charIndex)idx=k;else break}
+   if(idx+1>bwRev){bwRev=idx+1;renderBonusText()}
+  };
+  const end=()=>{if(tok!==bonusSpeechToken)return;bwRev=bw.length;renderBonusText();if(bwTimer){clearInterval(bwTimer);bwTimer=null}};
+  u.onend=end;u.onerror=end;
+  window.speechSynthesis.cancel();window.speechSynthesis.speak(u);
+  // fallback pacing if this voice never fires word boundaries
+  bwTimer=setInterval(()=>{
+   if(tok!==bonusSpeechToken||phase!=='bonus-ans'){clearInterval(bwTimer);bwTimer=null;return}
+   if(performance.now()-bwLast>1400&&bwRev<bw.length){bwRev=Math.min(bw.length,bwRev+Math.max(1,Math.round(prefs.game.wpm/60*.3)));renderBonusText()}
+  },300);
  },140);
 }
-function bonusReveal(){if(phase!=='bonus-ans')return;bonusSpeechToken++;stopSpeech();phase='bonus-rev';render()}
+function bonusReveal(){if(phase!=='bonus-ans')return;killBonusSpeech();phase='bonus-rev';render()}
 function bonusGrade(ok){
  if(phase!=='bonus-rev')return;
  bonusGrades.push({ok,given:bonusDraft,pts:ok?bonus.values[bonusIdx]:0});bonusDraft='';
  if(bonusIdx+1<bonus.parts.length){bonusIdx++;phase='bonus-ans';render();focusBonusInput();speakBonusPart()}
  else finishBonus();
 }
-function bonusTotal(){return bonusGrades.reduce((s,g)=>s+g.pts,0)}
+function bonusTotal(){return bonusPts(bonusGrades)}
+function overrideBonusPart(grades,b,p){const g=grades[p];if(!g)return;const ok=!g.ok;grades[p]={...g,ok,pts:ok?b.values[p]:0,overridden:!g.overridden};render()}
+function ovrBtn(p,h){const g=(h==null?bonusGrades:history[h].grades)[p];return `<button type="button" class="btn btn-outline btn-sm bovr" data-p="${p}" ${h==null?'':`data-h="${h}"`}>${g.ok?'\u2715 I was wrong':'\u2713 I was right'}</button>`}
 function logBonus(){
  if(!bonus||bonusLogged)return;bonusLogged=true;
- history=[{bonus,grades:[...bonusGrades],points:bonusTotal(),outcome:'bonus',buzzWord:null,totalWords:0,powerIndex:-1},...history];
+ history=[{bonus,grades:bonusGrades,outcome:'bonus',buzzWord:null,totalWords:0,powerIndex:-1},...history];
 }
 function finishBonus(){
- bonusSpeechToken++;stopSpeech();phase='bonus-done';logBonus();
+ killBonusSpeech();phase='bonus-done';logBonus();
  const o=bonusTotal()>0?'ten':'zero';
  if(prefs.audio.resultSounds&&Sound.sfx[o])Sound.sfx[o]();
  emitVfx(o);render();
@@ -2459,27 +2493,34 @@ renderStage=function(){
   if(!tossup&&phase==='loading'&&settings.mode!=='tossups'){$('qstage').innerHTML=`<p style="font-size:13px;color:var(--muted-foreground)" role="status">Loading bonuses (first time only, this can take a few seconds)\u2026</p>`;return}
   return _renderStage();
  }
- const b=bonus,done=phase==='bonus-done',tour=(prefs.game.readingStyle==='tournament');
+ const b=bonus,done=phase==='bonus-done',tour=(prefs.game.readingStyle==='tournament'),ans=phase==='bonus-ans';
  let html=bonusMeta(b,done);
  const shown=done?b.parts.length:bonusIdx+1;
- html+=`<p class="qtext" id="qtext">${(tour&&!done&&bonusIdx===0&&!bonusGrades.length)?'<span style="color:var(--muted-foreground)">Listening\u2026</span>':esc(clean(b.leadin))}</p>`;
+ html+=`<p class="qtext" id="qtext">${bonusIdx===0&&ans?(tour?'<span style="color:var(--muted-foreground)">Listening\u2026</span>':''):esc(clean(b.leadin))}</p>`;
  for(let i=0;i<shown;i++){
-  const g=bonusGrades[i],cur=(i===bonusIdx&&!done);
-  html+=`<p class="qtext" style="margin-top:12px"><b style="font-family:var(--font-mono);font-size:13px;color:var(--primary)">[${b.values[i]}]</b> ${cur&&tour&&phase==='bonus-ans'?'<span style="color:var(--muted-foreground)">Listening\u2026</span>':esc(clean(b.parts[i]))}</p>`;
-  if(g)html+=`<p class="hq" style="margin:2px 0 0"><span class="tag ${g.ok?'good':'bad'}">${g.ok?'+'+g.pts:'0'}</span> <span style="font-family:var(--font-mono);font-size:11px;font-weight:600;letter-spacing:.08em;color:var(--muted-foreground);text-transform:uppercase">Answer </span>${sanitizeAnswerHtml(b.answers[i])}${g.given?` <span style="color:var(--muted-foreground)">\u2014 you said: ${esc(g.given)}</span>`:''}</p>`;
+  const g=bonusGrades[i],cur=(i===bonusIdx&&!done&&ans);
+  html+=`<p class="qtext" style="margin-top:12px"><b style="font-family:var(--font-mono);font-size:13px;color:var(--primary)">[${b.values[i]}]</b> ${cur?(tour?'<span style="color:var(--muted-foreground)">Listening\u2026</span>':'<span id="bpart"></span>'):esc(clean(b.parts[i]))}</p>`;
+  if(g)html+=`<p class="hq" style="margin:2px 0 0"><span class="tag ${g.ok?'good':'bad'}">${g.ok?'+'+g.pts:'0'}</span> ${g.overridden?'<span style="font-size:11px;color:var(--muted-foreground)">(overridden)</span> ':''}<span style="font-family:var(--font-mono);font-size:11px;font-weight:600;letter-spacing:.08em;color:var(--muted-foreground);text-transform:uppercase">Answer </span>${sanitizeAnswerHtml(b.answers[i])}${g.given?` <span style="color:var(--muted-foreground)">\u2014 you said: ${esc(g.given)}</span>`:''} ${ovrBtn(i,null)}</p>`;
  }
  if(done){
   const tot=bonusTotal(),max=b.values.reduce((s,v)=>s+v,0);
   html+=`<div class="result"><div class="result-row"><span class="tag ${tot>0?'good':'neutral'}">Bonus ${tot}/${max}</span></div><p class="meta2">${esc(b.setName)}${b.packet?' / Packet '+esc(b.packet):''}${b.number?' / #'+b.number:''}</p></div>`;
  }
  $('qstage').innerHTML=html;
-}
+ $('qstage').querySelectorAll('.bovr').forEach(x=>x.onclick=()=>overrideBonusPart(bonusGrades,bonus,Number(x.dataset.p)));
+ renderBonusText();
+};
 const _renderActionCol=renderActionCol;
 renderActionCol=function(){
+ const nextLabel=settings.mode==='bonuses'?'Next bonus ':'Next tossup ';
  if(!bonus||phase==='bonus-done'){
   _renderActionCol();
   const sb=$('skipBtn');
-  if(sb&&pendingBonusFrom&&phase==='done'&&sb.firstChild)sb.firstChild.nodeValue='Play bonus ';
+  if(sb&&sb.firstChild){
+   if(phase==='bonus-done'){sb.disabled=false;sb.firstChild.nodeValue=nextLabel;sb.onclick=()=>nextTossup()}
+   else if(pendingBonusFrom&&phase==='done')sb.firstChild.nodeValue='Play bonus ';
+   else if(settings.mode==='bonuses'&&/^Next/.test(sb.firstChild.nodeValue))sb.firstChild.nodeValue=nextLabel;
+  }
   return;
  }
  const rev=phase==='bonus-rev',b=bonus;
@@ -2488,30 +2529,31 @@ renderActionCol=function(){
   <div class="answerrow2"><input id="answerInput" autocomplete="off" spellcheck="false" placeholder="Type your answer" ${rev?'disabled':''}><button type="button" class="btn btn-primary" id="bonusRevealBtn" ${rev?'disabled':''}>${rev?'Revealed':'Reveal'}</button></div>
   ${rev?`<div style="display:flex;flex-direction:column;gap:10px"><p class="ans" style="font-size:15px"><span style="font-family:var(--font-mono);font-size:11px;font-weight:600;letter-spacing:.08em;color:var(--muted-foreground);text-transform:uppercase">Official answer </span>${sanitizeAnswerHtml(b.answers[bonusIdx])}</p>
    <div class="action-row"><button type="button" class="btn btn-outline" id="bonusOk" style="border-color:var(--success);color:var(--success)">Correct <kbd style="margin-left:6px">C</kbd></button><button type="button" class="btn btn-outline" id="bonusNo" style="border-color:var(--primary);color:var(--primary)">Incorrect <kbd style="margin-left:6px">X</kbd></button></div></div>`:''}
-  <div class="action-row"><button type="button" class="btn btn-outline btn-sm" id="bonusSkip">Skip bonus <kbd style="margin-left:6px">N</kbd></button></div>
+  <div class="action-row"><button type="button" class="btn btn-primary btn-sm" id="bonusSkip">${nextLabel}<kbd style="margin-left:6px">N</kbd></button><button type="button" class="btn btn-outline btn-sm" id="settingsBtn">\u2699 Settings</button></div>
  </div>`;
  const inp=$('answerInput');
  inp.value=bonusDraft;inp.oninput=e=>{bonusDraft=e.target.value};
  inp.onkeydown=e=>{if(e.key==='Enter'){e.preventDefault();bonusReveal()}};
  $('bonusRevealBtn').onclick=bonusReveal;
  $('bonusSkip').onclick=()=>nextTossup();
+ $('settingsBtn').onclick=openSettings;
  if(rev){$('bonusOk').onclick=()=>bonusGrade(true);$('bonusNo').onclick=()=>bonusGrade(false)}
 };
 renderScoreboard=function(){
  const tu=history.filter(h=>!h.bonus),bs=history.filter(h=>h.bonus&&h.grades.length);
  const count=o=>tu.filter(h=>h.outcome===o).length;
- const tp=tu.reduce((s,h)=>s+pointsFor(h.outcome),0),bp=bs.reduce((s,h)=>s+h.points,0);
+ const tp=tu.reduce((s,h)=>s+pointsFor(h.outcome),0),bp=bs.reduce((s,h)=>s+bonusPts(h.grades),0);
  const stats=[['Points',tp+bp],['P/10/N',`${count('power')}/${count('ten')}/${count('neg')}`],['TUH',tu.length],['PPTUH',tu.length?(tp/tu.length).toFixed(2):'0.00']];
  if(bs.length)stats.push(['Bonuses',bs.length],['PPB',(bp/bs.length).toFixed(2)]);
  $('scoreboard').innerHTML=stats.map(([l,v])=>`<div><dt>${l}</dt><dd>${v}</dd></div>`).join('');
 };
-function bonusHistoryHtml(h){
+function bonusHistoryHtml(h,hIdx){
  const b=h.bonus,skipped=!h.grades.length;
  const lead=esc(clean(b.answers[0]||'').split('[')[0].trim());
- const tone=h.points>0?'good':'neutral';
- const body=b.parts.map((p,i)=>{const g=h.grades[i];return `<p class="hq">${g?(g.ok?'\u2713 ':'\u2717 '):'\u2013 '}${esc(clean(p))}</p><p class="hq"><span style="font-family:var(--font-mono);font-size:10.5px;font-weight:600;letter-spacing:.08em;color:var(--muted-foreground);text-transform:uppercase">Answer </span>${sanitizeAnswerHtml(b.answers[i])}</p>${g&&g.given?`<p class="hgiven">You said: <span style="color:var(--foreground)">${esc(g.given)}</span></p>`:''}`}).join('');
+ const pts=bonusPts(h.grades),tone=pts>0?'good':'neutral';
+ const body=b.parts.map((p,i)=>{const g=h.grades[i];return `<p class="hq">${g?(g.ok?'\u2713 ':'\u2717 '):'\u2013 '}${esc(clean(p))}</p><p class="hq"><span style="font-family:var(--font-mono);font-size:10.5px;font-weight:600;letter-spacing:.08em;color:var(--muted-foreground);text-transform:uppercase">Answer </span>${sanitizeAnswerHtml(b.answers[i])}</p>${g&&g.given?`<p class="hgiven">You said: <span style="color:var(--foreground)">${esc(g.given)}</span></p>`:''}${g?`<div style="margin-bottom:6px">${ovrBtn(i,hIdx)}</div>`:''}`}).join('');
  return `<li class="hitem"><details><summary>
-  <div class="hrow"><span class="hans">Bonus: ${lead}</span><span class="hpts ${tone}">${skipped?'SKIP':fmtSigned(h.points)}</span></div>
+  <div class="hrow"><span class="hans">Bonus: ${lead}</span><span class="hpts ${tone}">${skipped?'SKIP':fmtSigned(pts)}</span></div>
   <div class="hbottom"><div class="hbar"></div><span class="hcat">${esc(b.category)}</span></div></summary>
   <div class="hbody"><p class="hq">${esc(clean(b.leadin))}</p>${body}<p class="hgiven">${esc(b.setName)}${b.year?' ('+b.year+')':''}${b.packet?' / Packet '+esc(b.packet):''}${b.number?' / #'+b.number:''}</p></div></details></li>`;
 }
@@ -2521,6 +2563,9 @@ document.addEventListener('keydown',e=>{
  if(e.metaKey||e.ctrlKey||e.altKey)return;
  if(phase==='bonus-rev'){if(e.key==='c')bonusGrade(true);else if(e.key==='x')bonusGrade(false)}
 });
+
+const _renderHistory=renderHistory;
+renderHistory=function(){_renderHistory();document.querySelectorAll('#historyList .bovr').forEach(x=>x.onclick=()=>{const h=history[Number(x.dataset.h)];if(h&&h.bonus)overrideBonusPart(h.grades,h.bonus,Number(x.dataset.p))})};
 
 /* ================= boot ================= */
 (async function init(){
