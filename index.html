@@ -2317,7 +2317,7 @@ $('clearHistory').onclick=clearHistory;
    In the tossup+bonus modes the bonus follows a correct (power/10) tossup, like qbreader. */
 let allBonuses=[],bonusReady=null,bonusIndex=new Map();
 let bonus=null,bonusIdx=0,bonusGrades=[],bonusDraft='',bonusLogged=false,bonusSpeechToken=0,pendingBonusFrom=null;
-let bw=[],bwLead=0,bwRev=0,bwLast=0,bwTimer=null;
+let bw=[],bwLead=0,bwRev=0,bwLast=0,bwTimer=null,bonusPaused=false;
 const bonusPts=g=>g.reduce((s,x)=>s+x.pts,0);
 function killBonusSpeech(){bonusSpeechToken++;if(bwTimer){clearInterval(bwTimer);bwTimer=null}stopSpeech()}
 const BONUS_MODES=[
@@ -2387,7 +2387,7 @@ const _nextTossupCore=nextTossup;
 nextTossup=async function(){
  if(loadingNext)return;
  if(bonus&&phase!=='bonus-done')logBonus();
- bonus=null;killBonusSpeech();
+ bonus=null;bonusPaused=false;killBonusSpeech();
  const pend=pendingBonusFrom;pendingBonusFrom=null;
  const m=settings.mode;
  if(m==='bonuses'||(pend&&m!=='tossups')){
@@ -2413,7 +2413,7 @@ function bonusWordsHtml(words,count,all,live){
  let h='';
  if(all){words.forEach((w,i)=>{const read=i<count,cur=live&&i===count-1;h+=`<span class="${read?'reading-highlight':'reading-ahead'}${cur?' current':''}">${esc(w)}</span> `})}
  else words.slice(0,count).forEach(w=>{h+=`<span>${esc(w)}</span> `});
- if(live&&prefs.visual.readingCursor)h+='<span class="cursor"></span>';
+ if(live&&!bonusPaused&&prefs.visual.readingCursor)h+='<span class="cursor"></span>';
  return h;
 }
 function renderBonusText(){
@@ -2425,17 +2425,28 @@ function renderBonusText(){
  if(le&&bonusIdx===0)le.innerHTML=bonusWordsHtml(lead,lc,all,!fin&&bwRev<=bwLead);
  if(pe)pe.innerHTML=bonusWordsHtml(part,pc,all,!fin&&bwRev>bwLead||(!fin&&bwLead===0));
 }
-function speakBonusPart(){
+function toggleBonusPause(){
+ if(phase!=='bonus-ans'||!bonus||bwRev>=bw.length)return;
+ if(!bonusPaused){bonusPaused=true;killBonusSpeech();bonusPausedAt=bwRev}
+ else{bonusPaused=false;speakBonusPart(Math.max(0,bwRev))}
+ render();
+}
+let bonusPausedAt=0;
+function speakBonusPart(from){
  killBonusSpeech();const tok=bonusSpeechToken;
- const lead=bonusIdx===0?tokenize(bonus.leadin):[];
- bw=[...lead,...tokenize(bonus.parts[bonusIdx])];bwLead=lead.length;bwRev=0;bwLast=performance.now();
+ const start=from||0;
+ if(from==null){
+  const lead=bonusIdx===0?tokenize(bonus.leadin):[];
+  bw=[...lead,...tokenize(bonus.parts[bonusIdx])];bwLead=lead.length;bwRev=0;bonusPaused=false;
+ }
+ bwLast=performance.now();
  renderBonusText();
  if(!('speechSynthesis' in window)){bwRev=bw.length;renderBonusText();return}
- const cs=[];let acc=0;bw.forEach(w=>{cs.push(acc);acc+=w.length+1});
+ const sl=bw.slice(start),cs=[];let acc=0;sl.forEach(w=>{cs.push(acc);acc+=w.length+1});
  setTimeout(()=>{
   if(tok!==bonusSpeechToken||phase!=='bonus-ans')return;
   const vIdx=selectedVoiceIndex(),v=vIdx>=0?voices[vIdx]:null;
-  const u=new SpeechSynthesisUtterance(bw.join(' '));
+  const u=new SpeechSynthesisUtterance(sl.join(' '));
   if(v)u.voice=v;u.lang=v?v.lang:'en-US';
   u.rate=Math.max(.5,Math.min(2,prefs.game.wpm/240));
   u.pitch=Math.max(.5,Math.min(2,prefs.game.pitch));
@@ -2444,7 +2455,7 @@ function speakBonusPart(){
   u.onboundary=e=>{
    if(tok!==bonusSpeechToken||typeof e.charIndex!=='number'||(e.name&&e.name!=='word'))return;
    bwLast=performance.now();let idx=0;for(let k=0;k<cs.length;k++){if(cs[k]<=e.charIndex)idx=k;else break}
-   if(idx+1>bwRev){bwRev=idx+1;renderBonusText()}
+   if(start+idx+1>bwRev){bwRev=start+idx+1;renderBonusText()}
   };
   const end=()=>{if(tok!==bonusSpeechToken)return;bwRev=bw.length;renderBonusText();if(bwTimer){clearInterval(bwTimer);bwTimer=null}};
   u.onend=end;u.onerror=end;
@@ -2456,7 +2467,7 @@ function speakBonusPart(){
   },300);
  },140);
 }
-function bonusReveal(){if(phase!=='bonus-ans')return;killBonusSpeech();phase='bonus-rev';render()}
+function bonusReveal(){if(phase!=='bonus-ans')return;bonusPaused=false;killBonusSpeech();phase='bonus-rev';render()}
 function bonusGrade(ok){
  if(phase!=='bonus-rev')return;
  bonusGrades.push({ok,given:bonusDraft,pts:ok?bonus.values[bonusIdx]:0});bonusDraft='';
@@ -2529,7 +2540,7 @@ renderActionCol=function(){
   <div class="answerrow2"><input id="answerInput" autocomplete="off" spellcheck="false" placeholder="Type your answer" ${rev?'disabled':''}><button type="button" class="btn btn-primary" id="bonusRevealBtn" ${rev?'disabled':''}>${rev?'Revealed':'Reveal'}</button></div>
   ${rev?`<div style="display:flex;flex-direction:column;gap:10px"><p class="ans" style="font-size:15px"><span style="font-family:var(--font-mono);font-size:11px;font-weight:600;letter-spacing:.08em;color:var(--muted-foreground);text-transform:uppercase">Official answer </span>${sanitizeAnswerHtml(b.answers[bonusIdx])}</p>
    <div class="action-row"><button type="button" class="btn btn-outline" id="bonusOk" style="border-color:var(--success);color:var(--success)">Correct <kbd style="margin-left:6px">C</kbd></button><button type="button" class="btn btn-outline" id="bonusNo" style="border-color:var(--primary);color:var(--primary)">Incorrect <kbd style="margin-left:6px">X</kbd></button></div></div>`:''}
-  <div class="action-row"><button type="button" class="btn btn-primary btn-sm" id="bonusSkip">${nextLabel}<kbd style="margin-left:6px">N</kbd></button><button type="button" class="btn btn-outline btn-sm" id="settingsBtn">\u2699 Settings</button></div>
+  <div class="action-row"><button type="button" class="btn btn-primary btn-sm" id="bonusSkip">${nextLabel}<kbd style="margin-left:6px">N</kbd></button><button type="button" class="btn btn-outline btn-sm" id="pauseBtn" ${phase==='bonus-ans'&&bwRev<bw.length?'':'disabled'}>${bonusPaused?'\u25b6 Resume':'\u2161 Pause'} <kbd style="margin-left:6px">P</kbd></button><button type="button" class="btn btn-outline btn-sm" id="settingsBtn">\u2699 Settings</button><button type="button" class="btn btn-outline btn-sm" id="musicBtn">\uD83C\uDFB5 <span id="musicBtnLabel">Music</span></button></div>
  </div>`;
  const inp=$('answerInput');
  inp.value=bonusDraft;inp.oninput=e=>{bonusDraft=e.target.value};
@@ -2537,6 +2548,8 @@ renderActionCol=function(){
  $('bonusRevealBtn').onclick=bonusReveal;
  $('bonusSkip').onclick=()=>nextTossup();
  $('settingsBtn').onclick=openSettings;
+ $('pauseBtn').onclick=toggleBonusPause;
+ wireMusicButton();
  if(rev){$('bonusOk').onclick=()=>bonusGrade(true);$('bonusNo').onclick=()=>bonusGrade(false)}
 };
 renderScoreboard=function(){
@@ -2562,6 +2575,7 @@ document.addEventListener('keydown',e=>{
  if(t&&(t.tagName==='INPUT'||t.tagName==='TEXTAREA'||t.isContentEditable))return;
  if(e.metaKey||e.ctrlKey||e.altKey)return;
  if(phase==='bonus-rev'){if(e.key==='c')bonusGrade(true);else if(e.key==='x')bonusGrade(false)}
+ if(phase==='bonus-ans'&&e.key==='p')toggleBonusPause();
 });
 
 const _renderHistory=renderHistory;
