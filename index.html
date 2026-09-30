@@ -617,145 +617,127 @@ const Sound=(()=>{
   },
  };
 
- /* ---- YouTube / Invidious music search (real songs, no preset library) ----
-    Search any artist or track (e.g. "gone gone thank you tyler the creator", "laufey").
-    Playback uses the official YouTube IFrame API; search uses public Invidious instances. */
- const INVIDIOUS_HOSTS=[
-  'https://invidious.f5.si',
-  'https://yt.artemislena.eu',
-  'https://invidious.privacyredirect.com',
-  'https://iv.ggtyler.dev',
-  'https://invidious.protokolla.fi',
- ];
+ /* ---- Music engine (CORS-free, works inside a Weebly page) ----
+    Nothing here is fetched with a CORS-restricted request:
+    - Search: iTunes + Deezer via JSONP (a <script> tag, so the browser never applies CORS),
+      plus Audius (full-length songs, its API sends Access-Control-Allow-Origin: *).
+    - Playback: a plain <audio> element (media elements are not subject to CORS).
+    Results are merged, so you get mainstream songs (30s previews that auto-advance) and
+    full-length tracks from Audius's very large catalogue. */
+ const MUSIC_APP='QBSpeaker';
  let musicState={trackId:null,title:null,author:null,playing:false};
  const musicListeners=new Set();
  let playHistory=[];
- let ytPlayer=null,ytReady=false,ytPendingId=null,searchCache=new Map();
- let musicAnalyserFeed=null; // rAF that injects synthetic spectrum while YT is playing
+ let audioEl=null,playToken=0,searchCache=new Map(),audiusHost=null,musicAnalyserFeed=null;
 
  function setMusicState(next){musicState={...musicState,...next};musicListeners.forEach(l=>l())}
-
- function ensureYtApi(){
-  return new Promise((resolve,reject)=>{
-   if(window.YT&&window.YT.Player){resolve();return}
-   const prev=window.onYouTubeIframeAPIReady;
-   window.onYouTubeIframeAPIReady=()=>{if(typeof prev==='function')prev();resolve()};
-   if(!document.getElementById('yt-iframe-api')){
-    const s=document.createElement('script');
-    s.id='yt-iframe-api';
-    s.src='https://www.youtube.com/iframe_api';
-    s.onerror=()=>reject(new Error('Could not load YouTube player'));
-    document.head.appendChild(s);
-   }
-   setTimeout(()=>{if(!(window.YT&&window.YT.Player))reject(new Error('YouTube player timed out'))},12000);
-  });
- }
-
- function ensureYtPlayer(){
-  return ensureYtApi().then(()=>new Promise((resolve)=>{
-   if(ytPlayer){resolve(ytPlayer);return}
-   let host=document.getElementById('ytMusicHost');
-   if(!host){
-    host=document.createElement('div');
-    host.id='ytMusicHost';
-    host.style.cssText='position:fixed;width:1px;height:1px;opacity:0;pointer-events:none;bottom:0;left:0;overflow:hidden';
-    document.body.appendChild(host);
-   }
-   ytPlayer=new YT.Player('ytMusicHost',{
-    height:'1',width:'1',
-    playerVars:{autoplay:0,controls:0,disablekb:1,fs:0,modestbranding:1,playsinline:1,rel:0,origin:location.origin},
-    events:{
-     onReady:()=>{
-      ytReady=true;
-      try{ytPlayer.setVolume(Math.round(volumes.music*100))}catch(e){}
-      if(ytPendingId){const id=ytPendingId;ytPendingId=null;ytPlayer.loadVideoById(id)}
-      resolve(ytPlayer);
-     },
-     onStateChange:(e)=>{
-      const playing=e.data===YT.PlayerState.PLAYING;
-      const ended=e.data===YT.PlayerState.ENDED;
-      if(playing){setMusicState({playing:true});startMusicAnalyserFeed()}
-      else{setMusicState({playing:false});if(!playing)stopMusicAnalyserFeed()}
-      if(ended){
-       setMusicState({trackId:null,title:null,author:null,playing:false});
-       stopMusicAnalyserFeed();
-      }
-     },
-     onError:()=>{
-      setMusicState({playing:false});
-      stopMusicAnalyserFeed();
-      showToast('Playback blocked for this video — try another result');
-     }
-    }
-   });
-  }));
- }
-
- /* Synthetic analyser feed: YouTube iframe audio is cross-origin, so we cannot
-    tap real samples. While a track is playing we inject a red-friendly spectrum
-    into the musicGain path via a quiet noise+tone bed that the analyser hears —
-    SFX never touch this path. */
  function startMusicAnalyserFeed(){musicAnalyserFeed=1}
  function stopMusicAnalyserFeed(){musicAnalyserFeed=null}
+ function musicVol(){return Math.max(0,Math.min(1,(volumes.music||0)*(volumes.master==null?1:volumes.master)))}
 
-
- /* ---- CORS fallback ----
-    Public Invidious instances vary in whether they send Access-Control-Allow-Origin
-    for arbitrary origins — some do, some only allow their own frontend. When the app
-    is downloaded and hosted elsewhere (e.g. embedded in a Weebly site), the direct
-    request can get blocked by the browser's CORS check even though the exact same
-    request works fine from other origins. If the direct fetch fails, retry the same
-    URL through a couple of free public CORS relays that add the missing header for us. */
- const CORS_PROXIES=[
-  u=>`https://corsproxy.io/?url=${encodeURIComponent(u)}`,
-  u=>`https://api.allorigins.win/raw?url=${encodeURIComponent(u)}`,
-  u=>`https://thingproxy.freeboard.io/fetch/${u}`,
- ];
- async function fetchJsonWithCorsFallback(url,ms=6000){
-  try{
-   const ctrl=new AbortController();const to=setTimeout(()=>ctrl.abort(),ms);
-   const r=await fetch(url,{signal:ctrl.signal});
-   clearTimeout(to);
-   if(r.ok)return await r.json();
-  }catch(e){/* likely a CORS block — fall through to proxies below */}
+ function jsonp(url,param,ms=8000){
+  return new Promise((resolve,reject)=>{
+   const cb='__qbjp'+Date.now().toString(36)+Math.floor(Math.random()*1e6);
+   const s=document.createElement('script');
+   let to=null;
+   const done=()=>{clearTimeout(to);try{delete window[cb]}catch(e){window[cb]=undefined}s.remove()};
+   window[cb]=d=>{done();resolve(d)};
+   s.onerror=()=>{done();reject(new Error('Request blocked'))};
+   to=setTimeout(()=>{done();reject(new Error('Request timed out'))},ms);
+   s.src=url+(url.includes('?')?'&':'?')+param+'='+cb;
+   document.head.appendChild(s);
+  });
+ }
+ async function fetchJson(url,ms=6000){
+  const ctrl=new AbortController(),to=setTimeout(()=>ctrl.abort(),ms);
+  try{const r=await fetch(url,{signal:ctrl.signal});if(!r.ok)throw new Error('HTTP '+r.status);return await r.json()}
+  finally{clearTimeout(to)}
+ }
+ async function searchItunes(q){
+  const d=await jsonp('https://itunes.apple.com/search?media=music&entity=song&limit=25&term='+encodeURIComponent(q),'callback');
+  return (d.results||[]).filter(x=>x.previewUrl).map(x=>({
+   id:'it:'+x.trackId,title:x.trackName||'Untitled',author:x.artistName||'Unknown',lengthSeconds:0,
+   thumb:x.artworkUrl60||'',source:'itunes',url:x.previewUrl,preview:true
+  }));
+ }
+ async function searchDeezer(q){
+  const d=await jsonp('https://api.deezer.com/search?limit=25&output=jsonp&q='+encodeURIComponent(q),'callback');
+  return (d.data||[]).filter(x=>x.preview).map(x=>({
+   id:'dz:'+x.id,title:x.title||'Untitled',author:(x.artist&&x.artist.name)||'Unknown',lengthSeconds:0,
+   thumb:(x.album&&x.album.cover_small)||'',source:'deezer',url:x.preview,preview:true
+  }));
+ }
+ async function audiusHosts(){
+  if(audiusHost)return [audiusHost];
+  let list=[];
+  try{const d=await fetchJson('https://api.audius.co',5000);list=(d.data||[]).filter(h=>/^https:\/\//.test(h))}catch(e){}
+  const fallback=['https://discoveryprovider.audius.co','https://discoveryprovider2.audius.co','https://discoveryprovider3.audius.co'];
+  return [...list.sort(()=>Math.random()-.5).slice(0,3),...fallback];
+ }
+ async function searchAudius(q){
   let lastErr=null;
-  for(const makeUrl of CORS_PROXIES){
+  for(const host of await audiusHosts()){
    try{
-    const ctrl=new AbortController();const to=setTimeout(()=>ctrl.abort(),ms);
-    const r=await fetch(makeUrl(url),{signal:ctrl.signal});
-    clearTimeout(to);
-    if(!r.ok)throw new Error('HTTP '+r.status);
-    return await r.json();
+    const d=await fetchJson(`${host}/v1/tracks/search?limit=25&app_name=${MUSIC_APP}&query=${encodeURIComponent(q)}`);
+    audiusHost=host;
+    return (d.data||[]).filter(x=>x&&x.id&&x.is_streamable!==false).map(x=>({
+     id:'au:'+x.id,title:x.title||'Untitled',author:(x.user&&(x.user.name||x.user.handle))||'Unknown',
+     lengthSeconds:x.duration||0,thumb:(x.artwork&&(x.artwork['150x150']||x.artwork['480x480']))||'',source:'audius',preview:false
+    }));
    }catch(e){lastErr=e}
   }
-  throw lastErr||new Error('Network request failed');
+  throw lastErr||new Error('Audius unavailable');
  }
-
- async function searchInvidious(query,limit=24){
-  const q=query.trim();
+ async function searchMusic(query,limit=40){
+  const q=(query||'').trim();
   if(!q)return [];
   const key=q.toLowerCase();
   if(searchCache.has(key))return searchCache.get(key);
-  const params=new URLSearchParams({q,type:'video'});
-  let lastErr=null;
-  for(const host of INVIDIOUS_HOSTS){
-   try{
-    const data=await fetchJsonWithCorsFallback(`${host}/api/v1/search?${params}`);
-    const videos=(Array.isArray(data)?data:[])
-     .filter(x=>x&&x.type==='video'&&x.videoId)
-     .slice(0,limit)
-     .map(x=>({
-      id:x.videoId,
-      title:x.title||'Untitled',
-      author:x.author||'Unknown',
-      lengthSeconds:x.lengthSeconds||0,
-      thumb:(x.videoThumbnails&&x.videoThumbnails[0]&&x.videoThumbnails[0].url)||''
-     }));
-    searchCache.set(key,videos);
-    return videos;
-   }catch(e){lastErr=e}
+  const res=await Promise.allSettled([searchItunes(q),searchAudius(q),searchDeezer(q)]);
+  if(res.every(r=>r.status==='rejected'))throw new Error('Search failed \u2014 check your connection or ad blocker');
+  const lists=res.map(r=>r.status==='fulfilled'?r.value:[]);
+  const norm=t=>(t.title+'|'+t.author).toLowerCase().replace(/[^a-z0-9|]/g,'');
+  const seen=new Set(),out=[];
+  for(let i=0;out.length<limit&&lists.some(l=>i<l.length);i++){
+   for(const l of lists){
+    const t=l[i];if(!t)continue;
+    const k=norm(t);if(seen.has(k))continue;
+    seen.add(k);out.push(t);
+   }
   }
-  throw lastErr||new Error('Search failed');
+  searchCache.set(key,out);
+  return out;
+ }
+ async function resolveTrackUrl(track){
+  if(track.url)return track.url;
+  if(track.source==='audius'){
+   const raw=String(track.id).replace(/^au:/,'');
+   const host=(await audiusHosts())[0];
+   return `${host}/v1/tracks/${encodeURIComponent(raw)}/stream?app_name=${MUSIC_APP}`;
+  }
+  // legacy saved track (old YouTube id): find the same song again
+  const r=await searchMusic((track.title||'')+' '+(track.author||''));
+  if(r[0]&&r[0].url)return r[0].url;
+  if(r[0]){return resolveTrackUrl(r[0])}
+  throw new Error('Could not find this song again \u2014 search for it');
+ }
+ function getAudioEl(){
+  if(audioEl)return audioEl;
+  audioEl=new Audio();audioEl.preload='auto';audioEl.volume=musicVol();
+  audioEl.addEventListener('playing',()=>{setMusicState({playing:true});startMusicAnalyserFeed()});
+  audioEl.addEventListener('pause',()=>{if(!audioEl.ended){setMusicState({playing:false});stopMusicAnalyserFeed()}});
+  audioEl.addEventListener('ended',()=>{
+   stopMusicAnalyserFeed();setMusicState({playing:false});
+   let handled=false;
+   try{if(typeof music.onEnded==='function')handled=music.onEnded()===true}catch(e){}
+   if(!handled)setMusicState({trackId:null,title:null,author:null,playing:false});
+  });
+  audioEl.addEventListener('error',()=>{
+   if(!audioEl.getAttribute('src'))return;
+   setMusicState({playing:false});stopMusicAnalyserFeed();
+   showToast('Could not play this track \u2014 try another result');
+  });
+  return audioEl;
  }
 
  function formatDuration(sec){
@@ -774,7 +756,7 @@ const Sound=(()=>{
  function isSaved(id){return savedTracks.some(t=>t.id===id)}
  function saveTrack(track){
   if(!track||!track.id||isSaved(track.id))return;
-  savedTracks.unshift({id:track.id,title:track.title,author:track.author,lengthSeconds:track.lengthSeconds||0,thumb:track.thumb||''});
+  savedTracks.unshift({id:track.id,title:track.title,author:track.author,lengthSeconds:track.lengthSeconds||0,thumb:track.thumb||'',source:track.source||'',url:track.url||'',preview:!!track.preview});
   persistSaved();musicListeners.forEach(l=>l());
  }
  function unsaveTrack(id){
@@ -788,7 +770,7 @@ const Sound=(()=>{
   subscribe(l){musicListeners.add(l);return()=>musicListeners.delete(l)},
   getSnapshot(){return musicState},
   getHistory(){return playHistory.slice()},
-  search:searchInvidious,
+  search:searchMusic,onEnded:null,
   formatDuration,
   getSaved(){return savedTracks.slice()},
   isSaved,
@@ -799,33 +781,37 @@ const Sound=(()=>{
    const c=audio();
    if(c&&c.state==='suspended')c.resume();
    if(musicState.trackId&&musicState.trackId!==track.id)playHistory.push({
-    id:musicState.trackId,title:musicState.title,author:musicState.author
+    id:musicState.trackId,title:musicState.title,author:musicState.author,source:musicState.source,url:musicState.url,preview:musicState.preview
    });
-   setMusicState({trackId:track.id,title:track.title,author:track.author,playing:false});
+   const tok=++playToken;
+   setMusicState({trackId:track.id,title:track.title,author:track.author,source:track.source,url:track.url,preview:track.preview,playing:false});
    try{
-    await ensureYtPlayer();
-    const vol=Math.round((volumes.music||0)*100);
-    try{ytPlayer.setVolume(vol)}catch(e){}
-    if(ytReady)ytPlayer.loadVideoById(track.id);
-    else ytPendingId=track.id;
-    try{ytPlayer.playVideo()}catch(e){}
+    const url=await resolveTrackUrl(track);
+    if(tok!==playToken)return;
+    const a=getAudioEl();
+    a.volume=musicVol();
+    a.src=url;
+    await a.play();
    }catch(e){
-    showToast(e.message||'Could not start player');
-    setMusicState({trackId:null,title:null,author:null,playing:false});
+    if(tok!==playToken||(e&&e.name==='AbortError'))return;
+    showToast((e&&e.name==='NotAllowedError')?'Tap play to start the music':(e.message||'Could not start player'));
+    if(!(e&&e.name==='NotAllowedError'))setMusicState({trackId:null,title:null,author:null,playing:false});
    }
   },
   stop(){
-   try{if(ytPlayer)ytPlayer.stopVideo()}catch(e){}
+   playToken++;
+   if(audioEl){audioEl.pause();audioEl.removeAttribute('src');audioEl.load()}
    stopMusicAnalyserFeed();
    setMusicState({trackId:null,title:null,author:null,playing:false});
   },
   pause(){
-   try{if(ytPlayer)ytPlayer.pauseVideo()}catch(e){}
+   if(audioEl)audioEl.pause();
    setMusicState({playing:false});
    stopMusicAnalyserFeed();
   },
   resume(){
-   try{if(ytPlayer)ytPlayer.playVideo()}catch(e){}
+   if(audioEl&&audioEl.getAttribute('src')){audioEl.play().catch(()=>{})}
+   else if(musicState.trackId)this.play({id:musicState.trackId,title:musicState.title,author:musicState.author,source:musicState.source,url:musicState.url,preview:musicState.preview});
   },
   nextRandom(){/* no preset library — next is manual from search results */},
   prev(){
@@ -835,7 +821,7 @@ const Sound=(()=>{
    return true;
   },
   setYtVolume(pct){
-   try{if(ytPlayer)ytPlayer.setVolume(Math.max(0,Math.min(100,Math.round(pct))))}catch(e){}
+   try{if(audioEl)audioEl.volume=Math.max(0,Math.min(1,pct/100*(volumes.master==null?1:volumes.master)))}catch(e){}
   }
  };
  // Keep TRACKS empty so any leftover UI that iterates it stays safe
@@ -951,7 +937,7 @@ const AudioVisualizer=(()=>{
    peakTrack*=.95;
    return 1;
   }
-  // YouTube audio is cross-origin — synthesise a lively spectrum driven only by play state
+  // music audio is cross-origin — synthesise a lively spectrum driven only by play state
   musicPhase+=0.065;
   const kick=Math.pow(Math.max(0,Math.sin(musicPhase*2.05)),9);
   const snare=Math.pow(Math.max(0,Math.sin(musicPhase*1.02+0.55)),6);
@@ -1773,7 +1759,7 @@ function updateMusicChrome(){
  const prevBtn=$('musicPrevBtn');
  if(prevBtn)prevBtn.disabled=!Sound.music.getHistory().length;
  const now=$('musicNowPlaying');
- if(now)now.textContent=track?`Now playing: ${track.title}`:'Search any song on YouTube';
+ if(now)now.textContent=track?`Now playing: ${track.title}`:'Search any song or artist';
  const stop=$('musicStopBtn');
  if(stop)stop.classList.toggle('hidden',!track);
  const label=$('musicBtnLabel');
@@ -1901,7 +1887,7 @@ function trackRowHtml(t,i,curId,idxAttr){
  return `<li><div class="trackrow ${isCurrent?'playing':''}">
    <button type="button" class="trackrow-play" data-${idxAttr}="${i}">
     <span class="ticon">${isPlaying?'⏸':'▶'}</span>
-    <span class="tinfo"><span class="ttitle">${esc(t.title)}</span><span class="tmood">${esc(t.author)}${dur?' · '+dur:''}</span></span>
+    <span class="tinfo"><span class="ttitle">${esc(t.title)}</span><span class="tmood">${esc(t.author)}${dur?' · '+dur:''}${t.preview?' · 30s preview':''}</span></span>
     ${isPlaying?'<span class="eqbars"><span></span><span></span><span></span></span>':''}
    </button>
    <button type="button" class="tstar ${saved?'saved':''}" data-star="${esc(t.id)}" title="${saved?'Remove from saved':'Save to your library'}" aria-label="${saved?'Remove from saved':'Save to your library'}">${saved?'★':'☆'}</button>
@@ -1976,6 +1962,16 @@ function renderTrackList(){
 }
 Sound.music.subscribe(()=>{renderTrackList();updateMusicChrome()});
 $('musicStopBtn').onclick=()=>Sound.music.stop();
+Sound.music.onEnded=()=>{
+ // previews are 30s, so keep the music going: advance through the current list
+ const snap=Sound.music.getSnapshot();
+ const list=(musicView==='saved')?Sound.music.getSaved():searchResults;
+ if(!list.length)return false;
+ const idx=list.findIndex(t=>t.id===snap.trackId);
+ const next=list[(idx+1)%list.length];
+ if(!next||(list.length===1&&idx===0&&!next.preview&&false))return false;
+ Sound.music.play(next);return true;
+};
 $('musicNextBtn').onclick=()=>{
  // Play next result after the current one in the search list
  const snap=Sound.music.getSnapshot();
